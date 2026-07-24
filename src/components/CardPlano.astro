@@ -1,0 +1,448 @@
+---
+// CardPlano.astro
+interface Adicional {
+    nome: string;
+    preco: number;
+    incluso?: boolean;
+}
+
+interface Props {
+    nome: string;
+    velocidade?: string;
+    precoBase: number;
+    descricao: string;
+    badge?: string;
+    economia?: string;
+    recursos?: string[];
+    adicionais?: Adicional[];
+    isFeatured?: boolean;
+}
+
+const {
+    nome,
+    velocidade,
+    precoBase,
+    descricao,
+    badge,
+    economia,
+    recursos = [],
+    adicionais = [],
+    isFeatured = false,
+} = Astro.props;
+
+// Formata preço inicial
+const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
+---
+
+<article
+    class={`card-plano-dinamico ${isFeatured ? "card-plano--featured" : ""}`}
+    data-preco-base={precoBase}
+    data-nome-plano={nome}
+>
+    {badge && <div class="card-badge">{badge}</div>}
+
+    <header class="card-header">
+        <h3 class="plan-title">{nome}</h3>
+        {velocidade && <span class="speed-tag">{velocidade}</span>}
+    </header>
+
+    <div class="card-price">
+        <span class="currency">R$</span>
+        <span class="val-inteiro">{inteiroInicial}</span>
+        <div class="price-fraction">
+            <span class="val-centavos">,{centavosIniciais}</span>
+            <span class="period">/mês</span>
+        </div>
+    </div>
+
+    {economia && <p class="saving-tag">{economia}</p>}
+    <p class="plan-description">{descricao}</p>
+
+    <!-- RECURSOS DO PLANO -->
+    {
+        recursos.length > 0 && (
+            <ul class="resources-list">
+                {recursos.map((rec) => (
+                    <li>
+                        <img
+                            src={
+                                isFeatured
+                                    ? "/assets/icons/check-zamtech-white.svg"
+                                    : "/assets/icons/check-zamtech.svg"
+                            }
+                            alt="Check"
+                        />
+                        <span>{rec}</span>
+                    </li>
+                ))}
+            </ul>
+        )
+    }
+
+    <!-- LISTA DE OPCIONAIS / ADICIONAIS -->
+    {
+        adicionais.length > 0 && (
+            <div class="adicionais-container">
+                <span class="adicionais-title">Turbine seu plano:</span>
+                {adicionais.map((item) => (
+                    <div class="adicional-item">
+                        <span class="adicional-label">
+                            {item.nome}
+                            {item.incluso ? (
+                                <strong class="tag-incluso">
+                                    (Incluso no Combo)
+                                </strong>
+                            ) : (
+                                <small>
+                                    (+ R${" "}
+                                    {item.preco.toFixed(2).replace(".", ",")})
+                                </small>
+                            )}
+                        </span>
+                        <label class="switch">
+                            <input
+                                type="checkbox"
+                                class="chk-adicional"
+                                data-preco={item.preco}
+                                data-nome={item.nome}
+                                checked={item.incluso}
+                                disabled={item.incluso}
+                            />
+                            <span class="slider" />
+                        </label>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    <!-- BOTÃO DE AÇÃO DA ZAP -->
+    <a href="#" class="btn btn-primary btn-whatsapp"> Adquirir Plano </a>
+</article>
+
+<script>
+    function initCalculadoraPlanos() {
+        const cards = document.querySelectorAll(".card-plano-dinamico");
+        const whatsappPhone = "5527995057736";
+
+        cards.forEach((card) => {
+            const basePrice = parseFloat(
+                card.getAttribute("data-preco-base") || "0",
+            );
+            const planName =
+                card.getAttribute("data-nome-plano") || "Plano Zamtech";
+
+            const valInteiro = card.querySelector(".val-inteiro");
+            const valCentavos = card.querySelector(".val-centavos");
+            const btnZap = card.querySelector(
+                ".btn-whatsapp",
+            ) as HTMLAnchorElement;
+            const checkboxes = card.querySelectorAll(
+                ".chk-adicional",
+            ) as NodeListOf<HTMLInputElement>;
+
+            function calcular() {
+                let precoAtual = basePrice;
+                let selecionados: string[] = [];
+
+                checkboxes.forEach((chk) => {
+                    // Só soma se estiver marcado e NÃO for um item promocional já travado/incluso no preço base
+                    if (chk.checked && !chk.disabled) {
+                        const preco = parseFloat(
+                            chk.getAttribute("data-preco") || "0",
+                        );
+                        const nome = chk.getAttribute("data-nome") || "";
+                        precoAtual += preco;
+                        if (preco > 0) selecionados.push(nome);
+                    }
+                });
+
+                const [inteiro, centavos] = precoAtual.toFixed(2).split(".");
+                if (valInteiro) valInteiro.textContent = inteiro;
+                if (valCentavos) valCentavos.textContent = `,${centavos}`;
+
+                // Monta mensagem do WhatsApp
+                let msg = `Olá! Quero contratar o plano ${planName} (R$ ${inteiro},${centavos}/mês)`;
+                if (selecionados.length > 0) {
+                    msg += ` incluindo os adicionais: ${selecionados.join(", ")}`;
+                }
+
+                if (btnZap) {
+                    btnZap.href = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(msg)}`;
+                    btnZap.target = "_blank";
+                    btnZap.rel = "noopener noreferrer";
+                }
+            }
+
+            checkboxes.forEach((chk) =>
+                chk.addEventListener("change", calcular),
+            );
+            calcular(); // Executa inicial
+        });
+    }
+
+    // Roda no carregamento inicial
+    initCalculadoraPlanos();
+</script>
+
+<style>
+    .card-plano-dinamico {
+        position: relative;
+        background-color: var(--color-white);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-md);
+        padding: var(--space-24) var(--space-32);
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        justify-content: space-around;
+        color: var(--color-gray-dark);
+        transition: var(--transition-default);
+        gap: 0.4rem;
+    }
+
+    .card-plano-dinamico:hover {
+        border-color: var(--color-secondary);
+        box-shadow: var(--elevation-2);
+    }
+
+    .card-plano--featured {
+        border: 2px solid var(--color-secondary);
+        background: var(--color-secondary);
+        color: var(--color-white);
+    }
+
+    .card-badge {
+        position: absolute;
+        top: -14px;
+        right: var(--space-24);
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+        font-family: var(--font-display);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-full);
+        border: 2px solid var(--color-gray-light);
+    }
+
+    .brand-tag {
+        font-size: var(--fs-caption);
+        color: var(--color-secondary);
+        letter-spacing: 0.1em;
+        font-weight: 700;
+    }
+
+    .plan-title {
+        font-size: var(--fs-sm);
+        margin: var(--space-4) 0;
+    }
+
+    .speed-tag {
+        font-size: var(--fs-h2);
+        font-weight: 900;
+        color: var(--color-primary);
+    }
+
+    .card-plano--featured .speed-tag {
+        font-size: var(--fs-h2);
+        font-weight: 900;
+        color: var(--color-white);
+    }
+
+    .card-price {
+        display: flex;
+        flex: row;
+        align-items: center;
+        margin: var(--space-16) 0;
+    }
+
+    .currency {
+        font-size: var(--fs-h5);
+        font-weight: 600;
+        margin-right: var(--space-4);
+    }
+
+    .val-inteiro {
+        /* display: flex;
+        flex-direction: row; */
+        font-size: var(--fs-h1);
+        font-weight: 900;
+        font-family: var(--font-display);
+        line-height: 1;
+    }
+
+    .price-fraction {
+        display: flex;
+        flex-direction: column;
+        margin-left: var(--space-4);
+    }
+
+    .val-centavos {
+        font-size: var(--fs-sm);
+        font-weight: 700;
+    }
+
+    .period {
+        font-size: var(--fs-caption);
+        color: var(--color-gray-dark);
+    }
+
+    .card-price .period {
+        font-size: var(--fs-caption);
+        color: var(--color-white);
+    }
+
+    .saving-tag {
+        color: var(--color-purple);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        margin-bottom: var(--space-8);
+    }
+
+    .card-plano--featured .saving-tag {
+        color: var(--color-white);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        margin-bottom: var(--space-8);
+    }
+
+    .plan-description {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-dark);
+        margin-bottom: var(--space-24);
+    }
+
+    .card-plano--featured .plan-description {
+        font-size: var(--fs-sm);
+        color: var(--color-white);
+        margin-bottom: var(--space-24);
+    }
+
+    .resources-list {
+        list-style: none;
+        margin-bottom: var(--space-24);
+    }
+
+    .resources-list li {
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        font-size: var(--fs-sm);
+        margin-bottom: var(--space-8);
+    }
+
+    .resources-list img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* ADICIONAIS / SWITCHES */
+    .adicionais-container {
+        background: rgba(255, 255, 255, 0.04);
+        padding: var(--space-0);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-24);
+    }
+
+    .adicionais-title {
+        display: block;
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        margin-bottom: var(--space-12);
+        color: var(--color-secondary);
+    }
+
+    .card-plano--featured .adicionais-title {
+        display: block;
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        margin-bottom: var(--space-12);
+        color: var(--color-white);
+    }
+
+    .adicional-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-12);
+        gap: 1rem;
+    }
+
+    .adicional-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .adicional-label {
+        font-size: var(--fs-sm);
+        display: flex;
+        flex-direction: column;
+        font-weight: 500;
+        margin: var(--space-4);
+    }
+
+    .tag-incluso {
+        color: var(--color-secondary);
+        font-weight: 500;
+    }
+
+    .card-plano--featured .tag-incluso {
+        color: var(--color-yellow);
+        font-weight: 600;
+    }
+
+    /* TOGGLE SWITCH CSS */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #333;
+        transition: 0.3s;
+        border-radius: var(--radius-full);
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: var(--color-primary);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(16px);
+    }
+
+    input:disabled + .slider {
+        opacity: 1;
+        cursor: not-allowed;
+    }
+
+    .btn-whatsapp {
+        width: 100%;
+    }
+</style>

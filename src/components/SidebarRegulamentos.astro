@@ -1,0 +1,103 @@
+---
+// Pega a URL atual para marcar o link ativo
+const currentPath = Astro.url.pathname;
+
+const links = [
+  { name: "Regulamentos", href: "/regulamentos" },
+  { name: "Política de Privacidade", href: "/politica-de-privacidade" },
+  { name: "Termos de Uso", href: "/termos-de-uso" },
+  { name: "Contrato de Adesão", href: "/termos-de-contrato" },
+  { name: "Termos de Adesão", href: "/termos-de-adesao" },
+];
+---
+
+<aside class="sidebar">
+  <h2>Assuntos Regulamentares</h2>
+  <nav>
+    <ul>
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class={currentPath === link.href ? "active" : ""}
+            >
+              {link.name}
+              <span class="arrow">&rsaquo;</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</aside>
+
+<style>
+  .sidebar {
+    /* background-color: var(--color-gray-light); */
+    background: linear-gradient(
+      180deg,
+      rgba(245, 245, 245, 1) 0%,
+      rgba(245, 245, 245, 0.6) 51%,
+      rgba(245, 245, 245, 0) 100%
+    );
+    width: 100%;
+    max-width: 300px;
+    padding: 4rem 4rem 3rem 3rem;
+    border-radius: var(--radius-lg);
+    border-right: 1px solid #e5e7eb;
+  }
+
+  .sidebar h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #111827;
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar li {
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .sidebar a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .sidebar a:hover {
+    color: var(--color-primary); /* Troque pela cor verde da Zamtech */
+  }
+
+  .sidebar a.active {
+    color: var(--color-primary); /* Cor do item ativo */
+    font-weight: bold;
+  }
+
+  .arrow {
+    font-size: 1.2rem;
+  }
+
+  /* Responsivo: vira topo em telas pequenas */
+  @media (max-width: 768px) {
+    .sidebar {
+      max-width: 100%;
+      border-right: none;
+      border-bottom: 1px solid #e5e7eb;
+      padding-right: 5rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+  }
+</style>

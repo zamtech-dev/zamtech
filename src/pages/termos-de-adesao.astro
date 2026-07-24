@@ -1,0 +1,122 @@
+---
+import Regulamentos from "../layouts/Regulamentos.astro";
+import "../styles/global.css";
+---
+
+<Regulamentos title="Termo de Adesão - Zamtech Fibra Óptica">
+    <section>
+        <div class="regulamentos-page">
+            <div class="division-topic"></div>
+            <h1>TERMO DE ADESÃO – ZAMTECH TELECOMUNICAÇÕES</h1>
+            <p>
+                Bem-vindo à página de adesão aos serviços da Zamtech. Este documento tem como finalidade apresentar, de forma transparente, as condições gerais e os canais de contratação dos serviços disponibilizados pela nossa empresa.
+            </p>
+            <p>
+                Ao contratar qualquer serviço da Zamtech, o cliente declara que leu, compreendeu e concorda com os termos aqui descritos.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>1. Objeto</h2>
+            <p>
+                O presente Termo de Adesão estabelece as condições iniciais para contratação e utilização dos serviços oferecidos pela Zamtech Telecomunicações, empresa especializada em soluções de conectividade e tecnologia.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>2. Serviços Oferecidos</h2>
+            <p>A Zamtech disponibiliza soluções em tecnologia, incluindo, mas não se limitando a:</p>
+            <ul>
+                <li>Internet Banda Larga;</li>
+                <li>Telefonia IP;</li>
+                <li>Redes Corporativas;</li>
+                <li>Wi-Fi Corporativo;</li>
+                <li>Monitoramento por CFTV;</li>
+                <li>PABX em Nuvem;</li>
+                <li>Infraestrutura de Redes;</li>
+                <li>Suporte Técnico Especializado.</li>
+            </ul>
+            <p class="nota-servicos">
+                <strong>Nota:</strong> Os serviços serão prestados conforme disponibilidade técnica e comercial de cada região.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>3. Contratação e Efetivação</h2>
+            <p>
+                A contratação dos serviços dependerá sempre da análise de viabilidade técnica, disponibilidade da infraestrutura e aprovação do cadastro do cliente. A efetivação da contratação e aceite deste termo poderá ocorrer por meio eletrônico, presencial ou outro canal oficial disponibilizado pela Zamtech Telecomunicações.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>4. Condições Comerciais</h2>
+            <p>
+                Os valores, planos, promoções e condições comerciais específicas serão apresentados detalhadamente no momento da contratação. Campanhas promocionais poderão possuir regras específicas, prazos de vigência e condições próprias.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>5. Alterações deste Termo</h2>
+            <p>
+                A Zamtech Telecomunicações poderá atualizar este Termo de Adesão sempre que necessário para atender a alterações legais, regulatórias ou operacionais. A versão vigente permanecerá sempre disponível nesta página para consulta pública dos clientes.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>6. Disposições Finais</h2>
+            <p>
+                Este documento estabelece a intenção de adesão aos serviços. Condições específicas, promoções, planos, valores e demais particularidades jurídicas e operacionais da prestação do serviço serão formalizadas e regidas pelo Contrato de Prestação de Serviços da empresa.
+            </p>
+
+            <div class="division-topic"></div>
+        </div>
+    </section>
+
+    <style>
+        .regulamentos-page {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        .division-topic {
+            border-top: 2px solid var(--color-gray-light);
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .regulamentos-page h1 {
+            color: var(--color-primary);
+            font-weight: 900;
+            font-family: var(--font-display, "Red Hat Display");
+            font-size: var(--fs-h1);
+        }
+
+        .regulamentos-page p {
+            font-family: var(--font-text, "Red Hat Text");
+            line-height: 1.6;
+        }
+
+        .regulamentos-page h2,
+        .regulamentos-page h3,
+        .regulamentos-page h4 {
+            color: var(--color-gray-dark);
+            font-weight: 500;
+            font-family: var(--font-display, "Red Hat Display");
+        }
+
+        .regulamentos-page ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .regulamentos-page ul li {
+            list-style: disc;
+            font-family: var(--font-text, "Red Hat Text");
+            line-height: 1.5;
+        }
+
+        .nota-servicos {
+            font-size: var(--fs-sm);
+            color: var(--color-gray-dark);
+            margin-top: 0.5rem;
+        }
+    </style>
+</Regulamentos>

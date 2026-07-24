@@ -1,0 +1,292 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CardPlano from '../components/CardPlano.astro';
+
+// Adicionais Padrao para os planos residenciais simples
+const adicionaisPadraoResidencial = [
+    { nome: "Tecnologia Mesh", preco: 39.90 },
+    { nome: "Câmera Inteligente", preco: 39.90 },
+    { nome: "Linha Telefônica", preco: 29.90 }
+];
+---
+
+<Layout title="Planos de Internet - Zamtech Fibra Óptica">
+    <main class="container section">
+        
+        <!-- SEÇÃO RESIDENCIAIS -->
+        <section>
+            <h2 class="titulo-secao">Planos Residenciais</h2>
+            <div class="plans-grid">
+                
+                <!-- 300 MEGA -->
+                <CardPlano
+                    nome="ZAMTECH 300"
+                    velocidade="300 Mega"
+                    precoBase={79.90}
+                    descricao="Ideal para navegação diária, redes sociais, estudos e até 5 dispositivos."
+                    recursos={[
+                        "100% Fibra Óptica",
+                        "Instalação Grátis",
+                        "Wi-Fi de alta performance"
+                    ]}
+                    adicionais={adicionaisPadraoResidencial}
+                />
+
+                <!-- 500 MEGA -->
+                <CardPlano
+                    nome="ZAMTECH 500"
+                    velocidade="500 Mega"
+                    precoBase={89.90}
+                    descricao="Mais velocidade para streaming 4K, home office e até 10 dispositivos."
+                    recursos={[
+                        "100% Fibra Óptica",
+                        "Streaming em 4K",
+                        "Downloads ultra rápidos"
+                    ]}
+                    adicionais={adicionaisPadraoResidencial}
+                />
+
+                <!-- 800 MEGA -->
+                <CardPlano
+                    nome="ZAMTECH 800"
+                    velocidade="800 Mega"
+                    precoBase={99.90}
+                    descricao="Alta performance para casas inteligentes, jogos e mais de 15 dispositivos."
+                    recursos={[
+                        "Velocidade máxima",
+                        "Conectividade de ponta",
+                        "Suporte prioritário"
+                    ]}
+                    adicionais={adicionaisPadraoResidencial}
+                />
+
+                <!-- COMBO 800 + MESH -->
+                <CardPlano
+                    nome="ZAMTECH 800 + MESH"
+                    velocidade="800 Mega + Módulo Mesh"
+                    precoBase={129.90}
+                    badge="RECOMENDADO"
+                    economia="Economize contratando o Combo!"
+                    descricao="Sinal Wi-Fi forte em todos os cômodos da casa sem pontos cegos."
+                    isFeatured={true}
+                    recursos={[
+                        "Tecnologia Mesh Inclusa",
+                        "Sinal sem zonas mortas",
+                        "Roaming fluido na casa inteira"
+                    ]}
+                    adicionais={[
+                        { nome: "Tecnologia Mesh", preco: 0, incluso: true },
+                        { nome: "Câmera Inteligente", preco: 39.90 },
+                        { nome: "Linha Telefônica", preco: 29.90 }
+                    ]}
+                />
+
+                <!-- COMBO 800 + CÂMERA -->
+                <CardPlano
+                    nome="ZAMTECH 800 + CÂMERA"
+                    velocidade="800 Mega + Câmera em Nuvem"
+                    precoBase={139.90}
+                    badge="COMBO SEGURANÇA"
+                    descricao="Internet ultrarrápida combinada com monitoramento inteligente 100% na nuvem."
+                    recursos={[
+                        "1 Câmera em comodato",
+                        "Gravação 100% na nuvem",
+                        "App exclusivo para celular",
+                        "Sem necessidade de DVR"
+                    ]}
+                    adicionais={[
+                        { nome: "Câmera Inteligente", preco: 0, incluso: true },
+                        { nome: "Tecnologia Mesh", preco: 39.90 },
+                        { nome: "Linha Telefônica", preco: 29.90 }
+                    ]}
+                />
+
+                <!-- PLANO GAMER -->
+                <CardPlano
+                    nome="PLANO GAME 1G"
+                    velocidade="1 Giga + Wi-Fi 6"
+                    precoBase={179.90}
+                    badge="ALTA PERFORMANCE"
+                    descricao="Desenvolvido para máxima performance em jogos online, lives e downloads massivos."
+                    isFeatured={true}
+                    recursos={[
+                        "IP Público Incluso",
+                        "Roteador Wi-Fi 6",
+                        "Latência mínima (Ping Baixo)",
+                        "Upload turbinado"
+                    ]}
+                    adicionais={[
+                        { nome: "Tecnologia Mesh", preco: 39.90 },
+                        { nome: "Câmera Inteligente", preco: 39.90 }
+                    ]}
+                />
+
+            </div>
+        </section>
+
+        <!-- SEÇÃO EMPRESARIAIS -->
+        <section class="section">
+            <h2 class="titulo-secao">Planos Empresariais (B2B)</h2>
+            <div class="plans-grid">
+                
+                <!-- START 600 -->
+                <CardPlano
+                    nome="START 600"
+                    velocidade="600 Mega Empresarial"
+                    precoBase={119.90}
+                    descricao="Conectividade estável para pequenos negócios e operações em nuvem."
+                    recursos={["Link estável", "Notas fiscais e sistemas", "Suporte corporativo"]}
+                    adicionais={[
+                        { nome: "Linha Telefônica", preco: 29.90 },
+                        { nome: "Câmera em Nuvem", preco: 39.90 }
+                    ]}
+                />
+
+                <!-- ESCALA 850 -->
+                <CardPlano
+                    nome="ESCALA 850"
+                    velocidade="850 Mega Empresarial"
+                    precoBase={159.90}
+                    descricao="Projetado para empresas com múltiplos colaboradores em simultâneo."
+                    recursos={["Alta capacidade de carga", "Suporte prioritário", "Conexão simétrica"]}
+                    adicionais={[
+                        { nome: "Linha Telefônica", preco: 29.90 },
+                        { nome: "Câmera em Nuvem", preco: 39.90 }
+                    ]}
+                />
+
+                <!-- PRIME 1G -->
+                <CardPlano
+                    nome="PRIME 1G"
+                    velocidade="1 Giga Empresarial"
+                    precoBase={169.90}
+                    descricao="Desempenho máximo para empresas que não podem parar um segundo."
+                    recursos={["Velocidade extrema", "Atendimento B2B VIP", "Banda dedicada"]}
+                    adicionais={[
+                        { nome: "Linha Telefônica", preco: 29.90 },
+                        { nome: "Câmera em Nuvem", preco: 39.90 }
+                    ]}
+                />
+
+                <!-- START SECURE (COMBO COMPLETO) -->
+                <CardPlano
+                    nome="START SECURE"
+                    velocidade="600 Mega + Voz + Câmera"
+                    precoBase={189.90}
+                    badge="COMBO EMPRESARIAL"
+                    descricao="Solução 3 em 1: Conexão, telefonia e segurança no mesmo contrato."
+                    isFeatured={true}
+                    recursos={[
+                        "600 Mega de Internet",
+                        "1 Linha telefônica inclusa",
+                        "1 Câmera em nuvem inclusa",
+                        "App de monitoramento B2B"
+                    ]}
+                    adicionais={[
+                        { nome: "Linha Telefônica", preco: 0, incluso: true },
+                        { nome: "Câmera em Nuvem", preco: 0, incluso: true }
+                    ]}
+                />
+
+                <!-- SCALE SECURE -->
+                <CardPlano
+                    nome="SCALE SECURE"
+                    velocidade="850 Mega + Voz + Câmera"
+                    precoBase={229.90}
+                    badge="COMBO EMPRESARIAL"
+                    descricao="Mais velocidade para empresas em crescimento com segurança total."
+                    recursos={[
+                        "850 Mega de Internet",
+                        "1 Linha telefônica inclusa",
+                        "1 Câmera em nuvem inclusa"
+                    ]}
+                    adicionais={[
+                        { nome: "Linha Telefônica", preco: 0, incluso: true },
+                        { nome: "Câmera em Nuvem", preco: 0, incluso: true }
+                    ]}
+                />
+
+                <!-- PRIME SECURE -->
+                <CardPlano
+                    nome="PRIME SECURE"
+                    velocidade="1 Giga + Voz + Câmera"
+                    precoBase={239.90}
+                    badge="O MAIS COMPLETO"
+                    descricao="A estrutura definitiva para médias e grandes empresas."
+                    isFeatured={true}
+                    recursos={[
+                        "1 Giga de Internet",
+                        "1 Linha telefônica inclusa",
+                        "1 Câmera em nuvem inclusa"
+                    ]}
+                    adicionais={[
+                        { nome: "Linha Telefônica", preco: 0, incluso: true },
+                        { nome: "Câmera em Nuvem", preco: 0, incluso: true }
+                    ]}
+                />
+
+            </div>
+        </section>
+
+        <!-- SEÇÃO COMBOS PABX EM NUVEM -->
+        <section class="section">
+            <h2 class="titulo-secao">PABX em Nuvem & Combos</h2>
+            <div class="plans-grid">
+                
+                <!-- PABX ESSENTIAL (AVULSO) -->
+                <CardPlano
+                    nome="PABX ESSENTIAL"
+                    precoBase={49.90}
+                    descricao="Ideal para consultórios e pequenos escritórios profissionalizarem o atendimento."
+                    recursos={[
+                        "Até 5 ramais",
+                        "Atendimento pelo celular/Softphone",
+                        "URA Básica inclusa",
+                        "Painel Web de relatórios"
+                    ]}
+                />
+
+                <!-- PABX PRO (AVULSO) -->
+                <CardPlano
+                    nome="PABX PRO"
+                    precoBase={79.90}
+                    badge="POPULAR PABX"
+                    descricao="Uma estrutura completa para fluxos mais intensos de ligações."
+                    isFeatured={true}
+                    recursos={[
+                        "Até 10 ramais",
+                        "URA Personalizada",
+                        "Filas de atendimento",
+                        "Gravação de chamadas"
+                    ]}
+                />
+
+                <!-- COMBO PABX CONNECT -->
+                <CardPlano
+                    nome="PABX CONNECT"
+                    velocidade="600 Mega + PABX em Nuvem"
+                    precoBase={189.90}
+                    badge="COMBO PABX"
+                    descricao="Sua internet B2B integrada diretamente com a central em nuvem Zamtech."
+                    recursos={[
+                        "600 Mega de Internet",
+                        "PABX com ramais inclusos",
+                        "Atendimento via App / PC",
+                        "Zero central física"
+                    ]}
+                />
+
+            </div>
+        </section>
+
+    </main>
+</Layout>
+
+<style>
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-32);
+        margin-top: var(--space-32);
+    }
+</style>

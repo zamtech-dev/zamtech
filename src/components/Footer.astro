@@ -1,0 +1,273 @@
+---
+// Footer.astro
+---
+
+<footer class="main-footer">
+    <div class="container footer-container">
+        <div class="footer-logo-row"><a href="../pages/index"></a>
+            <img src="/assets/icons/logo-zamtech.svg" alt="Zamtech Fibra Óptica" class="footer-main-logo" />
+        </div>
+
+        <div class="footer-grid">
+            <!-- COLUNA 1 -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Conecte-se com a Zamtech - Fibra Óptica</h4>
+                <span class="footer-username">@zamtechtelecom</span>
+                
+                <div class="social-links-grid">
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/youtube.svg" alt="Youtube" class="social-icon" />
+                        <span>Youtube</span>
+                    </a>
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/pinterest.svg" alt="Pinterest" class="social-icon" />
+                        <span>Pinterest</span>
+                    </a>
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/x.svg" alt="X (antigo Twitter)" class="social-icon" />
+                        <span>X (antigo Twitter)</span>
+                    </a>
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/threads.svg" alt="Threads" class="social-icon" />
+                        <span>Threads</span>
+                    </a>
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/tiktok.svg" alt="Tiktok" class="social-icon" />
+                        <span>Tiktok</span>
+                    </a>
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/instagram.svg" alt="Instagram" class="social-icon" />
+                        <span>Instagram</span>
+                    </a>
+                    <a href="#" class="social-link-item">
+                        <img src="/assets/icons/social/facebook.svg" alt="Facebook" class="social-icon" />
+                        <span>Facebook</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- COLUNA 2 -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Contato e Localização</h4>
+                <div class="contact-info-list">
+                    <div class="contact-item">
+                        <img src="/assets/icons/social/phone.svg" alt="Telefone Fixo" class="contact-icon" />
+                        <a href="tel:2731413637">(27) 3141-3637 (Fixo)</a>
+                    </div>
+                    <div class="contact-item">
+                        <img src="/assets/icons/social/whatsapp.svg" alt="WhatsApp" class="contact-icon" />
+                        <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer">(27) 99505-7736 (WhatsApp)</a>
+                    </div>
+                    <div class="address-item">
+                        <p>Av. Papa João XXIII, 374 - Sala 201 - Cobilândia, Vila Velha ES, 29111-400</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA 3 -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Informações Legais e Fiscais</h4>
+                <p class="copyright-text">™ 2026 Zamtech Fibra Óptica. Todos os direitos reservados.</p>
+                <p class="cnpj-text">26.558.295/0001-00</p>
+            </div>
+        </div>
+
+        <!-- BOTTOM LINKS -->
+        <div class="footer-bottom-links">
+            <a href="/politica-de-privacidade">Políticas de Privacidade</a>
+            <span class="divider">|</span>
+            <a href="/termos-de-uso">Termos de Uso</a>
+            <span class="divider">|</span>
+            <a href="/termos-de-adesao">Termo de Adesão</a>
+            <span class="divider">|</span>
+            <a href="/termos-de-contrato">Termo de Contrato</a>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* ==========================================================================
+       RODAPÉ (FOOTER) - MAPEADO 100% NOS NOVOS DESIGN TOKENS
+       ========================================================================== */
+    .main-footer {
+        background-color: var(--color-gray-dark);
+        color: var(--color-white);
+        padding: var(--space-64) 0 var(--space-48) 0;
+        font-family: var(--font-text);
+    }
+
+    .footer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Logo no topo */
+    .footer-logo-row {
+        margin-bottom: var(--space-64);
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .footer-main-logo {
+        max-width: 8rem;
+        height: auto;
+    }
+
+    /* Grid principal de 3 colunas */
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-64);
+        width: 100%;
+        margin-bottom: var(--space-64);
+    }
+
+    .footer-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-col-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h5);
+        font-weight: 500;
+        margin-bottom: var(--space-8);
+        line-height: 1.3;
+    }
+
+    .footer-username {
+        font-size: var(--fs-body);
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: var(--space-24);
+        display: block;
+    }
+
+    /* Sub-grid de Redes Sociais (2 colunas) */
+    .social-links-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: var(--space-16);
+        column-gap: var(--space-24);
+    }
+
+    .social-link-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        font-size: var(--fs-body);
+        color: var(--color-white);
+        transition: var(--transition-default);
+    }
+
+    .social-link-item:hover {
+        opacity: 0.8;
+    }
+
+    .social-icon {
+        width: 1.15rem;
+        height: 1.15rem;
+        object-fit: contain;
+    }
+
+    /* Bloco de Contato e Endereço */
+    .contact-info-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-16);
+        margin-top: var(--space-8);
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        font-size: var(--fs-body);
+        font-weight: 600;
+    }
+
+    .contact-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        object-fit: contain;
+    }
+
+    .address-item {
+        font-size: var(--fs-body);
+        line-height: 1.5;
+        color: var(--color-gray-light);
+        margin-top: var(--space-8);
+        max-width: 18rem;
+    }
+
+    /* Copyright e CNPJ */
+    .copyright-text {
+        font-size: var(--fs-body);
+        line-height: 1.4;
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: var(--space-8);
+        margin-bottom: var(--space-24);
+    }
+
+    .cnpj-text {
+        font-size: var(--fs-h5);
+        font-weight: 400;
+        color: var(--color-white);
+        letter-spacing: 0.05rem;
+    }
+
+    /* Links do Rodapé Inferior */
+    .footer-bottom-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-8);
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: var(--space-32);
+        font-size: var(--fs-body);
+    }
+
+    .footer-bottom-links a {
+        color: var(--color-white);
+        transition: var(--transition-default);
+    }
+
+    .footer-bottom-links a:hover {
+        opacity: 0.7;
+    }
+
+    .footer-bottom-links .divider {
+        color: rgba(255, 255, 255, 0.4);
+        margin: 0 var(--space-4);
+    }
+
+    /* ==========================================================================
+       RESPONSIVIDADE
+       ========================================================================== */
+    @media (max-width: 900px) {
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-48);
+            text-align: left;
+        }
+
+        .address-item {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .footer-bottom-links {
+            flex-direction: column;
+            gap: var(--space-12);
+            text-align: center;
+        }
+
+        .footer-bottom-links .divider {
+            display: none;
+        }
+    }
+</style>

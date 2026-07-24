@@ -1,0 +1,204 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+---
+
+<Layout title="Regulamentos e Documentos Legais - Zamtech Fibra Óptica">
+    <main class="regulamentos-container section">
+        <div class="container">
+            <header class="regulamentos-header">
+                <span class="badge-tag">Transparência e Compromisso</span>
+                <h1>Central de Regulamentos e Documentos Legais</h1>
+                <p>
+                    A ZAMTECH preza pela máxima transparência na relação com nossos clientes. Acesse abaixo todos os termos, políticas e contratos que regem a prestação dos nossos serviços.
+                </p>
+            </header>
+
+            <div class="regulamentos-grid">
+                <!-- CARD 1: POLÍTICA DE PRIVACIDADE -->
+                <a href="/politica-de-privacidade" class="regulamento-card">
+                    <div class="card-icon">
+                        <img src="/assets/icons/fidelidade-icon.svg" alt="Política de Privacidade" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Política de Privacidade</h3>
+                        <p>Saiba como tratamos e protegemos seus dados pessoais em total conformidade com a LGPD (Lei nº 13.709/2018).</p>
+                    </div>
+                    <span class="card-action">Acessar Documento &rarr;</span>
+                </a>
+
+                <!-- CARD 2: TERMOS DE USO -->
+                <a href="/termos-de-uso" class="regulamento-card">
+                    <div class="card-icon">
+                        <img src="/assets/icons/check-zamtech.svg" alt="Termos de Uso" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Termos de Uso e Serviços</h3>
+                        <p>Condições gerais de navegação, licença de uso do site, direitos autorais e regras da plataforma.</p>
+                    </div>
+                    <span class="card-action">Acessar Documento &rarr;</span>
+                </a>
+
+                <!-- CARD 3: TERMO DE CONTRATO -->
+                <a href="/termos-de-contrato" class="regulamento-card">
+                    <div class="card-icon">
+                        <img src="/assets/icons/tech-icon.svg" alt="Termos de Contrato" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Contrato de Prestação de Serviços</h3>
+                        <p>Regras operacionais, direitos, deveres do cliente, fidelidade, instalação, suporte e cancelamento.</p>
+                    </div>
+                    <span class="card-action">Acessar Documento &rarr;</span>
+                </a>
+
+                <!-- CARD 4: TERMO DE ADESÃO -->
+                <a href="/termos-de-adesao" class="regulamento-card">
+                    <div class="card-icon">
+                        <img src="/assets/icons/instalacao-icon.svg" alt="Termo de Adesão" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Termo de Adesão</h3>
+                        <p>Condições iniciais de contratação, serviços oferecidos e procedimentos de viabilidade técnica.</p>
+                    </div>
+                    <span class="card-action">Acessar Documento &rarr;</span>
+                </a>
+            </div>
+
+            <div class="regulamentos-footer-note">
+                <p>
+                    Em caso de dúvidas sobre qualquer um dos regulamentos, entre em contato com nosso suporte ou pelo e-mail <a href="mailto:privacidade@zamtech.com.br">privacidade@zamtech.com.br</a>.
+                </p>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .regulamentos-container {
+        padding-top: var(--space-64);
+        padding-bottom: var(--space-64);
+        background-color: var(--color-white);
+    }
+
+    .regulamentos-header {
+        text-align: center;
+        max-width: 760px;
+        margin: 0 auto var(--space-48) auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-16);
+    }
+
+    .badge-tag {
+        background-color: var(--color-gray-light);
+        color: var(--color-primary);
+        font-family: var(--font-display);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-full);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .regulamentos-header h1 {
+        font-family: var(--font-display);
+        font-size: var(--fs-h1);
+        color: var(--color-primary);
+        line-height: 1.25;
+    }
+
+    .regulamentos-header p {
+        font-family: var(--font-text);
+        font-size: var(--fs-body);
+        color: var(--color-gray-dark);
+        line-height: 1.6;
+    }
+
+    .regulamentos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-24);
+        margin-bottom: var(--space-48);
+    }
+
+    .regulamento-card {
+        background-color: var(--color-gray-light);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--radius-lg);
+        padding: var(--space-32) var(--space-24);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: var(--space-24);
+        transition: var(--transition-default);
+        color: var(--color-gray-dark);
+    }
+
+    .regulamento-card:hover {
+        border-color: var(--color-primary);
+        box-shadow: var(--elevation-2);
+        transform: translateY(-4px);
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        background-color: var(--color-white);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--elevation-1);
+    }
+
+    .card-icon img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .card-content h3 {
+        font-family: var(--font-display);
+        font-size: var(--fs-h3);
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-8);
+    }
+
+    .card-content p {
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        color: var(--color-gray-dark);
+        line-height: 1.5;
+        opacity: 0.9;
+    }
+
+    .card-action {
+        font-family: var(--font-display);
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        color: var(--color-primary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+    }
+
+    .regulamentos-footer-note {
+        text-align: center;
+        padding-top: var(--space-24);
+        border-top: 1px solid var(--color-gray-light);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .regulamentos-footer-note p {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-dark);
+    }
+
+    .regulamentos-footer-note a {
+        color: var(--color-primary);
+        font-weight: 600;
+        text-decoration: underline;
+    }
+</style>
