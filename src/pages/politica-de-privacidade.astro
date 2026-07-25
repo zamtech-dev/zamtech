@@ -33,7 +33,10 @@ import "../styles/global.css";
                 não autorizados.
             </p>
             <div class="division-topic"></div>
-            <h2>Compartilhamento de Dados com Terceiros</h2><div class="division-topic"></div>
+            <h2>Compartilhamento de Dados com Terceiros</h2><div
+                class="division-topic"
+            >
+            </div>
             <div class="img-container">
                 <img
                     src="/assets/img/regulamento-img/compartilhamento-de-dados-com-terceiros.webp"
@@ -233,6 +236,15 @@ import "../styles/global.css";
             height: 100%;
             object-fit: cover;
             object-position: center 55%;
+        }
+        @media (max-width: 780px) {
+            .img-container img {
+                height: 100%;
+            }
+
+            .img-container {
+                height: 300px;
+            }
         }
     </style>
 </Regulamentos>

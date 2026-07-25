@@ -241,6 +241,11 @@
                 </summary>
                 <div class="accordion-body">
                     <a href="/planos-residenciais" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/beneficios.svg"
+                            alt=""
+                            class="item-icon"
+                        />
                         <span>Planos residenciais</span>
                     </a>
                     <a href="/beneficios" class="sub-link">
@@ -268,11 +273,19 @@
                     <span class="chevron">&#9662;</span>
                 </summary>
                 <div class="accordion-body">
-                    <a href="/planos-empresariais" class="sub-link">
+                    <a href="/planos-empresariais" class="sub-link">                        <img
+                            src="/assets/icons/others-icons/beneficios.svg"
+                            alt=""
+                            class="item-icon"
+                        />
                         <span>Planos empresariais</span>
                     </a>
                     <a href="/disponibilidade" class="sub-link">
-                        <img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="item-icon"/>
+                        <img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />
                         <span>Consultar disponibilidade</span>
                     </a>
                 </div>
@@ -283,15 +296,47 @@
         <div class="menu-section-card">
             <details class="accordion-item">
                 <summary class="accordion-header">
-                    <span class="section-card-title">Regulamentos e Contratos</span>
+                    <span class="section-card-title"
+                        >Regulamentos e Contratos</span
+                    >
                     <span class="chevron">&#9662;</span>
                 </summary>
                 <div class="accordion-body">
-                    <a href="/regulamentos" class="sub-link"><img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="item-icon"/>Central de Regulamentos</a>
-                    <a href="/politica-de-privacidade" class="sub-link"><img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="item-icon"/>Políticas de privacidade</a>
-                    <a href="/termos-de-uso" class="sub-link"><img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="item-icon"/>Termos de uso</a>
-                    <a href="/termos-de-contrato" class="sub-link"><img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="item-icon"/>Termos de contrato</a>
-                    <a href="/termos-de-adesao" class="sub-link"><img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="item-icon"/>Termos de adesão</a>
+                    <a href="/regulamentos" class="sub-link"
+                        ><img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />Central de Regulamentos</a
+                    >
+                    <a href="/politica-de-privacidade" class="sub-link"
+                        ><img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />Políticas de privacidade</a
+                    >
+                    <a href="/termos-de-uso" class="sub-link"
+                        ><img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />Termos de uso</a
+                    >
+                    <a href="/termos-de-contrato" class="sub-link"
+                        ><img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />Termos de contrato</a
+                    >
+                    <a href="/termos-de-adesao" class="sub-link"
+                        ><img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />Termos de adesão</a
+                    >
                 </div>
             </details>
         </div>
@@ -537,7 +582,7 @@
         background-color: var(--color-secondary);
         color: var(--color-white);
     }
-   .link-two-lines {
+    .link-two-lines {
         display: flex;
         align-items: center;
         gap: var(--space-12);
@@ -619,10 +664,11 @@
         font-size: 0.8rem;
         color: var(--color-primary);
         transition: transform 0.5s ease;
+        transform: rotate(-90deg);
     }
 
     details[open] .chevron {
-        transform: rotate(-90deg);
+        transform: rotate(0deg);
     }
 
     .accordion-body {
@@ -642,8 +688,8 @@
         gap: var(--space-12);
         font-family: var(--font-text);
         font-size: var(--fs-sm);
-        font-weight: 500;
-        color: var(--color-gray-dark);
+        font-weight: 400;
+        color: var(--color-gray-medium);
         padding: var(--space-8) var(--space-12);
         border-radius: var(--radius-lg);
         transition: var(--transition-default);
