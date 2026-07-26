@@ -1,0 +1,141 @@
+---
+import Regulamentos from "../layouts/Regulamentos.astro";
+import "../styles/global.css";
+---
+
+<Regulamentos title="Política de Vacinação - Zamtech Fibra Óptica">
+    <section>
+        <div class="regulamentos-page">
+            <div class="division-topic"></div>
+            <h1>POLÍTICA DE VACINAÇÃO (COVID-19)</h1>
+            <p>
+                A Zamtech Telecomunicações reafirma o seu compromisso com a saúde, a segurança e a integridade de seus colaboradores, clientes e da comunidade. Esta política estabelece as diretrizes referentes à imunização contra a doença COVID-19 (SARS-CoV-2) no âmbito de nossas operações e atendimento presencial.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>1. Cobertura Vacinal e Imunização Completa</h2>
+            <p>
+                Incentivamos e orientamos a imunização contra a COVID-19 para todos os integrantes de nossa equipe, alinhados com as recomendações atualizadas das autoridades de saúde pública:
+            </p>
+            <ul>
+                <li><strong>Esquema Vacinal Recomendado:</strong> Considera-se imunização completa a administração de todas as doses do esquema primário e doses de reforço aplicáveis.</li>
+                <li><strong>Proteção Coletiva:</strong> Entendemos a vacinação como uma medida fundamental para a proteção individual, redução de riscos de contágio e manutenção de um ambiente coletivo seguro.</li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <h2>2. Segurança no Atendimento Presencial e Visitas Técnicas</h2>
+            <p>
+                Como nossa atividade envolve a presença de técnicos em residências, empresas e estabelecimentos comerciais para instalação e manutenção de redes de fibra óptica, a segurança sanitária no atendimento é prioridade:
+            </p>
+            <ul>
+                <li><strong>Proteção ao Cliente:</strong> Garantimos que as equipes de campo sigam boas práticas de higiene e prevenção durante todo o atendimento presencial.</li>
+                <li><strong>Tranquilidade nas Instalações:</strong> A atenção à vacinação assegura que o atendimento ocorra de forma segura para os clientes, suas famílias e equipes de trabalho.</li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <h2>3. Prevenção e Saúde no Ambiente de Trabalho</h2>
+            <p>
+                Mantemos um ambiente de trabalho focado na prevenção e no cuidado mútuo em nossas instalações e escritórios:
+            </p>
+            <ul>
+                <li><strong>Monitoramento de Sintomas:</strong> Mantemos protocolos de orientação para o afastamento temporário e acompanhamento em caso de sintomas gripais ou suspeita de contágio.</li>
+                <li><strong>Conscientização Contínua:</strong> Promovemos campanhas internas sobre a importância do acompanhamento vacinal e do autocuidado contínuo.</li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <h2>4. Fontes e Referências Oficiais</h2>
+            <p>
+                Para total transparência e fundamentação técnica de nossas diretrizes de saúde, disponibilizamos os canais oficiais dos órgãos reguladores e de saúde pública:
+            </p>
+            <ul>
+                <li>
+                    <strong>Ministério da Saúde (Brasil): </strong> 
+                    <a href="https://www.gov.br/saude/pt-br/assuntos/vacina-covid19" target="_blank" rel="noopener noreferrer">
+                        Painel de Informações e Diretrizes de Vacinação contra COVID-19
+                    </a>
+                </li>
+                <li>
+                    <strong>ANVISA (Agência Nacional de Vigilância Sanitária): </strong> 
+                    <a href="https://www.gov.br/anvisa/pt-br/assuntos/noticias-anvisa/vacinas-covid-19" target="_blank" rel="noopener noreferrer">
+                        Aprovações, Regulamentação e Segurança de Vacinas
+                    </a>
+                </li>
+                <li>
+                    <strong>OPAS / OMS (Organização Pan-Americana da Saúde): </strong> 
+                    <a href="https://www.paho.org/pt/covid19/vacinas" target="_blank" rel="noopener noreferrer">
+                        Orientações Globais e Dados Científicos sobre Imunização
+                    </a>
+                </li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <p class="ultima-atualizacao">
+                <em>Última atualização: Julho de 2026</em>
+            </p>
+            <div class="division-topic"></div>
+        </div>
+    </section>
+
+    <style>
+        .regulamentos-page {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        .division-topic {
+            border-top: 2px solid var(--color-gray-light);
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .regulamentos-page h1 {
+            color: var(--color-primary);
+            font-weight: 900;
+            font-family: var(--font-display, "Red Hat Display");
+            font-size: var(--fs-h1);
+        }
+
+        .regulamentos-page p {
+            font-family: var(--font-text, "Red Hat Text");
+            line-height: 1.6;
+        }
+
+        .regulamentos-page h2,
+        .regulamentos-page h3,
+        .regulamentos-page h4 {
+            color: var(--color-gray-dark);
+            font-weight: 500;
+            font-family: var(--font-display, "Red Hat Display");
+        }
+
+        .regulamentos-page ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .regulamentos-page ul li {
+            list-style: disc;
+            font-family: var(--font-text, "Red Hat Text");
+            line-height: 1.5;
+        }
+
+        .regulamentos-page a {
+            color: var(--color-primary);
+            text-decoration: underline;
+            word-break: break-word;
+        }
+
+        .regulamentos-page a:hover {
+            opacity: 0.8;
+        }
+
+        .ultima-atualizacao {
+            font-size: var(--fs-sm);
+            color: var(--color-gray-dark);
+        }
+    </style>
+</Regulamentos>

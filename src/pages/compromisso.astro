@@ -1,0 +1,117 @@
+---
+import Regulamentos from "../layouts/Regulamentos.astro";
+import "../styles/global.css";
+---
+
+<Regulamentos title="Compromisso Institucional - Zamtech Fibra Óptica">
+    <section>
+        <div class="regulamentos-page">
+            <div class="division-topic"></div>
+            <h1>NOSSO COMPROMISSO INSTITUCIONAL</h1>
+            <p>
+                Na Zamtech Telecomunicações, acreditamos que a tecnologia é apenas o meio e que o nosso verdadeiro propósito são as pessoas. Mais do que fornecer conectividade e internet de alta performance, assumimos o compromisso público de construir um ambiente de trabalho justo, sustentável e pautado pelo aprendizado contínuo.
+            </p>
+
+            <div class="division-topic"></div>
+            <h2>1. Diversidade, Equidade e Inclusão (DEI)</h2>
+            <p>
+                Acreditamos que toda pessoa merece ser tratada com respeito, dignidade e igualdade. A cultura da Zamtech é fundada no acolhimento e no trabalho em equipe, rejeitando qualquer tipo de discriminação, fofocas ou bolhas internas:
+            </p>
+            <ul>
+                <li><strong>Valorização das pessoas:</strong> Priorizamos as qualidades humanas, atitudes e respeito acima de cargos ou posições hierárquicas.</li>
+                <li><strong>Ambiente seguro e respeitoso:</strong> Incentivamos a livre expressão de ideias, opiniões e sugestões em um espaço onde todos são ouvidos com empatia.</li>
+                <li><strong>Equidade de oportunidades:</strong> Garantimos que o crescimento interno e o reconhecimento sejam acessíveis a todos, baseados em dedicação, compromisso e alinhamento com nossos valores.</li>
+                <li><strong>Atendimento inclusivo:</strong> Tratamos nossos clientes com a mesma proximidade e respeito, reconhecendo a diversidade de cada lar e empresa que atendemos.</li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <h2>2. Sustentabilidade Ambiental</h2>
+            <p>
+                Como empresa de tecnologia e infraestrutura de rede, assumimos a responsabilidade de reduzir impactos ambientais e promover o uso consciente dos recursos:
+            </p>
+            <ul>
+                <li><strong>Tecnologia de fibra óptica:</strong> Redes de fibra possuem eficiência energética superior às redes tradicionais de cobre, consumindo menos energia e emitindo menor pegada de carbono.</li>
+                <li><strong>Gestão de resíduos e equipamentos:</strong> Adotamos procedimentos para o descarte adequado de cabos, insumos de instalação e equipamentos eletrônicos em final de vida útil.</li>
+                <li><strong>Processos 100% digitais:</strong> Priorizamos a eliminação do papel através de faturamento digital, assinaturas eletrônicas e sistemas em nuvem.</li>
+                <li><strong>Reutilização e ciclo de vida:</strong> Incentivamos a manutenção preventiva e o recondicionamento de equipamentos (como roteadores e ONUs) para evitar o descarte precoce.</li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <h2>3. Crescimento Profissional e Aprendizagem</h2>
+            <p>
+                O crescimento da Zamtech depende diretamente da evolução pessoal e profissional da nossa equipe. Promovemos um ambiente de aprendizado contínuo e autonomia:
+            </p>
+            <ul>
+                <li><strong>Cultura do aprendizado diário:</strong> Estimulamos o perfil autodidata, a proatividade e o desejo constante de evoluir tecnicamente e no atendimento.</li>
+                <li><strong>Troca de conhecimento:</strong> O conhecimento é compartilhado abertamente entre todos os setores, fortalecendo a colaboração e eliminando barreiras internas.</li>
+                <li><strong>Liderança servidora:</strong> Nossos líderes têm o compromisso de servir, orientar em particular, reconhecer em público e liderar pelo exemplo.</li>
+                <li><strong>Plano de desenvolvimento:</strong> Criamos oportunidades reais de crescimento interno para quem demonstra dedicação e compromisso com a empresa e com o cliente.</li>
+            </ul>
+
+            <div class="division-topic"></div>
+            <h2>4. Disposições Finais</h2>
+            <p>
+                Estes pilares representam a conduta que escolhemos praticar todos os dias em nossas instalações, atendimentos técnicos e decisões administrativas.
+            </p>
+
+            <div class="division-topic"></div>
+            <p class="ultima-atualizacao">
+                <em>Última atualização: Julho de 2026</em>
+            </p>
+            <div class="division-topic"></div>
+        </div>
+    </section>
+
+    <style>
+        .regulamentos-page {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        .division-topic {
+            border-top: 2px solid var(--color-gray-light);
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .regulamentos-page h1 {
+            color: var(--color-primary);
+            font-weight: 900;
+            font-family: var(--font-display, "Red Hat Display");
+            font-size: var(--fs-h1);
+        }
+
+        .regulamentos-page p {
+            font-family: var(--font-text, "Red Hat Text");
+            line-height: 1.6;
+        }
+
+        .regulamentos-page h2,
+        .regulamentos-page h3,
+        .regulamentos-page h4 {
+            color: var(--color-gray-dark);
+            font-weight: 500;
+            font-family: var(--font-display, "Red Hat Display");
+        }
+
+        .regulamentos-page ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .regulamentos-page ul li {
+            list-style: disc;
+            font-family: var(--font-text, "Red Hat Text");
+            line-height: 1.5;
+        }
+
+        .ultima-atualizacao {
+            font-size: var(--fs-sm);
+            color: var(--color-gray-dark);
+        }
+    </style>
+</Regulamentos>
