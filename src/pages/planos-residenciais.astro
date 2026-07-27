@@ -1,292 +1,570 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import CardPlano from '../components/CardPlano.astro';
+import Layout from "../layouts/Layout.astro";
+import CardPlano from "../components/CardPlano.astro";
+import "../styles/global.css";
 
-// Adicionais Padrao para os planos residenciais simples
-const adicionaisPadraoResidencial = [
-    { nome: "Tecnologia Mesh", preco: 39.90 },
+// Adicionais padrão para planos residenciais simples
+const adicionaisResidencial = [
+    { nome: "Mais Pontos de Wi-Fi (Mesh)", preco: 39.90 },
     { nome: "Câmera Inteligente", preco: 39.90 },
-    { nome: "Linha Telefônica", preco: 29.90 }
+    { nome: "Linha Telefônica Fixa", preco: 29.90 }
 ];
 ---
 
-<Layout title="Planos de Internet - Zamtech Fibra Óptica">
-    <main class="container section">
-        
-        <!-- SEÇÃO RESIDENCIAIS -->
-        <section>
-            <h2 class="titulo-secao">Planos Residenciais</h2>
-            <div class="plans-grid">
-                
-                <!-- 300 MEGA -->
-                <CardPlano
-                    nome="ZAMTECH 300"
-                    velocidade="300 Mega"
-                    precoBase={79.90}
-                    descricao="Ideal para navegação diária, redes sociais, estudos e até 5 dispositivos."
-                    recursos={[
-                        "100% Fibra Óptica",
-                        "Instalação Grátis",
-                        "Wi-Fi de alta performance"
-                    ]}
-                    adicionais={adicionaisPadraoResidencial}
-                />
+<Layout title="Planos Residenciais - Zamtech Fibra Óptica">
+    <!-- 1. HERO SECTION RESIDENCIAL -->
+    <section class="hero-residencia">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="badge-hero">
+                <img src="/assets/icons/others-icons/casa-house-white.svg" alt="Casa" width="18" height="18" />
+                Zamtech para Residência
+            </span>
+            <h1>Tenha uma conexão rápida, estável e preparada para tudo que acontece dentro da sua casa</h1>
+            <p>
+                Seja para assistir filmes em 4K sem travar, trabalhar em home office, estudar ou jogar online, a Zamtech entrega a fibra óptica que a sua família merece.
+            </p>
+            <a href="#planos" class="btn btn-yellow btn-hero">
+                Começar
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+            </a>
+        </div>
+    </section>
 
-                <!-- 500 MEGA -->
-                <CardPlano
-                    nome="ZAMTECH 500"
-                    velocidade="500 Mega"
-                    precoBase={89.90}
-                    descricao="Mais velocidade para streaming 4K, home office e até 10 dispositivos."
-                    recursos={[
-                        "100% Fibra Óptica",
-                        "Streaming em 4K",
-                        "Downloads ultra rápidos"
-                    ]}
-                    adicionais={adicionaisPadraoResidencial}
-                />
+    <!-- 2. SEÇÃO DE PLANOS COM SWITCH -->
+    <section id="planos" class="section section-planos">
+        <div class="container">
+            <div class="header-planos">
+                <span class="subtitulo-tag">Escolha a Velocidade Ideal</span>
+                <h2 class="titulo-secao-local">Conheça nossos Planos Residenciais</h2>
+                <p class="desc-secao">
+                    Selecione abaixo a categoria de plano que melhor se adapta à rotina e ao tamanho da sua casa.
+                </p>
 
-                <!-- 800 MEGA -->
-                <CardPlano
-                    nome="ZAMTECH 800"
-                    velocidade="800 Mega"
-                    precoBase={99.90}
-                    descricao="Alta performance para casas inteligentes, jogos e mais de 15 dispositivos."
-                    recursos={[
-                        "Velocidade máxima",
-                        "Conectividade de ponta",
-                        "Suporte prioritário"
-                    ]}
-                    adicionais={adicionaisPadraoResidencial}
-                />
+                <!-- SWITCH / CHAVE DE ALTERNÂNCIA -->
+                <div class="switch-container">
+                    <button id="btn-entrada" class="switch-btn">
+                        Planos de Entrada
+                    </button>
+                    <button id="btn-melhores" class="switch-btn active">
+                        Melhores Planos (Combos)
+                        <span class="badge-pop">Mais Escolhidos</span>
+                    </button>
+                </div>
+            </div>
 
-                <!-- COMBO 800 + MESH -->
+            <!-- GRID 1: MELHORES PLANOS (PADRÃO VISÍVEL) -->
+            <div id="grid-melhores" class="plans-grid">
+                <!-- ZAMTECH 800 + MESH (ULTRA MESH) -->
                 <CardPlano
-                    nome="ZAMTECH 800 + MESH"
-                    velocidade="800 Mega + Módulo Mesh"
+                    nome="ZAMTECH 800 - Ultra Mesh"
+                    velocidade="800 Mega + Wi-Fi na Casa Toda"
                     precoBase={129.90}
-                    badge="RECOMENDADO"
-                    economia="Economize contratando o Combo!"
-                    descricao="Sinal Wi-Fi forte em todos os cômodos da casa sem pontos cegos."
+                    badge="RECOMENDADO PARA CASAS MAIORES"
+                    economia="Sinal forte no quarto, sala e quintal!"
+                    descricao="Internet de altíssima velocidade com tecnologia Mesh inclusa para acabar de vez com áreas onde o Wi-Fi não pega."
                     isFeatured={true}
                     recursos={[
-                        "Tecnologia Mesh Inclusa",
-                        "Sinal sem zonas mortas",
-                        "Roaming fluido na casa inteira"
+                        "800 Mega 100% Fibra Óptica",
+                        "1 Ponto Extra Wi-Fi Mesh Incluso",
+                        "Zero pontos cegos ou sinal caindo",
+                        "Instalação e Suporte Técnico inclusos"
                     ]}
                     adicionais={[
-                        { nome: "Tecnologia Mesh", preco: 0, incluso: true },
+                        { nome: "Mais Pontos de Wi-Fi (Mesh)", preco: 0, incluso: true },
                         { nome: "Câmera Inteligente", preco: 39.90 },
-                        { nome: "Linha Telefônica", preco: 29.90 }
+                        { nome: "Linha Telefônica Fixa", preco: 29.90 }
                     ]}
                 />
 
-                <!-- COMBO 800 + CÂMERA -->
+                <!-- ZAMTECH 800 + CÂMERA (ULTRA SECURE) -->
                 <CardPlano
-                    nome="ZAMTECH 800 + CÂMERA"
+                    nome="ZAMTECH 800 - Ultra Secure"
                     velocidade="800 Mega + Câmera em Nuvem"
                     precoBase={139.90}
-                    badge="COMBO SEGURANÇA"
-                    descricao="Internet ultrarrápida combinada com monitoramento inteligente 100% na nuvem."
+                    badge="COMBO SEGURANÇA RESIDENCIAL"
+                    descricao="Sua casa com internet ultrarrápida e monitoramento em tempo real direto pelo celular, sem precisar de gravadores caros."
                     recursos={[
-                        "1 Câmera em comodato",
-                        "Gravação 100% na nuvem",
-                        "App exclusivo para celular",
-                        "Sem necessidade de DVR"
+                        "800 Mega 100% Fibra Óptica",
+                        "1 Câmera de Monitoramento em comodato",
+                        "Gravação de vídeo 100% salva na nuvem",
+                        "Acesso ao vivo pelo App Zamtech"
                     ]}
                     adicionais={[
                         { nome: "Câmera Inteligente", preco: 0, incluso: true },
-                        { nome: "Tecnologia Mesh", preco: 39.90 },
-                        { nome: "Linha Telefônica", preco: 29.90 }
+                        { nome: "Mais Pontos de Wi-Fi (Mesh)", preco: 39.90 },
+                        { nome: "Linha Telefônica Fixa", preco: 29.90 }
                     ]}
                 />
 
-                <!-- PLANO GAMER -->
+                <!-- PLANO GAMER 1G -->
                 <CardPlano
-                    nome="PLANO GAME 1G"
-                    velocidade="1 Giga + Wi-Fi 6"
+                    nome="PLANO GAMER 1G"
+                    velocidade="1 Giga + Wi-Fi 6 Especial"
                     precoBase={179.90}
-                    badge="ALTA PERFORMANCE"
-                    descricao="Desenvolvido para máxima performance em jogos online, lives e downloads massivos."
+                    badge="PERFORMANCE MÁXIMA"
+                    descricao="Desenvolvido sob medida para quem joga online, faz transmissões ao vivo e precisa da menor latência (ping baixo) possível."
                     isFeatured={true}
                     recursos={[
-                        "IP Público Incluso",
-                        "Roteador Wi-Fi 6",
-                        "Latência mínima (Ping Baixo)",
-                        "Upload turbinado"
+                        "1 Giga (1.000 Mega) de velocidade",
+                        "Roteador com tecnologia Wi-Fi 6",
+                        "IP Público Incluso para servidores e jogos",
+                        "Baixíssima latência para partidas sem lag"
                     ]}
                     adicionais={[
-                        { nome: "Tecnologia Mesh", preco: 39.90 },
-                        { nome: "Câmera Inteligente", preco: 39.90 }
+                        { nome: "Mais Pontos de Wi-Fi (Mesh)", preco: 39.90 },
+                        { nome: "Câmera Inteligente", preco: 39.90 },
+                        { nome: "Linha Telefônica Fixa", preco: 29.90 }
                     ]}
                 />
-
             </div>
-        </section>
 
-        <!-- SEÇÃO EMPRESARIAIS -->
-        <section class="section">
-            <h2 class="titulo-secao">Planos Empresariais (B2B)</h2>
-            <div class="plans-grid">
-                
-                <!-- START 600 -->
+            <!-- GRID 2: PLANOS DE ENTRADA (OCULTO INICIALMENTE) -->
+            <div id="grid-entrada" class="plans-grid hidden">
+                <!-- ZAMTECH 300 - PLAY -->
                 <CardPlano
-                    nome="START 600"
-                    velocidade="600 Mega Empresarial"
-                    precoBase={119.90}
-                    descricao="Conectividade estável para pequenos negócios e operações em nuvem."
-                    recursos={["Link estável", "Notas fiscais e sistemas", "Suporte corporativo"]}
-                    adicionais={[
-                        { nome: "Linha Telefônica", preco: 29.90 },
-                        { nome: "Câmera em Nuvem", preco: 39.90 }
-                    ]}
-                />
-
-                <!-- ESCALA 850 -->
-                <CardPlano
-                    nome="ESCALA 850"
-                    velocidade="850 Mega Empresarial"
-                    precoBase={159.90}
-                    descricao="Projetado para empresas com múltiplos colaboradores em simultâneo."
-                    recursos={["Alta capacidade de carga", "Suporte prioritário", "Conexão simétrica"]}
-                    adicionais={[
-                        { nome: "Linha Telefônica", preco: 29.90 },
-                        { nome: "Câmera em Nuvem", preco: 39.90 }
-                    ]}
-                />
-
-                <!-- PRIME 1G -->
-                <CardPlano
-                    nome="PRIME 1G"
-                    velocidade="1 Giga Empresarial"
-                    precoBase={169.90}
-                    descricao="Desempenho máximo para empresas que não podem parar um segundo."
-                    recursos={["Velocidade extrema", "Atendimento B2B VIP", "Banda dedicada"]}
-                    adicionais={[
-                        { nome: "Linha Telefônica", preco: 29.90 },
-                        { nome: "Câmera em Nuvem", preco: 39.90 }
-                    ]}
-                />
-
-                <!-- START SECURE (COMBO COMPLETO) -->
-                <CardPlano
-                    nome="START SECURE"
-                    velocidade="600 Mega + Voz + Câmera"
-                    precoBase={189.90}
-                    badge="COMBO EMPRESARIAL"
-                    descricao="Solução 3 em 1: Conexão, telefonia e segurança no mesmo contrato."
-                    isFeatured={true}
-                    recursos={[
-                        "600 Mega de Internet",
-                        "1 Linha telefônica inclusa",
-                        "1 Câmera em nuvem inclusa",
-                        "App de monitoramento B2B"
-                    ]}
-                    adicionais={[
-                        { nome: "Linha Telefônica", preco: 0, incluso: true },
-                        { nome: "Câmera em Nuvem", preco: 0, incluso: true }
-                    ]}
-                />
-
-                <!-- SCALE SECURE -->
-                <CardPlano
-                    nome="SCALE SECURE"
-                    velocidade="850 Mega + Voz + Câmera"
-                    precoBase={229.90}
-                    badge="COMBO EMPRESARIAL"
-                    descricao="Mais velocidade para empresas em crescimento com segurança total."
-                    recursos={[
-                        "850 Mega de Internet",
-                        "1 Linha telefônica inclusa",
-                        "1 Câmera em nuvem inclusa"
-                    ]}
-                    adicionais={[
-                        { nome: "Linha Telefônica", preco: 0, incluso: true },
-                        { nome: "Câmera em Nuvem", preco: 0, incluso: true }
-                    ]}
-                />
-
-                <!-- PRIME SECURE -->
-                <CardPlano
-                    nome="PRIME SECURE"
-                    velocidade="1 Giga + Voz + Câmera"
-                    precoBase={239.90}
-                    badge="O MAIS COMPLETO"
-                    descricao="A estrutura definitiva para médias e grandes empresas."
-                    isFeatured={true}
-                    recursos={[
-                        "1 Giga de Internet",
-                        "1 Linha telefônica inclusa",
-                        "1 Câmera em nuvem inclusa"
-                    ]}
-                    adicionais={[
-                        { nome: "Linha Telefônica", preco: 0, incluso: true },
-                        { nome: "Câmera em Nuvem", preco: 0, incluso: true }
-                    ]}
-                />
-
-            </div>
-        </section>
-
-        <!-- SEÇÃO COMBOS PABX EM NUVEM -->
-        <section class="section">
-            <h2 class="titulo-secao">PABX em Nuvem & Combos</h2>
-            <div class="plans-grid">
-                
-                <!-- PABX ESSENTIAL (AVULSO) -->
-                <CardPlano
-                    nome="PABX ESSENTIAL"
-                    precoBase={49.90}
-                    descricao="Ideal para consultórios e pequenos escritórios profissionalizarem o atendimento."
-                    recursos={[
-                        "Até 5 ramais",
-                        "Atendimento pelo celular/Softphone",
-                        "URA Básica inclusa",
-                        "Painel Web de relatórios"
-                    ]}
-                />
-
-                <!-- PABX PRO (AVULSO) -->
-                <CardPlano
-                    nome="PABX PRO"
+                    nome="ZAMTECH 300 - Play"
+                    velocidade="300 Mega"
                     precoBase={79.90}
-                    badge="POPULAR PABX"
-                    descricao="Uma estrutura completa para fluxos mais intensos de ligações."
+                    descricao="Economia e estabilidade para a navegação do dia a dia, redes sociais, pesquisas e vídeos."
+                    recursos={[
+                        "300 Mega 100% Fibra Óptica",
+                        "Ideal para até 5 aparelhos conectados",
+                        "Suporte rápido e humanizado"
+                    ]}
+                    adicionais={adicionaisResidencial}
+                />
+
+                <!-- ZAMTECH 500 - STREAM -->
+                <CardPlano
+                    nome="ZAMTECH 500 - Stream"
+                    velocidade="500 Mega"
+                    precoBase={89.90}
+                    badge="MAIS POPULAR DA CATEGORIA"
+                    descricao="Mais velocidade para a família inteira assistir a filmes e séries em 4K, fazer reuniões online e baixar arquivos rápidos."
                     isFeatured={true}
                     recursos={[
-                        "Até 10 ramais",
-                        "URA Personalizada",
-                        "Filas de atendimento",
-                        "Gravação de chamadas"
+                        "500 Mega 100% Fibra Óptica",
+                        "Excelente para Smart TVs em 4K",
+                        "Ideal para até 10 aparelhos conectados"
                     ]}
+                    adicionais={adicionaisResidencial}
                 />
 
-                <!-- COMBO PABX CONNECT -->
+                <!-- ZAMTECH 800 - ULTRA -->
                 <CardPlano
-                    nome="PABX CONNECT"
-                    velocidade="600 Mega + PABX em Nuvem"
-                    precoBase={189.90}
-                    badge="COMBO PABX"
-                    descricao="Sua internet B2B integrada diretamente com a central em nuvem Zamtech."
+                    nome="ZAMTECH 800 - Ultra"
+                    velocidade="800 Mega"
+                    precoBase={99.90}
+                    descricao="Altíssima capacidade de download e upload para casas com muitos dispositivos ativos ao mesmo tempo."
                     recursos={[
-                        "600 Mega de Internet",
-                        "PABX com ramais inclusos",
-                        "Atendimento via App / PC",
-                        "Zero central física"
+                        "800 Mega 100% Fibra Óptica",
+                        "Conecta mais de 15 aparelhos sem perda",
+                        "Download ultrarrápido de arquivos pesados"
                     ]}
+                    adicionais={adicionaisResidencial}
                 />
-
             </div>
-        </section>
+        </div>
+    </section>
 
-    </main>
+    <!-- 3. SEÇÃO EDUCATIVA: COMO POTENCIALIZAR SUA INTERNET -->
+    <section class="section section-potencializar">
+        <div class="container">
+            <div class="potencializar-header">
+                <span class="subtitulo-tag-blue">Entenda o que você está contratando</span>
+                <h2>Como potencializar a internet na sua casa?</h2>
+                <p>
+                    Nós não usamos termos difíceis. Aqui você entende exatamente o benefício de cada tecnologia no seu dia a dia.
+                </p>
+            </div>
+
+            <div class="potencializar-grid">
+                <!-- CARD MESH -->
+                <div class="potencializar-card">
+                    <div class="card-img-wrapper">
+                        <img 
+                            src="/assets/equipamentos/roteador-wifi-mesh.webp" 
+                            alt="Roteador Wi-Fi Mesh" 
+                            loading="lazy"
+                        />
+                    </div>
+                    <div class="card-text">
+                        <div class="card-tag">Pontos de Wi-Fi Extra</div>
+                        <h3>O que é a Tecnologia Mesh?</h3>
+                        <p>
+                            Sabe quando o Wi-Fi funciona muito bem na sala, mas fica fraco no quarto ou no quintal? 
+                        </p>
+                        <p>
+                            A tecnologia Mesh são <strong>pontos de internet espalhados pela casa</strong> que conversam entre si e criam uma teia única de sinal forte. Você anda pela casa inteira assistindo seus vídeos sem que a internet caia ou fique lenta!
+                        </p>
+                        <ul class="mini-benefits">
+                            <li>Elimina pontos cegos sem sinal</li>
+                            <li>Sinal forte em todos os cômodos</li>
+                            <li>Você não precisa ficar trocando de rede</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- CARD CÂMERA -->
+                <div class="potencializar-card">
+                    <div class="card-img-wrapper">
+                        <img 
+                            src="/assets/equipamentos/camera-monitoramento.webp" 
+                            alt="Câmera de Monitoramento Inteligente" 
+                            loading="lazy"
+                        />
+                    </div>
+                    <div class="card-text">
+                        <div class="card-tag">Segurança em Nuvem</div>
+                        <h3>O que é a Câmera Inteligente?</h3>
+                        <p>
+                            É um sistema moderno de monitoramento para proteger sua família sem complicações técnicas.
+                        </p>
+                        <p>
+                            <strong>Não precisa comprar aparelhos gravadores (DVR) nem HDs caros.</strong> Todas as imagens ficam salvas na nuvem com segurança e você acompanha tudo ao vivo pelo aplicativo no seu celular de onde estiver.
+                        </p>
+                        <ul class="mini-benefits">
+                            <li>Acesso ao vivo pelo celular</li>
+                            <li>Gravações salvas 100% na nuvem</li>
+                            <li>Zero necessidade de aparelhos no rack</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CHAMADA FINAL PARA SUPORTE/DUVIDAS -->
+    <section class="section section-cta">
+        <div class="container cta-box">
+            <h2>Ainda em dúvida sobre qual plano escolher?</h2>
+            <p>
+                Nossa equipe de especialistas te ajuda a entender quantos Mega a sua casa realmente precisa, sem empurrar serviços desnecessários.
+            </p>
+            <a href="/contato" class="btn btn-yellow">
+                Falar com um Atendente
+            </a>
+        </div>
+    </section>
 </Layout>
 
+<!-- JAVASCRIPT DE ALTERNÂNCIA DOS PLANOS -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnEntrada = document.getElementById("btn-entrada");
+        const btnMelhores = document.getElementById("btn-melhores");
+        const gridEntrada = document.getElementById("grid-entrada");
+        const gridMelhores = document.getElementById("grid-melhores");
+
+        if (btnEntrada && btnMelhores && gridEntrada && gridMelhores) {
+            btnEntrada.addEventListener("click", () => {
+                btnEntrada.classList.add("active");
+                btnMelhores.classList.remove("active");
+                gridEntrada.classList.remove("hidden");
+                gridMelhores.classList.add("hidden");
+            });
+
+            btnMelhores.addEventListener("click", () => {
+                btnMelhores.classList.add("active");
+                btnEntrada.classList.remove("active");
+                gridMelhores.classList.remove("hidden");
+                gridEntrada.classList.add("hidden");
+            });
+        }
+    });
+</script>
+
 <style>
+    /* 1. HERO SECTION RESIDENCIAL */
+    .hero-residencia {
+        position: relative;
+        padding: var(--space-64) 0;
+        background-image: url('/assets/img/backgrounds/wallpaper-planos-residenciais.webp');
+        background-size: cover;
+        background-position: center 30%;
+        color: var(--color-white);
+        min-height: 700px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: left;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: #000000a9;
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: left;
+        gap: var(--space-16);
+    }
+
+    .badge-hero {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+        padding: 6px 16px;
+        background-color: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--radius-full);
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        color: var(--color-white);
+    }
+
+    .hero-content h1 {
+        font-size: clamp(2rem, 4vw, var(--fs-h1));
+        line-height: 1.15;
+    }
+
+    .hero-content p {
+        font-size: var(--fs-body);
+        color: var(--color-gray-low);
+        line-height: 1.6;
+        max-width: 680px;
+    }
+
+    .btn-hero {
+        margin-top: var(--space-12);
+        gap: var(--space-8);
+    }
+
+    .btn-yellow {
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+        font-weight: 700;
+    }
+
+    .btn-yellow:hover {
+        background-color: var(--color-primary);
+    }
+
+    /* 2. SEÇÃO DE PLANOS & SWITCH */
+    .section-planos {
+        background-color: var(--color-white);
+    }
+
+    .header-planos {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto var(--space-48);
+    }
+
+    .subtitulo-tag {
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--color-primary);
+        letter-spacing: 1px;
+    }
+
+    .titulo-secao-local {
+        font-size: var(--fs-h2);
+        color: var(--color-dark-blue);
+        margin: var(--space-4) 0 var(--space-12);
+    }
+
+    .desc-secao {
+        color: var(--color-gray-medium);
+        font-size: var(--fs-body);
+    }
+
+    /* Estilos da Chave de Alternância (Switch) */
+    .switch-container {
+        display: inline-flex;
+        background-color: var(--color-gray-light);
+        padding: 6px;
+        border-radius: var(--radius-full);
+        gap: var(--space-8);
+        margin-top: var(--space-24);
+        border: 1px solid #e2e8f0;
+    }
+
+    .switch-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+        padding: 12px 24px;
+        border-radius: var(--radius-full);
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        color: var(--color-gray-medium);
+        transition: var(--transition-default);
+        cursor: pointer;
+    }
+
+    .switch-btn.active {
+        background-color: var(--color-primary);
+        color: var(--color-white);
+        box-shadow: var(--elevation-1);
+    }
+
+    .badge-pop {
+        background-color: var(--color-yellow);
+        color: var(--color-black);
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: var(--radius-full);
+        font-weight: 800;
+    }
+
+    /* Grids de Planos */
     .plans-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
         gap: var(--space-32);
-        margin-top: var(--space-32);
+    }
+
+    .plans-grid.hidden {
+        display: none !important;
+    }
+
+    /* 3. SEÇÃO EDUCATIVA (COMO POTENCIALIZAR) */
+    .section-potencializar {
+        background-color: var(--color-gray-light);
+    }
+
+    .potencializar-header {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto var(--space-48);
+    }
+
+    .subtitulo-tag-blue {
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--color-secondary);
+        letter-spacing: 1px;
+    }
+
+    .potencializar-header h2 {
+        font-size: var(--fs-h2);
+        color: var(--color-dark-blue);
+        margin: var(--space-4) 0 var(--space-12);
+    }
+
+    .potencializar-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-32);
+    }
+
+    @media (min-width: 850px) {
+        .potencializar-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .potencializar-card {
+        background-color: var(--color-white);
+        border-radius: var(--radius-lg);
+        padding: var(--space-32);
+        box-shadow: var(--elevation-1);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-20);
+        border: 1px solid #e2e8f0;
+    }
+
+    .card-img-wrapper {
+        width: 100%;
+        height: 220px;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        background-color: var(--color-gray-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-img-wrapper img {
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .card-tag {
+        display: inline-block;
+        padding: 4px 12px;
+        background-color: rgba(3, 37, 208, 0.08);
+        color: var(--color-primary);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        border-radius: var(--radius-full);
+        margin-bottom: var(--space-8);
+    }
+
+    .card-text h3 {
+        font-size: var(--fs-h4);
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-12);
+    }
+
+    .card-text p {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
+        line-height: 1.6;
+        margin-bottom: var(--space-12);
+    }
+
+    .mini-benefits {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+        margin-top: var(--space-16);
+        padding-top: var(--space-16);
+        border-top: 1px solid var(--color-gray-light);
+    }
+
+    .mini-benefits li {
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        color: var(--color-dark-blue);
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+    }
+
+    .mini-benefits li::before {
+        content: "✓";
+        color: var(--color-secondary);
+        font-weight: 900;
+    }
+
+    /* 4. CHAMADA FINAL (CTA) */
+    .section-cta {
+        background-color: var(--color-dark-blue);
+        color: var(--color-white);
+        text-align: center;
+    }
+
+    .cta-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-16);
+        max-width: 700px;
+    }
+
+    .cta-box h2 {
+        font-size: var(--fs-h2);
+    }
+
+    .cta-box p {
+        color: var(--color-gray-low);
     }
 </style>

@@ -189,7 +189,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     .card-plano-dinamico {
         position: relative;
         background-color: var(--color-white);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: var(--radius-small) solid var(--color-secondary);
         border-radius: var(--radius-md);
         padding: var(--space-24) var(--space-32);
         display: flex;
@@ -199,11 +199,6 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         color: var(--color-gray-dark);
         transition: var(--transition-default);
         gap: 0.4rem;
-    }
-
-    .card-plano-dinamico:hover {
-        border-color: var(--color-secondary);
-        box-shadow: var(--elevation-2);
     }
 
     .card-plano--featured {
@@ -288,8 +283,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         color: var(--color-gray-dark);
     }
 
-    .card-price .period {
-        font-size: var(--fs-caption);
+    .card-plano--featured .period {
         color: var(--color-white);
     }
 
