@@ -28,15 +28,6 @@ import "../styles/global.css";
             <div class="actions-grid">
                 <div class="action-card">
                     <div class="action-icon">
-                        <img src="/assets/icons/others-icons/2-via-de-contas.svg" alt="2ª Via" width="36" height="36" />
-                    </div>
-                    <h3>2ª Via de Conta</h3>
-                    <p>Consulte suas faturas em aberto, copie o código Pix ou baixe o seu boleto de forma rápida e segura.</p>
-                    <a href="#" id="open-modal-2via" class="btn btn-primary">Emitir 2ª Via</a>
-                </div>
-
-                <div class="action-card">
-                    <div class="action-icon">
                         <img src="/assets/icons/others-icons/suporte-tecnico.svg" alt="Suporte Técnico" width="36" height="36" />
                     </div>
                     <h3>Suporte Técnico</h3>
@@ -50,7 +41,7 @@ import "../styles/global.css";
                     </div>
                     <h3>Desbloquear em Confiança</h3>
                     <p>Fez o pagamento recentemente e o sinal foi suspenso? Solicite o desbloqueio temporário imediato.</p>
-                    <a href="https://wa.me/5527995057736?text=Ol%C3%A1,%20gostaria%20de%20solicitar%20o%20desbloqueio%20em%20confiança" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-dark">Solicitar Desbloqueio</a>
+                    <a href="/desbloqueio-de-confianca" target="_blank" rel="noopener noreferrer" class="btn btn btn-primary">Solicitar Desbloqueio</a>
                 </div>
             </div>
         </div>
@@ -158,6 +149,10 @@ import "../styles/global.css";
 
     .section-header {
         margin-bottom: var(--space-32);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .section-header h2 {

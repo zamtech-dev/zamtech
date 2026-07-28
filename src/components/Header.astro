@@ -41,17 +41,21 @@
     <div class="sidebar-content">
         <!-- 1. BLOQUINHOS (TOP GRID) -->
         <div class="bloquinhos-grid">
-<button type="button" class="bloquinho-card" id="open-modal-2via">
-    <div class="bloquinho-icon">
-        <img
-            src="/assets/icons/others-icons/2-via-de-contas.svg"
-            alt="2ª via"
-        />
-    </div>
-    <span>2ª via de conta</span>
-</button>
+            <button type="button" class="bloquinho-card" id="open-modal-2via">
+                <div class="bloquinho-icon">
+                    <img
+                        src="/assets/icons/others-icons/2-via-de-contas.svg"
+                        alt="2ª via"
+                    />
+                </div>
+                <span>2ª via de conta</span>
+            </button>
 
-            <a href="https://ixc.zamtech.com.br/central_assinante_web/login" class="bloquinho-card" target="_blank">
+            <a
+                href="https://ixc.zamtech.com.br/central_assinante_web/login"
+                class="bloquinho-card"
+                target="_blank"
+            >
                 <div class="bloquinho-icon">
                     <img
                         src="/assets/icons/others-icons/login.svg"
@@ -73,33 +77,40 @@
         </div>
 
         <div class="modal-overlay" id="modal-2via">
-    <div class="modal-content">
-        <button type="button" class="modal-close" id="close-modal-2via">&times;</button>
-        <h2>Consulte sua 2ª Via</h2>
-        <p>Digite seu CPF ou CNPJ para consultar faturas em aberto:</p>
-        
-        <form id="formSegundaViaModal">
-            <input 
-              type="text" 
-              id="cpfCnpjModalInput" 
-              placeholder="Digite apenas números ou com pontos" 
-              required 
-              maxlength="18"
-            >
-            <button type="submit" id="btnBuscarModal" class="btn-buscar-modal">Buscar Faturas</button>
-        </form>
+            <div class="modal-content">
+                <button type="button" class="modal-close" id="close-modal-2via"
+                    >&times;</button
+                >
+                <h2>Consulte sua 2ª Via</h2>
+                <p>Digite seu CPF ou CNPJ para consultar faturas em aberto:</p>
 
-        <div id="loadingModal" style="display:none;">Buscando faturas no sistema...</div>
-        <div id="resultadoFaturasModal"></div>
-    </div>
-</div>
+                <form id="formSegundaViaModal">
+                    <input
+                        type="text"
+                        id="cpfCnpjModalInput"
+                        placeholder="Digite apenas números ou com pontos"
+                        required
+                        maxlength="18"
+                    />
+                    <button
+                        type="submit"
+                        id="btnBuscarModal"
+                        class="btn-buscar-modal">Buscar Faturas</button
+                    >
+                </form>
 
-<div class="menu-overlay" id="menu-overlay"></div>
+                <div id="loadingModal" style="display:none;">
+                    Buscando faturas no sistema...
+                </div>
+                <div id="resultadoFaturasModal"></div>
+            </div>
+        </div>
 
-<aside class="sidebar-menu" id="sidebar-menu">
-    </aside>
+        <div class="menu-overlay" id="menu-overlay"></div>
 
-                <!-- 5. PLANOS RECOMENDADOS (SANFONA) -->
+        <aside class="sidebar-menu" id="sidebar-menu"></aside>
+
+        <!-- 5. PLANOS RECOMENDADOS (SANFONA) -->
         <div class="menu-section-card">
             <h3 class="section-card-title">Planos Recomendados</h3>
 
@@ -134,7 +145,6 @@
                         />
                         <span>Benefícios</span>
                     </a>
-                                    
                 </div>
             </details>
 
@@ -152,7 +162,8 @@
                     <span class="chevron">&#9662;</span>
                 </summary>
                 <div class="accordion-body">
-                    <a href="/planos-empresariais" class="sub-link">                        <img
+                    <a href="/planos-empresariais" class="sub-link">
+                        <img
                             src="/assets/icons/others-icons/empresarial.svg"
                             alt=""
                             class="item-icon"
@@ -176,7 +187,10 @@
             <h3 class="section-card-title">Com problemas?</h3>
             <ul class="menu-list">
                 <li>
-                    <a href="https://wa.me/5527995057736?text=Ol%C3%A1%2C%20gostaria%20de%20falar%20com%20o%20%2ASUPORTE%20T%C3%89CNICO%2A" target="_blank">
+                    <a
+                        href="https://wa.me/5527995057736?text=Ol%C3%A1%2C%20gostaria%20de%20falar%20com%20o%20%2ASUPORTE%20T%C3%89CNICO%2A"
+                        target="_blank"
+                    >
                         <img
                             src="/assets/icons/others-icons/suporte-tecnico.svg"
                             alt=""
@@ -186,7 +200,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/desbloqueio">
+                    <a href="/desbloqueio-de-confianca">
                         <img
                             src="/assets/icons/others-icons/desbloquear-servico.svg"
                             alt=""
@@ -214,7 +228,7 @@
                     <span class="chevron">&#9662;</span>
                 </summary>
                 <div class="accordion-body">
-                    <a href="#" target="_blank" class="sub-link">
+                    <a href="https://ixc.zamtech.com.br/central_assinante_web/login" target="_blank" class="sub-link">
                         <img
                             src="/assets/icons/others-icons/web.svg"
                             alt=""
@@ -222,7 +236,7 @@
                         />
                         <span>Acessar via Web</span>
                     </a>
-                    <a href="#" target="_blank" class="sub-link">
+                    <a href="https://play.google.com/store/apps/details?id=br.com.zamtech.app&hl=pt_BR" target="_blank" class="sub-link">
                         <img
                             src="/assets/icons/others-icons/play-store.svg"
                             alt=""
@@ -237,8 +251,7 @@
                             class="item-icon"
                         />
                         <span
-                            >Apple Store <small class="tag-breve"
-                                >(Em breve)</small
+                            >Apple Store <small class="tag-breve">(Em breve)</small
                             ></span
                         >
                     </div>
@@ -256,7 +269,7 @@
                     <span class="chevron">&#9662;</span>
                 </summary>
                 <div class="accordion-body">
-                    <a href="#" target="_blank" class="sub-link">
+                    <a href="https://monitoramento.zamtech.com.br" target="_blank" class="sub-link">
                         <img
                             src="/assets/icons/others-icons/web.svg"
                             alt=""
@@ -264,7 +277,7 @@
                         />
                         <span>Acessar via Web</span>
                     </a>
-                    <a href="#" target="_blank" class="sub-link">
+                    <a href="https://play.google.com/store/apps/details?id=fc.zamtechmonitoramento.me&hl=pt_BR" target="_blank" class="sub-link">
                         <img
                             src="/assets/icons/others-icons/play-store.svg"
                             alt=""
@@ -272,7 +285,7 @@
                         />
                         <span>Google Play Store</span>
                     </a>
-                    <a href="#" target="_blank" class="sub-link">
+                    <a href="#" target="_blank" class="sub-link disabled">
                         <img
                             src="/assets/icons/others-icons/apple-store.svg"
                             alt=""
@@ -306,7 +319,7 @@
                     </a>
                 </li>
                 <li class="li-card">
-                    <a href="tel:08000000000" class="link-two-lines">
+                    <a href="tel:2731413637" class="link-two-lines" target="_blank">
                         <img
                             src="/assets/icons/others-icons/telefone-phone.svg"
                             alt=""
@@ -320,8 +333,6 @@
                 </li>
             </ul>
         </div>
-
-
 
         <!-- 6. REGULAMENTOS -->
         <div class="menu-section-card">
@@ -372,17 +383,21 @@
             </details>
         </div>
 
-                <!-- 7. Institucional -->
+        <!-- 7. Institucional -->
         <div class="menu-section-card">
             <details class="accordion-item">
                 <summary class="accordion-header">
-                    <span class="section-card-title"
-                        >Institucionais</span
-                    >
+                    <span class="section-card-title">Institucionais</span>
                     <span class="chevron">&#9662;</span>
                 </summary>
                 <div class="accordion-body">
-                    <a href="/sobre" class="sub-link"><img src="/assets/icons/sobre.svg" alt="" class="item-icon"/>Sobre a Zamtech</a>
+                    <a href="/sobre" class="sub-link"
+                        ><img
+                            src="/assets/icons/sobre.svg"
+                            alt=""
+                            class="item-icon"
+                        />Sobre a Zamtech</a
+                    >
                 </div>
             </details>
         </div>
@@ -433,7 +448,7 @@
     }
 
     .brand-logo {
-        height: 32px;
+        height: 40px;
         width: auto;
     }
 
@@ -454,7 +469,7 @@
         color: var(--color-white);
         font-family: var(--font-display);
         font-size: var(--fs-body);
-        font-weight: 600;
+        font-weight: 500;
         transition: var(--transition-default);
     }
 
@@ -543,7 +558,7 @@
     .bloquinho-card {
         background-color: var(--color-white);
         border: 1px solid rgba(114, 114, 114, 0.08);
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-sm);
         padding: var(--space-16) var(--space-8);
         display: flex;
         flex-direction: column;
@@ -584,7 +599,7 @@
     .menu-section-card {
         background-color: var(--color-white);
         border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-sm);
         padding: var(--space-24);
         box-shadow: var(--elevation-1);
         display: flex;
@@ -615,7 +630,7 @@
         align-items: center;
         gap: var(--space-12);
         padding: var(--space-12) var(--space-16);
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-sm);
         color: var(--color-gray-dark);
         font-family: var(--font-text);
         font-size: var(--fs-sm);
@@ -702,7 +717,7 @@
     .app-subtitle {
         font-family: var(--font-text);
         font-size: var(--fs-caption);
-        color: #6b7280;
+        color: var(--color-gray-medium);
     }
 
     .chevron {
@@ -736,7 +751,7 @@
         font-weight: 400;
         color: var(--color-gray-medium);
         padding: var(--space-8) var(--space-12);
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-sm);
         transition: var(--transition-default);
     }
 
@@ -773,19 +788,19 @@
     .menu-overlay.active {
         opacity: 1;
         visibility: visible;
-    }/* Estilos do Botão de 2ª Via no Header */
+    } /* Estilos do Botão de 2ª Via no Header */
     .btn-segunda-via {
-        background-color: var(--color-primary, #0325D0);
-        color: var(--color-white, #FFF);
+        background-color: var(--color-primary, #0325d0);
+        color: var(--color-white, #fff);
         border: none;
         padding: 8px 16px;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         font-weight: 600;
         cursor: pointer;
         transition: 0.2s;
     }
     .btn-segunda-via:hover {
-        background-color: var(--color-secondary, #0756FF);
+        background-color: var(--color-secondary, #0756ff);
     }
 
     /* Estilos do Modal / Pop-up */
@@ -812,11 +827,11 @@
         width: 100%;
         max-width: 520px;
         padding: 30px;
-        border-radius: 12px;
+        border-radius: var(--radius-sm);
         position: relative;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
     .modal-close {
         position: absolute;
@@ -829,7 +844,7 @@
         color: #525252;
     }
     .modal-content h2 {
-        color: var(--color-dark-blue, #000F76);
+        color: var(--color-dark-blue, #000f76);
         margin-top: 0;
         font-family: var(--font-display);
     }
@@ -842,7 +857,7 @@
         width: 100%;
         padding: 12px;
         border: 1px solid #ccc;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         font-size: 15px;
         box-sizing: border-box;
         margin-bottom: 12px;
@@ -850,34 +865,114 @@
     .btn-buscar-modal {
         width: 100%;
         padding: 12px;
-        background: var(--color-primary, #0325D0);
+        background: var(--color-primary, #0325d0);
         color: #fff;
         border: none;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
     }
     .btn-buscar-modal:hover {
-        background: var(--color-secondary, #0756FF);
+        background: var(--color-secondary, #0756ff);
     }
-    
+
     /* Cards de Resultado */
-    .lista-faturas { list-style: none; padding: 0; margin-top: 20px; }
-    .fatura-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 15px; }
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; }
-    .badge-atraso { background-color: #d9534f; }
-    .badge-atual { background-color: #0275d8; }
-    .badge-proximo { background-color: #5cb85c; }
-    .fatura-card p { margin: 6px 0; font-size: 14px; color: #333; }
-    .codigo-box { background: #ffffff; padding: 8px; font-family: monospace; font-size: 11px; word-break: break-all; border-radius: 4px; border: 1px solid #d0d0d0; display: block; margin: 6px 0; text-align: left; }
-    .btn-acao { display: block; width: 100%; text-align: center; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; text-decoration: none; box-sizing: border-box; }
-    .btn-pix { background: #00a896; color: #fff; margin-top: 6px; }
-    .btn-pdf { background: #e7c413; color: #02061f; margin-top: 10px; }
-    .btn-linha { background: #6c757d; color: #fff; margin-top: 6px; }
-    .erro-msg { color: #d9534f; text-align: center; font-weight: bold; margin-top: 15px; }
-    #loadingModal { text-align: center; font-weight: bold; color: var(--color-primary); margin-top: 15px; }
-    .qr-code-img { width: 150px; height: 150px; margin: 8px auto; display: block; border: 2px solid #fff; border-radius: 6px; }
+    .lista-faturas {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+    .fatura-card {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 15px;
+    }
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 8px;
+    }
+    .badge-atraso {
+        background-color: #d9534f;
+    }
+    .badge-atual {
+        background-color: #0275d8;
+    }
+    .badge-proximo {
+        background-color: #5cb85c;
+    }
+    .fatura-card p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #333;
+    }
+    .codigo-box {
+        background: #ffffff;
+        padding: 8px;
+        font-family: monospace;
+        font-size: 11px;
+        word-break: break-all;
+        border-radius: var(--radius-sm);
+        border: 1px solid #d0d0d0;
+        display: block;
+        margin: 6px 0;
+        text-align: left;
+    }
+    .btn-acao {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: bold;
+        font-size: 13px;
+        cursor: pointer;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+    .btn-pix {
+        background: #00a896;
+        color: #fff;
+        margin-top: 6px;
+    }
+    .btn-pdf {
+        background: #e7c413;
+        color: #02061f;
+        margin-top: 10px;
+    }
+    .btn-linha {
+        background: #6c757d;
+        color: #fff;
+        margin-top: 6px;
+    }
+    .erro-msg {
+        color: #d9534f;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+    #loadingModal {
+        text-align: center;
+        font-weight: bold;
+        color: var(--color-primary);
+        margin-top: 15px;
+    }
+    .qr-code-img {
+        width: 150px;
+        height: 150px;
+        margin: 8px auto;
+        display: block;
+        border: 2px solid #fff;
+        border-radius: var(--radius-sm);
+    }
 
     /* RESPONSIVIDADE */
     @media (max-width: 768px) {
@@ -893,73 +988,79 @@
     }
 </style>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('modal-2via');
-        const openBtn = document.getElementById('open-modal-2via');
-        const closeBtn = document.getElementById('close-modal-2via');
-        const form = document.getElementById('formSegundaViaModal');
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("modal-2via");
+        const openBtn = document.getElementById("open-modal-2via");
+        const closeBtn = document.getElementById("close-modal-2via");
+        const form = document.getElementById("formSegundaViaModal");
 
         // Abrir Modal
         if (openBtn) {
-            openBtn.addEventListener('click', () => {
-                modal.classList.add('active');
+            openBtn.addEventListener("click", () => {
+                modal.classList.add("active");
             });
         }
 
         // Fechar Modal
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                modal.classList.remove('active');
+            closeBtn.addEventListener("click", () => {
+                modal.classList.remove("active");
             });
         }
 
         // Fechar clicando fora do modal
-        window.addEventListener('click', (e) => {
+        window.addEventListener("click", (e) => {
             if (e.target === modal) {
-                modal.classList.remove('active');
+                modal.classList.remove("active");
             }
         });
 
         // Envio do Formulário de Busca via AJAX
         if (form) {
-            form.addEventListener('submit', async function(e) {
+            form.addEventListener("submit", async function (e) {
                 e.preventDefault();
 
-                const cpfCnpj = document.getElementById('cpfCnpjModalInput').value.trim();
-                const containerResultado = document.getElementById('resultadoFaturasModal');
-                const loading = document.getElementById('loadingModal');
-                const btnBuscar = document.getElementById('btnBuscarModal');
+                const cpfCnpj = document
+                    .getElementById("cpfCnpjModalInput")
+                    .value.trim();
+                const containerResultado = document.getElementById(
+                    "resultadoFaturasModal",
+                );
+                const loading = document.getElementById("loadingModal");
+                const btnBuscar = document.getElementById("btnBuscarModal");
 
                 if (!cpfCnpj) return;
 
-                containerResultado.innerHTML = '';
-                loading.style.display = 'block';
+                containerResultado.innerHTML = "";
+                loading.style.display = "block";
                 btnBuscar.disabled = true;
 
                 try {
                     // Requisição direcionada para o script PHP na HostGator
-                    const response = await fetch('/api/segunda-via.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ cpf_cnpj: cpfCnpj })
+                    const response = await fetch("/api/segunda-via.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ cpf_cnpj: cpfCnpj }),
                     });
 
                     const data = await response.json();
 
-                    loading.style.display = 'none';
+                    loading.style.display = "none";
                     btnBuscar.disabled = false;
 
                     if (data.sucesso && data.faturas.length > 0) {
                         let html = '<ul class="lista-faturas">';
-                        
-                        data.faturas.forEach((fatura, index) => {
-                            let badgeClass = 'badge-atual';
-                            if (fatura.periodo === 'Em Atraso') badgeClass = 'badge-atraso';
-                            if (fatura.periodo === 'Próximo Mês') badgeClass = 'badge-proximo';
 
-                            const urlQrCode = fatura.pix_copia_cola 
-                              ? `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(fatura.pix_copia_cola)}` 
-                              : '';
+                        data.faturas.forEach((fatura, index) => {
+                            let badgeClass = "badge-atual";
+                            if (fatura.periodo === "Em Atraso")
+                                badgeClass = "badge-atraso";
+                            if (fatura.periodo === "Próximo Mês")
+                                badgeClass = "badge-proximo";
+
+                            const urlQrCode = fatura.pix_copia_cola
+                                ? `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(fatura.pix_copia_cola)}`
+                                : "";
 
                             html += `
                               <li class="fatura-card">
@@ -967,22 +1068,30 @@
                                 <p><strong>Vencimento:</strong> ${fatura.vencimento}</p>
                                 <p><strong>Valor:</strong> R$ ${fatura.valor}</p>
 
-                                ${fatura.pix_copia_cola ? `
-                                  <div style="background: #e6f7f5; padding: 10px; border-radius: 6px; margin: 8px 0; text-align: center;">
+                                ${
+                                    fatura.pix_copia_cola
+                                        ? `
+                                  <div style="background: #e6f7f5; padding: 10px; border-radius: var(--radius-sm); margin: 8px 0; text-align: center;">
                                     <p style="margin:0 0 6px 0; color:#008775; font-weight:bold; font-size:13px;">❖ Pagamento via PIX</p>
                                     <img src="${urlQrCode}" alt="QR Code PIX" class="qr-code-img">
                                     <span class="codigo-box" id="pixCode_${index}">${fatura.pix_copia_cola}</span>
                                     <button type="button" class="btn-acao btn-pix" onclick="copiarTexto('pixCode_${index}', this)">Copiar Chave Pix</button>
                                   </div>
-                                ` : ''}
+                                `
+                                        : ""
+                                }
 
-                                ${fatura.linha_digitavel ? `
+                                ${
+                                    fatura.linha_digitavel
+                                        ? `
                                   <div style="margin-top: 8px;">
                                     <p style="margin:0 0 4px 0; font-size:13px;"><strong>Linha Digitável:</strong></p>
                                     <span class="codigo-box" id="linhaCode_${index}">${fatura.linha_digitavel}</span>
                                     <button type="button" class="btn-acao btn-linha" onclick="copiarTexto('linhaCode_${index}', this)">📋 Copiar Linha Digitável</button>
                                   </div>
-                                ` : ''}
+                                `
+                                        : ""
+                                }
 
                                 <div style="margin-top: 10px;">
                                   <a href="${fatura.link_pdf}" target="_blank" class="btn-acao btn-pdf">📄 Abrir / Imprimir Fatura (PDF)</a>
@@ -990,17 +1099,17 @@
                               </li>
                             `;
                         });
-                        
-                        html += '</ul>';
+
+                        html += "</ul>";
                         containerResultado.innerHTML = html;
                     } else {
-                        containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || 'Nenhuma fatura localizada.'}</p>`;
+                        containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
                     }
-
                 } catch (error) {
-                    loading.style.display = 'none';
+                    loading.style.display = "none";
                     btnBuscar.disabled = false;
-                    containerResultado.innerHTML = '<p class="erro-msg">Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.</p>';
+                    containerResultado.innerHTML =
+                        '<p class="erro-msg">Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.</p>';
                 }
             });
         }
@@ -1008,15 +1117,15 @@
 
     // Função global de cópia para a área de transferência
     function copiarTexto(elementId, btnElement) {
-      const texto = document.getElementById(elementId).innerText;
-      navigator.clipboard.writeText(texto).then(() => {
-        const textoOriginal = btnElement.innerText;
-        btnElement.innerText = '✅ Copiado!';
-        btnElement.style.opacity = '0.8';
-        setTimeout(() => {
-          btnElement.innerText = textoOriginal;
-          btnElement.style.opacity = '1';
-        }, 2000);
-      });
+        const texto = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(texto).then(() => {
+            const textoOriginal = btnElement.innerText;
+            btnElement.innerText = "✅ Copiado!";
+            btnElement.style.opacity = "0.8";
+            setTimeout(() => {
+                btnElement.innerText = textoOriginal;
+                btnElement.style.opacity = "1";
+            }, 2000);
+        });
     }
 </script>

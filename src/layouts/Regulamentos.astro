@@ -1,6 +1,7 @@
 ---
 import Layout from "./Layout.astro";
 import SidebarRegulamentos from "../components/SidebarRegulamentos.astro";
+import "../styles/regulamentos.css";
 
 interface Props {
   title?: string;
@@ -21,21 +22,26 @@ const { title = "Zamtech - Fibra Óptica" } = Astro.props;
 
 <style>
   .container-regulamentos {
-    max-width: 1200px;
+    max-width: 1100px; /* Aumentado para acomodar perfeitamente a sidebar e o conteúdo */
     margin: 3rem auto;
     padding: 0 1.5rem;
     display: flex;
     gap: 3rem;
+    width: 100%;
+    box-sizing: border-box; 
   }
 
   .content {
     flex: 1;
+    min-width: 0; /* Impede que elementos filhos estourem o flexbox */
   }
 
   @media (max-width: 768px) {
     .container-regulamentos {
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
+      padding: 0 1rem;
+      margin: 1.5rem auto;
     }
   }
 </style>

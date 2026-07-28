@@ -1,0 +1,131 @@
+---
+// src/components/ConsentimentoLGPD.astro
+import "../styles/global.css"
+---
+
+<div id="lgpd-banner" class="lgpd-banner" style="display: none;">
+    <div class="lgpd-content">
+        <p>
+            Utilizamos cookies e tecnologias semelhantes para melhorar a sua experiência em nossos serviços e personalizar publicidade. Ao continuar navegando, você concorda com a nossa <a href="/politica-de-privacidade" target="_blank">Política de Privacidade</a>.
+        </p>
+        <button id="lgpd-accept" class="lgpd-btn">Aceitar e Fechar</button>
+    </div>
+</div>
+
+<style>
+    .lgpd-banner {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: var(--color-white);
+        color: var(--color-primary);
+        padding: 16px 24px;
+        border-radius: 12px;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+        border: 1px solid #374151;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .lgpd-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .lgpd-content p {
+        margin: 0;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        color: var(--color-black);
+        flex: 1;
+        min-width: 280px;
+    }
+
+    .lgpd-content a {
+        color: #001aff;
+        text-decoration: underline;
+        font-weight: 500;
+    }
+
+    .lgpd-content a:hover {
+        color: #020746;
+    }
+
+    .lgpd-btn {
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+        border: none;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        white-space: nowrap;
+    }
+
+    .lgpd-btn:hover {
+        background-color: var(--color-primary);
+    }
+
+    .lgpd-btn:active {
+        transform: scale(0.98);
+    }
+
+    @media (max-width: 768px) {
+        .lgpd-banner {
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            padding: 14px 16px;
+        }
+        .lgpd-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .lgpd-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<script>
+    const lgpdBanner = document.getElementById('lgpd-banner');
+    const lgpdAccept = document.getElementById('lgpd-accept');
+
+    if (lgpdBanner && lgpdAccept) {
+        const hasAccepted = localStorage.getItem('zamtech_lgpd_accepted');
+
+        if (!hasAccepted) {
+            lgpdBanner.style.display = 'flex';
+        }
+
+        lgpdAccept.addEventListener('click', () => {
+            localStorage.setItem('zamtech_lgpd_accepted', 'true');
+            lgpdBanner.style.display = 'none';
+        });
+    }
+</script>
