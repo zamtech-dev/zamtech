@@ -14,7 +14,7 @@ const { title = "Zamtech - Fibra Óptica" } = Astro.props;
     <SidebarRegulamentos />
     
     <main class="content">
-      <slot /> <!-- O texto da Política/Termos vai cair AQUI -->
+      <slot />
     </main>
   </div>
 </Layout>
@@ -29,7 +29,7 @@ const { title = "Zamtech - Fibra Óptica" } = Astro.props;
   }
 
   .content {
-    flex: 1; /* Ocupa todo o espaço restante da direita */
+    flex: 1;
   }
 
   @media (max-width: 768px) {
