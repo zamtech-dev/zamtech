@@ -1,0 +1,353 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+---
+
+<Layout title="Ajuda e Suporte - Zamtech Fibra Óptica">
+    <section class="hero-ajuda">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="badge-hero">
+                <img src="/assets/icons/others-icons/ajuda.svg" alt="Ajuda" width="18" height="18" />
+                Central de Ajuda Zamtech
+            </span>
+            <h1>Como podemos ajudar você hoje?</h1>
+            <p>
+                Encontre respostas rápidas para suas dúvidas, acesse canais de atendimento direto ou resolva pendências com a agilidade que você merece.
+            </p>
+        </div>
+    </section>
+
+    <section class="quick-actions-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Soluções Rápidas</h2>
+                <p>O que você precisa resolver agora?</p>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">
+                        <img src="/assets/icons/others-icons/2-via-de-contas.svg" alt="2ª Via" width="36" height="36" />
+                    </div>
+                    <h3>2ª Via de Conta</h3>
+                    <p>Consulte suas faturas em aberto, copie o código Pix ou baixe o seu boleto de forma rápida e segura.</p>
+                    <a href="#" id="open-modal-2via" class="btn btn-primary">Emitir 2ª Via</a>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <img src="/assets/icons/others-icons/suporte-tecnico.svg" alt="Suporte Técnico" width="36" height="36" />
+                    </div>
+                    <h3>Suporte Técnico</h3>
+                    <p>Está com lentidão ou sem conexão? Fale direto com nossa equipe técnica humanizada pelo WhatsApp.</p>
+                    <a href="https://wa.me/5527995057736?text=Ol%C3%A1,%20gostaria%20de%20falar%20com%20o%20SUPORTE%20T%C3%89CNICO" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Chamar no WhatsApp</a>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <img src="/assets/icons/others-icons/desbloquear-servico.svg" alt="Desbloquear" width="36" height="36" />
+                    </div>
+                    <h3>Desbloquear em Confiança</h3>
+                    <p>Fez o pagamento recentemente e o sinal foi suspenso? Solicite o desbloqueio temporário imediato.</p>
+                    <a href="https://wa.me/5527995057736?text=Ol%C3%A1,%20gostaria%20de%20solicitar%20o%20desbloqueio%20em%20confiança" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-dark">Solicitar Desbloqueio</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Perguntas Frequentes</h2>
+                <p>Tire suas dúvidas sobre os serviços da Zamtech</p>
+            </div>
+
+            <div class="faq-accordion">
+                <details class="faq-item">
+                    <summary>Como faço para emitir a 2ª via da minha fatura?</summary>
+                    <p>Você pode emitir sua fatura clicando no botão "Emitir 2ª Via" acima, acessando o nosso aplicativo oficial para celular ou entrando em contato através do nosso atendimento automatizado no WhatsApp.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>O que fazer se a minha internet cair ou ficar instável?</summary>
+                    <p>Primeiramente, tente reiniciar o seu roteador Wi-Fi tirando-o da tomada por cerca de 10 segundos e depois religando-o. Se o problema persistir, verifique se os cabos de fibra óptica estão conectados corretamente ou entre em contato com o nosso suporte técnico.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Como posso alterar meu plano atual para uma velocidade maior?</summary>
+                    <p>É muito simples! Você pode solicitar o upgrade do seu plano residencial ou empresarial diretamente pelo nosso WhatsApp de atendimento ou através do App Zamtech.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Quais são as formas de pagamento aceitas pela Zamtech?</summary>
+                    <p>Aceitamos pagamentos via PIX (com compensação instantânea), boleto bancário e cartões cadastrados em recorrência para maior comodidade.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Onde fica localizada a sede da Zamtech?</summary>
+                    <p>Nossa central está localizada na Av. Papa João XXIII, 374 - Sala 201 - Cobilândia, Vila Velha - ES, CEP 29111-400.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="help-cta-section">
+        <div class="container help-cta-box">
+            <div class="help-cta-content">
+                <h2>Ainda precisa de ajuda?</h2>
+                <p>Nossa equipe está sempre pronta para garantir que você tenha a melhor experiência com a nossa fibra óptica.</p>
+            </div>
+            <div class="help-cta-buttons">
+                <a href="tel:2731413637" class="btn btn-yellow">
+                    Ligar: (27) 3141-3637
+                </a>
+                <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                    Atendimento Geral WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    /* Estilos específicos da página de Ajuda */
+    .hero-ajuda {
+        position: relative;
+        background-image: linear-gradient(rgba(0, 15, 118, 0.85), rgba(3, 37, 208, 0.85)), url("/assets/img/backgrounds/background-image-website-top.webp");
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0 80px;
+        color: var(--color-white);
+        text-align: center;
+    }
+
+    .badge-hero {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+        background-color: rgba(255, 255, 255, 0.15);
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-full);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        margin-bottom: var(--space-16);
+        backdrop-filter: blur(4px);
+    }
+
+    .hero-ajuda h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-family: var(--font-display);
+        font-weight: 700;
+        margin-bottom: var(--space-16);
+    }
+
+    .hero-ajuda p {
+        font-size: var(--fs-body);
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+
+    /* Quick Actions */
+    .quick-actions-section {
+        padding: 80px 0;
+        background-color: var(--color-gray-light);
+    }
+
+    .section-header {
+        margin-bottom: var(--space-32);
+    }
+
+    .section-header h2 {
+        font-size: var(--fs-h2);
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-8);
+    }
+
+    .section-header p {
+        color: var(--color-gray-medium);
+        font-size: var(--fs-body);
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-24);
+    }
+
+    .action-card {
+        background-color: var(--color-white);
+        padding: var(--space-32);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--elevation-1);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 4px solid var(--color-secondary);
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--elevation-2);
+    }
+
+    .action-icon {
+        width: 64px;
+        height: 64px;
+        background-color: rgba(7, 86, 255, 0.08);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: var(--space-16);
+    }
+
+    .action-card h3 {
+        font-size: var(--fs-h4);
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-12);
+    }
+
+    .action-card p {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
+        line-height: 1.6;
+        margin-bottom: var(--space-24);
+        flex-grow: 1;
+    }
+
+    .btn-outlined-dark {
+        border: 2px solid var(--color-dark-blue);
+        color: var(--color-dark-blue);
+        background: transparent;
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        padding: 0 var(--space-24);
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-default);
+    }
+
+    .btn-outlined-dark:hover {
+        background-color: var(--color-dark-blue);
+        color: var(--color-white);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        padding: 80px 0;
+        background-color: var(--color-white);
+    }
+
+    .faq-accordion {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-16);
+    }
+
+    .faq-item {
+        background-color: var(--color-gray-light);
+        border-radius: var(--radius-md);
+        padding: var(--space-16) var(--space-24);
+        transition: background-color 0.2s ease;
+    }
+
+    .faq-item[open] {
+        background-color: #eef2ff;
+        border-left: 4px solid var(--color-primary);
+    }
+
+    .faq-item summary {
+        font-size: var(--fs-body);
+        font-weight: 600;
+        color: var(--color-dark-blue);
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .faq-item summary::after {
+        content: "+";
+        font-size: 1.5rem;
+        color: var(--color-secondary);
+        font-weight: 400;
+        transition: transform 0.2s ease;
+    }
+
+    .faq-item[open] summary::after {
+        transform: rotate(45deg);
+    }
+
+    .faq-item p {
+        margin-top: var(--space-16);
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
+        line-height: 1.6;
+    }
+
+    /* Help CTA Section */
+    .help-cta-section {
+        padding: 60px 0 100px;
+        background-color: var(--color-gray-light);
+    }
+
+    .help-cta-box {
+        background-color: var(--color-dark-blue);
+        border-radius: var(--radius-lg);
+        padding: var(--space-32);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--space-24);
+        color: var(--color-white);
+        box-shadow: var(--elevation-2);
+    }
+
+    .help-cta-content h2 {
+        font-size: var(--fs-h2);
+        margin-bottom: var(--space-8);
+        color: var(--color-white);
+    }
+
+    .help-cta-content p {
+        opacity: 0.85;
+        font-size: var(--fs-body);
+        max-width: 600px;
+    }
+
+    .help-cta-buttons {
+        display: flex;
+        gap: var(--space-16);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .help-cta-box {
+            padding: var(--space-24);
+        }
+        
+        .help-cta-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .help-cta-buttons .btn {
+            width: 100%;
+        }
+    }
+</style>

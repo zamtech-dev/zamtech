@@ -1,0 +1,243 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contato - Zamtech Fibra Óptica">
+	<main class="contato-page">
+		<section class="hero-section">
+			<div class="container">
+				<div class="badge">
+					<img src="/assets/icons/contato-icons/white_whatsapp.svg" alt="Ícone WhatsApp" width="20" height="20" />
+					<span>Canal de Atendimento</span>
+				</div>
+				<h1>Fale com a Zamtech</h1>
+				<p>Escolha o canal de sua preferência ou preencha o formulário abaixo para iniciar um atendimento rápido via WhatsApp.</p>
+			</div>
+		</section>
+
+		<section class="whatsapp-form-section" id="whatsapp-form">
+			<div class="container">
+				<div class="form-wrapper">
+					<div class="form-header">
+						<h2>Atendimento Direto via WhatsApp</h2>
+						<p>Preencha os campos abaixo. Sua mensagem e dados cadastrais serão preparados automaticamente para agilizar o seu atendimento.</p>
+					</div>
+
+					<form id="waForm" class="contact-form">
+						<div class="input-group">
+							<label for="nome">Nome Completo *</label>
+							<input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo" />
+						</div>
+
+						<div class="input-group">
+							<label for="assunto">Assunto do Contato *</label>
+							<select id="assunto" name="assunto" required>
+								<option value="" disabled selected>Selecione o assunto...</option>
+								<option value="Suporte Técnico">Suporte Técnico</option>
+								<option value="Financeiro / 2ª Via">Financeiro / 2ª Via</option>
+								<option value="Planos Residenciais">Planos Residenciais</option>
+								<option value="Planos Empresariais">Planos Empresariais</option>
+								<option value="Desbloqueio de Confiança">Desbloqueio de Confiança</option>
+								<option value="Outros Assuntos">Outros Assuntos</option>
+							</select>
+						</div>
+
+						<div class="input-group">
+							<label for="cpf">CPF (Se possui cadastro na Zamtech)</label>
+							<input type="text" id="cpf" name="cpf" placeholder="000.000.000-00 (Opcional)" />
+						</div>
+
+						<div class="input-group">
+							<label for="mensagem">Mensagem *</label>
+							<textarea id="mensagem" name="mensagem" rows="4" required placeholder="Digite sua mensagem..."></textarea>
+						</div>
+
+						<button type="submit" class="btn-whatsapp">
+							<img src="/assets/icons/contato-icons/white_whatsapp.svg" alt="WhatsApp" width="20" height="20" />
+							Enviar mensagem
+						</button>
+					</form>
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<script>
+	const form = document.getElementById('waForm') as HTMLFormElement;
+	if (form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			
+			const nome = (document.getElementById('nome') as HTMLInputElement).value;
+			const assunto = (document.getElementById('assunto') as HTMLSelectElement).value;
+			const cpf = (document.getElementById('cpf') as HTMLInputElement).value;
+			const mensagemUsuario = (document.getElementById('mensagem') as HTMLTextAreaElement).value;
+
+			let mensagem = `Olá, meu nome é *${nome}*.\n`;
+			mensagem += `*Assunto:* ${assunto}\n`;
+			if (cpf.trim() !== '') {
+				mensagem += `*CPF/Cadastro:* ${cpf}\n`;
+			}
+			mensagem += `*Mensagem:* ${mensagemUsuario}`;
+
+			const numeroWhatsApp = '552731413637'; // Número padrão Zamtech
+			const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+
+			window.open(url, '_blank');
+		});
+	}
+</script>
+
+<style>
+	.contato-page {
+		background-color: #0f172a;
+		color: #ffffff;
+		font-family: 'Red Hat Display', sans-serif;
+		min-height: 100vh;
+	}
+
+	.container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 2rem;
+	}
+
+	.hero-section {
+		padding: 6rem 0 3rem 0;
+		text-align: center;
+		background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+	}
+
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: rgba(255, 255, 255, 0.1);
+		padding: 0.5rem 1rem;
+		border-radius: 50px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		margin-bottom: 1.5rem;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.hero-section h1 {
+		font-size: 2.75rem;
+		font-weight: 700;
+		margin-bottom: 1rem;
+		color: #ffffff;
+	}
+
+	.hero-section p {
+		font-size: 1.125rem;
+		color: #94a3b8;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.whatsapp-form-section {
+		padding: 3rem 0 6rem 0;
+	}
+
+	.form-wrapper {
+		background: #1e293b;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 20px;
+		padding: 3rem;
+		max-width: 700px;
+		margin: 0 auto;
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+	}
+
+	.form-header {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.form-header h2 {
+		font-size: 1.875rem;
+		font-weight: 700;
+		margin-bottom: 0.75rem;
+	}
+
+	.form-header p {
+		color: #94a3b8;
+		font-size: 1rem;
+	}
+
+	.contact-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.input-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.input-group label {
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: #e2e8f0;
+	}
+
+	.input-group input,
+	.input-group select,
+	.input-group textarea {
+		background: #0f172a;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		border-radius: 8px;
+		padding: 0.875rem 1rem;
+		color: #ffffff;
+		font-size: 1rem;
+		font-family: inherit;
+		transition: border-color 0.2s;
+		resize: vertical;
+	}
+
+	.input-group select option {
+		background: #0f172a;
+		color: #ffffff;
+	}
+
+	.input-group input:focus,
+	.input-group select:focus,
+	.input-group textarea:focus {
+		outline: none;
+		border-color: #22c55e;
+	}
+
+	.btn-whatsapp {
+		background: #22c55e;
+		color: #ffffff;
+		border: none;
+		border-radius: 8px;
+		padding: 1rem;
+		font-size: 1rem;
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		cursor: pointer;
+		transition: background 0.2s, transform 0.2s;
+		margin-top: 1rem;
+	}
+
+	.btn-whatsapp:hover {
+		background: #16a34a;
+		transform: translateY(-2px);
+	}
+
+	@media (max-width: 768px) {
+		.hero-section h1 {
+			font-size: 2rem;
+		}
+		.form-wrapper {
+			padding: 1.5rem;
+		}
+	}
+</style>
