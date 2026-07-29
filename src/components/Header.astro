@@ -1028,28 +1028,24 @@
         const closeBtn = document.getElementById("close-modal-2via");
         const form = document.getElementById("formSegundaViaModal");
 
-        // Abrir Modal
         if (openBtn && modal) {
             openBtn.addEventListener("click", () => {
                 modal.classList.add("active");
             });
         }
 
-        // Fechar Modal
         if (closeBtn && modal) {
             closeBtn.addEventListener("click", () => {
                 modal.classList.remove("active");
             });
         }
 
-        // Fechar clicando fora do modal
         window.addEventListener("click", (e) => {
             if (e.target === modal) {
                 modal.classList.remove("active");
             }
         });
 
-        // Envio do Formulário de Busca via AJAX
         if (form) {
             form.addEventListener("submit", async function (e) {
                 e.preventDefault();
@@ -1072,14 +1068,13 @@
                         body: JSON.stringify({ cpf_cnpj: cpfCnpj }),
                     });
 
-                    // Lê primeiro como texto para evitar crash de JSON SyntaxError
                     const rawText = await response.text();
                     let data;
                     try {
                         data = JSON.parse(rawText);
                     } catch (jsonErr) {
-                        console.error("Erro na resposta do PHP:", rawText);
-                        throw new Error("Não foi possível conectar ao sistema da API IXC. Verifique se as credenciais do config.php estão corretas.");
+                        console.error("Resposta não-JSON enviada pelo PHP:", rawText);
+                        throw new Error(rawText.length > 0 ? `Resposta do servidor: ${rawText.substring(0, 180)}` : "O servidor não retornou dados.");
                     }
 
                     if (loading) loading.style.display = "none";
@@ -1143,14 +1138,13 @@
                     if (loading) loading.style.display = "none";
                     if (btnBuscar) btnBuscar.disabled = false;
                     if (containerResultado) {
-                        containerResultado.innerHTML = `<p class="erro-msg">${error.message || "Ocorreu um erro ao processar sua solicitação."}</p>`;
+                        containerResultado.innerHTML = `<p class="erro-msg">${error.message}</p>`;
                     }
                 }
             });
         }
     });
 
-    // Função global para copiar chave PIX ou Linha Digitável
     window.copiarTexto = function(elementId, btnElement) {
         const el = document.getElementById(elementId);
         if (!el) return;

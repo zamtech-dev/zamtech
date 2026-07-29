@@ -1,8 +1,0 @@
-# Impede a listagem de arquivos da pasta API
-Options -Indexes
-
-# Bloqueia acesso direto a arquivos de configuração sensíveis
-<FilesMatch "(config\.php|rate_limit\.php)">
-    Order Deny,Allow
-    Deny from all
-</FilesMatch>
