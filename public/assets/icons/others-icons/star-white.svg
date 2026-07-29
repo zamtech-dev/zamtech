@@ -2,13 +2,13 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="117.97832mm"
-   height="112.204mm"
+   width="195.44801mm"
+   height="185.88168mm"
    version="1.1"
-   viewBox="0 0 445.91586 424.0784"
+   viewBox="0 0 738.72356 702.54541"
    xml:space="preserve"
    id="svg1"
-   sodipodi:docname="star.svg"
+   sodipodi:docname="star-white.svg"
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,9 +24,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
-     inkscape:zoom="0.6450328"
-     inkscape:cx="471.29386"
-     inkscape:cy="332.54123"
+     inkscape:zoom="0.45610707"
+     inkscape:cx="98.661045"
+     inkscape:cy="244.46015"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -34,6 +34,6 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg1" /><path
      id="path1"
-     style="fill:#000000;fill-opacity:1;stroke-width:1.33337;paint-order:markers stroke fill"
-     inkscape:transform-center-y="-22.386268"
-     d="M 222.95794,-0.00634444 154.06132,139.59555 0,161.981 111.47995,270.64641 85.16274,424.08466 l 137.7952,-72.4436 137.7952,72.4436 L 334.43789,270.64641 445.91588,161.981 291.85652,139.59555 Z" /></svg>
+     style="fill:#f9f9f9;stroke-width:1.33337;paint-order:markers stroke fill"
+     inkscape:transform-center-y="-37.085991"
+     d="M 369.36083,-0.00634444 255.2226,231.26435 0,268.34946 184.68139,448.3686 141.08436,702.55992 369.36083,582.54846 597.63925,702.55992 554.04222,448.3686 738.72361,268.34946 483.50101,231.26435 Z" /></svg>

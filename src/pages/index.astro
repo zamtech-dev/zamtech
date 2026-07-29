@@ -153,7 +153,7 @@ import Layout from "../layouts/Layout.astro";
                             alt=""
                             class="benefit-icon"
                         />
-                        <h4>Fibra Pura de Ponta a Ponta</h4>
+                        <h4>Fibra Óptica de Ponta a Ponta</h4>
                         <p>
                             Conexão 100% em fibra óptica da nossa central até o
                             seu roteador. Mais estabilidade, sem interferências
@@ -243,15 +243,8 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <header class="container-narrow section-header">
-                    <h2 class="section-title">O sistema que faz diferença</h2>
-                    <p class="section-subtitle">
-                        Wi-Fi na casa inteira, sem pontos cegos
-                    </p>
-                    <p class="section-description">
-                        Diga adeus ao sinal fraco nos cômodos mais distantes. A
-                        tecnologia Mesh cria uma rede única e inteligente na sua
-                        casa através de módulos que conversam entre si.
-                    </p>
+                    <h2 class="section-title">Wi-Fi na casa inteira, sem pontos cegos</h2>
+                    <p class="section-description">Sabe aquele quarto onde o sinal não pega de jeito nenhum? Esquece! O Wi-Fi Mesh espalha internet boa por toda a casa porque os aparelhinhos trabalham em equipe.</p>
                 </header>
 
                 <div class="mesh-image">
@@ -302,18 +295,14 @@ import Layout from "../layouts/Layout.astro";
             <!-- SEÇÃO MONITORAMENTO -->
 
             <div class="container">
-                <div class="badge-group">
-                    <span>Monitoramento Inteligente</span>
-                    <span class="badge-tag">Zamtech</span>
+                <div class="badge-group space-top-padding">
+                    <span>Monitoramento</span>
+                    <span class="badge-tag">Inteligente</span>
                 </div>
 
                 <header class="container-narrow section-header">
-                    <h2 class="section-title">Como funciona a tecnologia?</h2>
-                    <p class="section-description">
-                        A solução de câmeras da ZAMTECH foi desenvolvida para
-                        levar segurança de verdade na palma da sua mão. Sem
-                        gastar dinheiro com aparelhos físicos de armazenamento.
-                    </p>
+                    <h2 class="section-title">Sua vida mais segura com câmera inteligente</h2>
+                    <p class="section-description">Você pode ver o que está acontecendo na sua casa direto no celular, tudo guardado de forma mágica na internet, sem precisar gastar com caixas de gravação!</p>
                 </header>
 
                 <div class="cards-horizontal-grid">
@@ -836,6 +825,10 @@ import Layout from "../layouts/Layout.astro";
         align-items: center;
     }
 
+.badge-group.space-top-padding {
+    margin-top: 120px;
+}
+
     /* PLAN CARDS */
     .plan-card {
         position: relative;
@@ -1046,6 +1039,7 @@ import Layout from "../layouts/Layout.astro";
 
     .mesh-highlights {
         display: flex;
+        flex-direction: column;
         gap: var(--space-32);
         justify-content: center;
         flex-wrap: wrap;
@@ -1053,10 +1047,6 @@ import Layout from "../layouts/Layout.astro";
         text-align: center;
     }
 
-    .mesh-highlights p {
-        font-weight: 600;
-        max-width: 320px;
-    }
 
     .info-card {
         padding: var(--space-32);
@@ -1296,6 +1286,7 @@ import Layout from "../layouts/Layout.astro";
         background-position: center;
         background-size: cover;
     }
+
 
     .testimonials-grid {
         display: flex;

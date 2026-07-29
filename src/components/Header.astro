@@ -2,7 +2,7 @@
 // Header.astro
 ---
 
-<header class="main-header">
+<header class="main-header" id="main-header">
     <div class="container header-container">
         <a href="/" class="brand-logo-link">
             <img
@@ -11,6 +11,7 @@
                 class="brand-logo"
             />
         </a>
+
         <div class="menu-top-wrapper">
             <ul class="nav-menu-top">
                 <li><a href="/planos-residenciais">Planos Residenciais</a></li>
@@ -24,10 +25,8 @@
     </div>
 </header>
 
-<!-- Overlay para escurecer a tela -->
 <div class="menu-overlay" id="menu-overlay"></div>
 
-<!-- Sidebar Lateral Branca -->
 <aside class="sidebar-menu" id="sidebar-menu">
     <div class="sidebar-header">
         <button
@@ -39,7 +38,6 @@
     </div>
 
     <div class="sidebar-content">
-        <!-- 1. BLOQUINHOS (TOP GRID) -->
         <div class="bloquinhos-grid">
             <button type="button" class="bloquinho-card" id="open-modal-2via">
                 <div class="bloquinho-icon">
@@ -106,15 +104,9 @@
             </div>
         </div>
 
-        <div class="menu-overlay" id="menu-overlay"></div>
-
-        <aside class="sidebar-menu" id="sidebar-menu"></aside>
-
-        <!-- 5. PLANOS RECOMENDADOS (SANFONA) -->
         <div class="menu-section-card">
             <h3 class="section-card-title">Planos Recomendados</h3>
 
-            <!-- Pra sua casa -->
             <details class="accordion-item">
                 <summary class="accordion-header">
                     <div class="accordion-title-group header-with-icon">
@@ -148,7 +140,6 @@
                 </div>
             </details>
 
-            <!-- Pra sua empresa -->
             <details class="accordion-item">
                 <summary class="accordion-header">
                     <div class="accordion-title-group header-with-icon">
@@ -182,7 +173,6 @@
             </details>
         </div>
 
-        <!-- 2. COM PROBLEMAS? -->
         <div class="menu-section-card">
             <h3 class="section-card-title">Com problemas?</h3>
             <ul class="menu-list">
@@ -212,11 +202,9 @@
             </ul>
         </div>
 
-        <!-- 3. APLICATIVOS ZAMTECH (SANFONAS) -->
         <div class="menu-section-card">
             <h3 class="section-card-title">Aplicativos Zamtech</h3>
 
-            <!-- Central do Assinante -->
             <details class="accordion-item">
                 <summary class="accordion-header">
                     <div class="accordion-title-group">
@@ -252,13 +240,11 @@
                         />
                         <span
                             >Apple Store <small class="tag-breve">(Em breve)</small
-                            ></span
-                        >
+                        ></span>
                     </div>
                 </div>
             </details>
 
-            <!-- Monitoramento Câmera Inteligente -->
             <details class="accordion-item">
                 <summary class="accordion-header">
                     <div class="accordion-title-group">
@@ -297,7 +283,6 @@
             </details>
         </div>
 
-        <!-- 4. CANAIS DE ATENDIMENTO -->
         <div class="menu-section-card">
             <h3 class="section-card-title">Canais de atendimento</h3>
             <ul class="menu-list">
@@ -334,7 +319,6 @@
             </ul>
         </div>
 
-        <!-- 6. REGULAMENTOS -->
         <div class="menu-section-card">
             <details class="accordion-item">
                 <summary class="accordion-header">
@@ -383,7 +367,6 @@
             </details>
         </div>
 
-        <!-- 7. Institucional -->
         <div class="menu-section-card">
             <details class="accordion-item">
                 <summary class="accordion-header">
@@ -404,12 +387,12 @@
     </div>
 </aside>
 
-<!-- SCRIPT ISOLADO DO HEADER -->
 <script>
     const btnOpen = document.getElementById("open-menu");
     const btnClose = document.getElementById("close-menu");
     const sidebar = document.getElementById("sidebar-menu");
     const overlay = document.getElementById("menu-overlay");
+    const header = document.getElementById("main-header");
 
     if (btnOpen && sidebar && overlay) {
         const openMenu = () => {
@@ -428,28 +411,64 @@
         if (btnClose) btnClose.addEventListener("click", closeMenu);
         overlay.addEventListener("click", closeMenu);
     }
+
+    // EFEITO DE SCROLL GLASSMORPHISM
+    if (header) {
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 40) {
+                header.classList.add("scrolled");
+            } else {
+                header.classList.remove("scrolled");
+            }
+        });
+    }
 </script>
 
-<!-- CSS REFINADO -->
 <style>
     .main-header {
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
         z-index: 100;
         background-color: var(--color-primary);
         padding: var(--space-16) 0;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-sizing: border-box;
+    }
+
+    /* ESTADO COMPACTO / GLASSMORPHISM (QUANDO ROLA A PÁGINA) */
+    .main-header.scrolled {
+        top: 5px;
+        width: 50%;
+        border-radius: 50px;
+        background: rgba(90, 90, 90, 0.6); /* Cor original com transparência */
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        padding: var(--space-8) var(--space-24);
+        transition: all 0.6s ease;
     }
 
     .header-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
+        height: 30px;
     }
 
     .brand-logo {
         height: 40px;
         width: auto;
+        transition: height 0.4s ease;
+    }
+
+    .main-header.scrolled .brand-logo {
+        height: 28px; /* Redução sutil na logo ao compactar */
     }
 
     .menu-top-wrapper {
@@ -490,7 +509,10 @@
         font-weight: 600;
         cursor: pointer;
         transition: background-color 0.5s ease;
-        transform:;
+    }
+
+    .main-header.scrolled .btn-menu-toggle {
+        border-radius: 20px; /* Adapta o botão ao formato pílula do header */
     }
 
     .btn-menu-toggle:hover {
@@ -777,18 +799,20 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
+        background: rgba(0, 5, 28, 0.7);
+        backdrop-filter: blur(12px);
         z-index: 999;
         opacity: 0;
         visibility: hidden;
-        transition: all 0.3s ease-in-out;
+        transition: all 0.6s ease-in-out;
     }
 
     .menu-overlay.active {
         opacity: 1;
         visibility: visible;
-    } /* Estilos do Botão de 2ª Via no Header */
+    }
+
+    /* Estilos do Botão de 2ª Via no Header */
     .btn-segunda-via {
         background-color: var(--color-primary, #0325d0);
         color: var(--color-white, #fff);
@@ -810,8 +834,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(8px);
         display: none;
         justify-content: center;
         align-items: center;
@@ -975,9 +999,20 @@
     }
 
     /* RESPONSIVIDADE */
+    @media (max-width: 992px) {
+        .main-header.scrolled {
+            width: 85%; /* No mobile/tablet 50% esconderia o conteúdo, então ajustamos para float em 85% */
+        }
+    }
+
     @media (max-width: 768px) {
         .nav-menu-top {
             display: none;
+        }
+
+        .main-header.scrolled {
+            width: 92%;
+            padding: var(--space-8) var(--space-16);
         }
 
         .sidebar-menu {
@@ -987,6 +1022,7 @@
         }
     }
 </style>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("modal-2via");
@@ -1019,7 +1055,6 @@
         if (form) {
             form.addEventListener("submit", async function (e) {
                 e.preventDefault();
-
                 const cpfCnpj = document
                     .getElementById("cpfCnpjModalInput")
                     .value.trim();
@@ -1042,7 +1077,6 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ cpf_cnpj: cpfCnpj }),
                     });
-
                     const data = await response.json();
 
                     loading.style.display = "none";
@@ -1050,7 +1084,6 @@
 
                     if (data.sucesso && data.faturas.length > 0) {
                         let html = '<ul class="lista-faturas">';
-
                         data.faturas.forEach((fatura, index) => {
                             let badgeClass = "badge-atual";
                             if (fatura.periodo === "Em Atraso")
@@ -1063,7 +1096,7 @@
                                 : "";
 
                             html += `
-                              <li class="fatura-card">
+                                <li class="fatura-card">
                                 <span class="badge ${badgeClass}">${fatura.periodo}</span>
                                 <p><strong>Vencimento:</strong> ${fatura.vencimento}</p>
                                 <p><strong>Valor:</strong> R$ ${fatura.valor}</p>
