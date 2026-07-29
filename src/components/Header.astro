@@ -1021,7 +1021,6 @@
         }
     }
 </style>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("modal-2via");
@@ -1030,14 +1029,14 @@
         const form = document.getElementById("formSegundaViaModal");
 
         // Abrir Modal
-        if (openBtn) {
+        if (openBtn && modal) {
             openBtn.addEventListener("click", () => {
                 modal.classList.add("active");
             });
         }
 
         // Fechar Modal
-        if (closeBtn) {
+        if (closeBtn && modal) {
             closeBtn.addEventListener("click", () => {
                 modal.classList.remove("active");
             });
@@ -1054,41 +1053,44 @@
         if (form) {
             form.addEventListener("submit", async function (e) {
                 e.preventDefault();
-                const cpfCnpj = document
-                    .getElementById("cpfCnpjModalInput")
-                    .value.trim();
-                const containerResultado = document.getElementById(
-                    "resultadoFaturasModal",
-                );
+                const cpfCnpjInput = document.getElementById("cpfCnpjModalInput");
+                const cpfCnpj = cpfCnpjInput ? cpfCnpjInput.value.trim() : "";
+                const containerResultado = document.getElementById("resultadoFaturasModal");
                 const loading = document.getElementById("loadingModal");
                 const btnBuscar = document.getElementById("btnBuscarModal");
 
                 if (!cpfCnpj) return;
 
-                containerResultado.innerHTML = "";
-                loading.style.display = "block";
-                btnBuscar.disabled = true;
+                if (containerResultado) containerResultado.innerHTML = "";
+                if (loading) loading.style.display = "block";
+                if (btnBuscar) btnBuscar.disabled = true;
 
                 try {
-                    // Requisição direcionada para o script PHP na HostGator
                     const response = await fetch("/api/segunda-via.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ cpf_cnpj: cpfCnpj }),
                     });
-                    const data = await response.json();
 
-                    loading.style.display = "none";
-                    btnBuscar.disabled = false;
+                    // Lê primeiro como texto para evitar crash de JSON SyntaxError
+                    const rawText = await response.text();
+                    let data;
+                    try {
+                        data = JSON.parse(rawText);
+                    } catch (jsonErr) {
+                        console.error("Erro na resposta do PHP:", rawText);
+                        throw new Error("Não foi possível conectar ao sistema da API IXC. Verifique se as credenciais do config.php estão corretas.");
+                    }
 
-                    if (data.sucesso && data.faturas.length > 0) {
+                    if (loading) loading.style.display = "none";
+                    if (btnBuscar) btnBuscar.disabled = false;
+
+                    if (data.sucesso && data.faturas && data.faturas.length > 0) {
                         let html = '<ul class="lista-faturas">';
                         data.faturas.forEach((fatura, index) => {
                             let badgeClass = "badge-atual";
-                            if (fatura.periodo === "Em Atraso")
-                                badgeClass = "badge-atraso";
-                            if (fatura.periodo === "Próximo Mês")
-                                badgeClass = "badge-proximo";
+                            if (fatura.periodo === "Em Atraso") badgeClass = "badge-atraso";
+                            if (fatura.periodo === "Próximo Mês") badgeClass = "badge-proximo";
 
                             const urlQrCode = fatura.pix_copia_cola
                                 ? `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(fatura.pix_copia_cola)}`
@@ -1133,23 +1135,26 @@
                         });
 
                         html += "</ul>";
-                        containerResultado.innerHTML = html;
+                        if (containerResultado) containerResultado.innerHTML = html;
                     } else {
-                        containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
+                        if (containerResultado) containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
                     }
                 } catch (error) {
-                    loading.style.display = "none";
-                    btnBuscar.disabled = false;
-                    containerResultado.innerHTML =
-                        '<p class="erro-msg">Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.</p>';
+                    if (loading) loading.style.display = "none";
+                    if (btnBuscar) btnBuscar.disabled = false;
+                    if (containerResultado) {
+                        containerResultado.innerHTML = `<p class="erro-msg">${error.message || "Ocorreu um erro ao processar sua solicitação."}</p>`;
+                    }
                 }
             });
         }
     });
 
-    // Função global de cópia para a área de transferência
-    function copiarTexto(elementId, btnElement) {
-        const texto = document.getElementById(elementId).innerText;
+    // Função global para copiar chave PIX ou Linha Digitável
+    window.copiarTexto = function(elementId, btnElement) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const texto = el.innerText;
         navigator.clipboard.writeText(texto).then(() => {
             const textoOriginal = btnElement.innerText;
             btnElement.innerText = "✅ Copiado!";
@@ -1159,5 +1164,5 @@
                 btnElement.style.opacity = "1";
             }, 2000);
         });
-    }
+    };
 </script>
