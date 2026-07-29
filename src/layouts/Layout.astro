@@ -17,11 +17,16 @@ const { title = "Zamtech - Fibra Óptica" } = Astro.props;
     <link rel="shortcut icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" type="image/x-icon">
     <link rel="apple-touch-icon" href="/assets/icons/website-global-icons/icon-zamtech.svg">
 </head>
-<body>
+<body class="margin-compensa">
     <Header />
     <slot />
     <Footer />
     <ConsentimentoLGPD />
     <BotaoWhatsApp />
 </body>
+<style>
+    .margin-compensa {
+        padding-top: 60px;
+    }
+</style>
 </html>
