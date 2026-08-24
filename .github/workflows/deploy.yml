@@ -1,0 +1,31 @@
+name: Deploy Hostgator
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  web-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Baixar codigo
+      uses: actions/checkout@v4
+
+    - name: Configurar Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Instalar dependencias e Buildar
+      run: |
+        npm ci
+        npm run build
+
+    - name: Enviar para Hostgator
+      uses: SamKirkland/FTP-Deploy-Action@v4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: /zamtech.com.br/
