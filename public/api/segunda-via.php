@@ -21,24 +21,19 @@ $sgp_url = 'https://zamtech.sgp.tsmx.app';
 $sgp_app = 'segunda-via-website';
 $sgp_token = '4ab8d0da-ed7d-4e91-b717-9d4a98625458';
 
+// 1. Localiza o cliente pelo CPF
 $curl = curl_init();
 curl_setopt_array($curl, array(
   CURLOPT_URL => $sgp_url . '/api/ura/clientes/',
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => '',
-  CURLOPT_MAXREDIRS => 10,
   CURLOPT_TIMEOUT => 30,
-  CURLOPT_FOLLOWLOCATION => true,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => 'POST',
   CURLOPT_POSTFIELDS => json_encode([
     'app' => $sgp_app,
     'token' => $sgp_token,
     'cpfcnpj' => $cpf_cnpj
   ]),
-  CURLOPT_HTTPHEADER => array(
-    'Content-Type: application/json'
-  ),
+  CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
 ));
 
 $response = curl_exec($curl);
@@ -56,18 +51,32 @@ $todasFaturas = [];
 foreach ($dataCliente['clientes'] as $cliente) {
     if (isset($cliente['titulos']) && is_array($cliente['titulos'])) {
         foreach ($cliente['titulos'] as $t) {
-            $status = isset($t['status']) ? strtolower($t['status']) : '';
-            $dataPagamento = isset($t['dataPagamento']) ? $t['dataPagamento'] : '';
-            
-            if ($status === 'aberto' || $status === 'abertos' || empty($dataPagamento)) {
-                $diasAtraso = isset($t['diasAtraso']) ? $t['diasAtraso'] : 0;
+            $status = isset($t['status']) ? trim(strtolower($t['status'])) : '';
+            $dataPagamento = isset($t['dataPagamento']) ? trim($t['dataPagamento']) : '';
+            $dataCancelamento = isset($t['dataCancelamento']) ? trim($t['dataCancelamento']) : '';
+
+            // Regra estrita: apenas o que estiver realmente ABERTO no SGP
+            $estaAberto = ($status === 'aberto' || $status === 'abertos' || $status === 'a vencer' || $status === 'vencido');
+            $naoPago = empty($dataPagamento) || $dataPagamento === '0000-00-00' || $dataPagamento === '0000-00-00 00:00:00';
+            $naoCancelado = empty($dataCancelamento) || $dataCancelamento === '0000-00-00' || $dataCancelamento === '0000-00-00 00:00:00';
+            $naoLiquidado = !in_array($status, ['liquidado', 'pago', 'cancelado', 'baixado', 'isento']);
+
+            if ($estaAberto && $naoPago && $naoCancelado && $naoLiquidado) {
+                $diasAtraso = isset($t['diasAtraso']) ? intval($t['diasAtraso']) : 0;
+                
+                // Se a data de vencimento já passou da data de hoje, marca como atraso
+                $dataVenc = isset($t['dataVencimento']) ? $t['dataVencimento'] : '';
+                $hoje = date('Y-m-d');
+                $isAtrasado = ($diasAtraso > 0) || ($dataVenc && $dataVenc < $hoje);
+
                 $todasFaturas[] = [
-                    'periodo' => $diasAtraso > 0 ? 'Em Atraso' : 'Atual',
-                    'vencimento' => isset($t['dataVencimento']) ? $t['dataVencimento'] : '',
-                    'valor' => isset($t['valorCorrigido']) ? $t['valorCorrigido'] : (isset($t['valor']) ? $t['valor'] : 0),
-                    'linha_digitavel' => isset($t['codigoBarras']) ? $t['codigoBarras'] : (isset($t['linhaDigitavel']) ? $t['linhaDigitavel'] : ''),
+                    'id' => isset($t['id']) ? $t['id'] : '',
+                    'periodo' => $isAtrasado ? 'Em Atraso' : 'Atual',
+                    'vencimento' => $dataVenc,
+                    'valor' => isset($t['valorCorrigido']) && floatval($t['valorCorrigido']) > 0 ? $t['valorCorrigido'] : (isset($t['valor']) ? $t['valor'] : 0),
+                    'linha_digitavel' => isset($t['codigoBarras']) && !empty($t['codigoBarras']) ? $t['codigoBarras'] : (isset($t['linhaDigitavel']) ? $t['linhaDigitavel'] : ''),
                     'pix_copia_cola' => isset($t['codigoPix']) ? $t['codigoPix'] : '',
-                    'link_pdf' => isset($t['link']) ? $t['link'] : (isset($t['link_cobranca']) ? $t['link_cobranca'] : '#')
+                    'link_pdf' => isset($t['link']) && !empty($t['link']) ? $t['link'] : (isset($t['link_cobranca']) ? $t['link_cobranca'] : '#')
                 ];
             }
         }
@@ -75,13 +84,13 @@ foreach ($dataCliente['clientes'] as $cliente) {
 }
 
 if (empty($todasFaturas)) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Nenhuma fatura em aberto localizada.']);
+    echo json_encode(['sucesso' => false, 'mensagem' => 'Parabéns! Não existem faturas pendentes em aberto para este CPF/CNPJ.']);
     exit;
 }
 
-// Ordena da mais recente para a mais antiga
+// Ordena as faturas pela data de vencimento (a mais antiga/vencida primeiro)
 usort($todasFaturas, function($a, $b) {
-    return strtotime($b['vencimento']) - strtotime($a['vencimento']);
+    return strtotime($a['vencimento']) - strtotime($b['vencimento']);
 });
 
 echo json_encode(['sucesso' => true, 'faturas' => $todasFaturas]);
