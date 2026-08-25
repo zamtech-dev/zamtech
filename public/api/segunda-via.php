@@ -21,7 +21,6 @@ $sgp_url = 'https://zamtech.sgp.tsmx.app';
 $sgp_app = 'segunda-via-website';
 $sgp_token = '4ab8d0da-ed7d-4e91-b717-9d4a98625458';
 
-// 1. Localiza o cliente pelo CPF
 $curl = curl_init();
 curl_setopt_array($curl, array(
   CURLOPT_URL => $sgp_url . '/api/ura/clientes/',
@@ -47,6 +46,7 @@ if (!isset($dataCliente['clientes']) || empty($dataCliente['clientes'])) {
 }
 
 $todasFaturas = [];
+$hoje = date('Y-m-d'); // Data atual do servidor
 
 foreach ($dataCliente['clientes'] as $cliente) {
     if (isset($cliente['titulos']) && is_array($cliente['titulos'])) {
@@ -55,23 +55,24 @@ foreach ($dataCliente['clientes'] as $cliente) {
             $dataPagamento = isset($t['dataPagamento']) ? trim($t['dataPagamento']) : '';
             $dataCancelamento = isset($t['dataCancelamento']) ? trim($t['dataCancelamento']) : '';
 
-            // Regra estrita: apenas o que estiver realmente ABERTO no SGP
             $estaAberto = ($status === 'aberto' || $status === 'abertos' || $status === 'a vencer' || $status === 'vencido');
             $naoPago = empty($dataPagamento) || $dataPagamento === '0000-00-00' || $dataPagamento === '0000-00-00 00:00:00';
             $naoCancelado = empty($dataCancelamento) || $dataCancelamento === '0000-00-00' || $dataCancelamento === '0000-00-00 00:00:00';
             $naoLiquidado = !in_array($status, ['liquidado', 'pago', 'cancelado', 'baixado', 'isento']);
 
             if ($estaAberto && $naoPago && $naoCancelado && $naoLiquidado) {
-                $diasAtraso = isset($t['diasAtraso']) ? intval($t['diasAtraso']) : 0;
-                
-                // Se a data de vencimento já passou da data de hoje, marca como atraso
                 $dataVenc = isset($t['dataVencimento']) ? $t['dataVencimento'] : '';
-                $hoje = date('Y-m-d');
-                $isAtrasado = ($diasAtraso > 0) || ($dataVenc && $dataVenc < $hoje);
+                
+                // Comparação real por data (hoje vs vencimento)
+                if ($dataVenc && $dataVenc < $hoje) {
+                    $periodo = 'Em Atraso';
+                } else {
+                    $periodo = 'A Vencer';
+                }
 
                 $todasFaturas[] = [
                     'id' => isset($t['id']) ? $t['id'] : '',
-                    'periodo' => $isAtrasado ? 'Em Atraso' : 'Atual',
+                    'periodo' => $periodo,
                     'vencimento' => $dataVenc,
                     'valor' => isset($t['valorCorrigido']) && floatval($t['valorCorrigido']) > 0 ? $t['valorCorrigido'] : (isset($t['valor']) ? $t['valor'] : 0),
                     'linha_digitavel' => isset($t['codigoBarras']) && !empty($t['codigoBarras']) ? $t['codigoBarras'] : (isset($t['linhaDigitavel']) ? $t['linhaDigitavel'] : ''),
@@ -88,7 +89,7 @@ if (empty($todasFaturas)) {
     exit;
 }
 
-// Ordena as faturas pela data de vencimento (a mais antiga/vencida primeiro)
+// Ordena pela data de vencimento
 usort($todasFaturas, function($a, $b) {
     return strtotime($a['vencimento']) - strtotime($b['vencimento']);
 });

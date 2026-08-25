@@ -1,703 +1,90 @@
----
-import Layout from "../layouts/Layout.astro";
-import "../styles/global.css";
----
+function renderizarFaturas(faturas) {
+    const containerResultado = document.getElementById("resultadoFaturasModal");
+    if (!containerResultado) return;
 
-<Layout title="Segunda Via - Zamtech Fibra Óptica">
-    <main class="segunda-via-page">
-        <div class="blob blob-purple"></div>
-        <div class="blob blob-blue"></div>
+    if (faturas.length === 0) {
+        containerResultado.innerHTML = `<p class="erro-msg">Nenhuma fatura encontrada para este mês.</p>`;
+        return;
+    }
 
-        <div class="container-hero">
-            <div class="hero-header">
-                <h1>Consulte sua <strong>2ª Via</strong></h1>
-                <p>Digite seu CPF ou CNPJ abaixo para localizar faturas em aberto com rapidez e segurança.</p>
-            </div>
+    let html = '<div class="faturas-grid">';
+    faturas.forEach((fatura, index) => {
+        let badgeClass = "badge-atual";
+        let statusText = fatura.periodo;
+        if (fatura.periodo === "Em Atraso") {
+            badgeClass = "badge-atraso";
+            statusText = "⚠ Vencida / Em Atraso";
+        } else {
+            badgeClass = "badge-atual";
+            statusText = "✓ A Vencer";
+        }
 
-            <div class="search-box-wrapper">
-                <form id="formSegundaViaModal" class="search-pill-form">
-                    <div class="input-icon-group">
-                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input
-                            type="text"
-                            id="cpfCnpjModalInput"
-                            placeholder="Digite seu CPF ou CNPJ..."
-                            required
-                            maxlength="18"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        id="btnBuscarModal"
-                        class="btn-search-pill"
-                    >
-                        Buscar Faturas
-                    </button>
-                </form>
-            </div>
+        const vencimentoFormatado = formatarDataBR(fatura.vencimento);
 
-            <div id="loadingModal" class="loading-state" style="display:none;">
-                <div class="spinner"></div>
-                <span>Buscando faturas no sistema...</span>
-            </div>
+        const urlQrCode = fatura.pix_copia_cola
+            ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fatura.pix_copia_cola)}`
+            : "";
 
-            <!-- Container do Filtro de Mês -->
-            <div id="filtroMesContainer" style="display:none; width:100%; margin-top:24px;">
-                <div class="filtro-wrapper">
-                    <label for="selectMes" class="filtro-label">📅 Filtrar por mês de vencimento:</label>
-                    <select id="selectMes" class="filtro-select">
-                        <option value="todos">Todas as faturas em aberto</option>
-                    </select>
+        html += `
+            <div class="fatura-card">
+                <div class="card-top-bar">
+                    <span class="badge ${badgeClass}">${statusText}</span>
+                    <span class="fatura-id">Vencimento: <strong>${vencimentoFormatado}</strong></span>
                 </div>
-            </div>
 
-            <div id="resultadoFaturasModal" class="resultado-container"></div>
-        </div>
-    </main>
-</Layout>
+                <div class="card-valor-section">
+                    <span class="valor-label">Valor Total</span>
+                    <span class="fatura-valor">R$ ${fatura.valor}</span>
+                </div>
 
-<script>
-    let faturasGlobais = [];
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const form = document.getElementById("formSegundaViaModal");
-        const selectMes = document.getElementById("selectMes");
-
-        if (form) {
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault();
-                const cpfCnpjInput = document.getElementById("cpfCnpjModalInput");
-                const cpfCnpj = cpfCnpjInput ? cpfCnpjInput.value.trim() : "";
-                const containerResultado = document.getElementById("resultadoFaturasModal");
-                const loading = document.getElementById("loadingModal");
-                const btnBuscar = document.getElementById("btnBuscarModal");
-                const filtroContainer = document.getElementById("filtroMesContainer");
-
-                if (!cpfCnpj) return;
-
-                if (containerResultado) containerResultado.innerHTML = "";
-                if (filtroContainer) filtroContainer.style.display = "none";
-                if (loading) loading.style.display = "flex";
-                if (btnBuscar) btnBuscar.disabled = true;
-
-                try {
-                    const response = await fetch("/api/segunda-via.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ cpf_cnpj: cpfCnpj }),
-                    });
-
-                    const rawText = await response.text();
-                    let data;
-                    try {
-                        data = JSON.parse(rawText);
-                    } catch (jsonErr) {
-                        throw new Error(rawText.length > 0 ? `Resposta do servidor: ${rawText.substring(0, 180)}` : "O servidor não retornou dados.");
-                    }
-
-                    if (loading) loading.style.display = "none";
-                    if (btnBuscar) btnBuscar.disabled = false;
-
-                    if (data.sucesso && data.faturas && data.faturas.length > 0) {
-                        faturasGlobais = data.faturas;
-                        popularFiltroMes(faturasGlobais);
-                        if (filtroContainer) filtroContainer.style.display = "block";
-                        renderizarFaturas(faturasGlobais);
-                    } else {
-                        if (containerResultado) containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
-                    }
-                } catch (error) {
-                    if (loading) loading.style.display = "none";
-                    if (btnBuscar) btnBuscar.disabled = false;
-                    if (containerResultado) {
-                        containerResultado.innerHTML = `<p class="erro-msg">${error.message}</p>`;
-                    }
-                }
-            });
-        }
-
-        if (selectMes) {
-            selectMes.addEventListener("change", (e) => {
-                const mesSelecionado = e.target.value;
-                if (mesSelecionado === "todos") {
-                    renderizarFaturas(faturasGlobais);
-                } else {
-                    const filtradas = faturasGlobais.filter(f => f.vencimento.startsWith(mesSelecionado));
-                    renderizarFaturas(filtradas);
-                }
-            });
-        }
-    });
-
-    // Função para transformar de YYYY-MM-DD para DD/MM/YYYY
-    function formatarDataBR(dataStr) {
-        if (!dataStr) return "";
-        const partes = dataStr.split("-");
-        if (partes.length === 3) {
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-        }
-        return dataStr;
-    }
-
-    function popularFiltroMes(faturas) {
-        const selectMes = document.getElementById("selectMes");
-        if (!selectMes) return;
-
-        selectMes.innerHTML = '<option value="todos">Todas as faturas em aberto</option>';
-
-        const mesesUnicos = [...new Set(faturas.map(f => f.vencimento.substring(0, 7)))];
-
-        mesesUnicos.forEach(anoMes => {
-            const [ano, mes] = anoMes.split("-");
-            const nomeMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            const labelFormatado = `${nomeMeses[parseInt(mes, 10) - 1]} de ${ano}`;
-            
-            const option = document.createElement("option");
-            option.value = anoMes;
-            option.textContent = labelFormatado;
-            selectMes.appendChild(option);
-        });
-    }
-
-    function renderizarFaturas(faturas) {
-        const containerResultado = document.getElementById("resultadoFaturasModal");
-        if (!containerResultado) return;
-
-        if (faturas.length === 0) {
-            containerResultado.innerHTML = `<p class="erro-msg">Nenhuma fatura encontrada para este mês.</p>`;
-            return;
-        }
-
-        let html = '<div class="faturas-grid">';
-        faturas.forEach((fatura, index) => {
-            let badgeClass = "badge-atual";
-            let statusText = fatura.periodo;
-            if (fatura.periodo === "Em Atraso") {
-                badgeClass = "badge-atraso";
-                statusText = "⚠ Vencida / Em Atraso";
-            } else if (fatura.periodo === "Atual") {
-                statusText = "✓ Fatura Atual";
-            }
-
-            const vencimentoFormatado = formatarDataBR(fatura.vencimento);
-
-            const urlQrCode = fatura.pix_copia_cola
-                ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fatura.pix_copia_cola)}`
-                : "";
-
-            html += `
-                <div class="fatura-card">
-                    <div class="card-top-bar">
-                        <span class="badge ${badgeClass}">${statusText}</span>
-                        <span class="fatura-id">Vencimento: <strong>${vencimentoFormatado}</strong></span>
+                ${
+                    fatura.pix_copia_cola
+                        ? `
+                  <div class="pagamento-secao pix-secao">
+                    <div class="secao-titulo">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      Pagamento Instantâneo via PIX
                     </div>
-
-                    <div class="card-valor-section">
-                        <span class="valor-label">Valor Total</span>
-                        <span class="fatura-valor">R$ ${fatura.valor}</span>
-                    </div>
-
-                    ${
-                        fatura.pix_copia_cola
-                            ? `
-                      <div class="pagamento-secao pix-secao">
-                        <div class="secao-titulo">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                          Pagamento Instantâneo via PIX
-                        </div>
-                        <div class="pix-content-grid">
-                          <div class="qr-wrapper">
-                            <img src="${urlQrCode}" alt="QR Code PIX" class="qr-code-img">
-                          </div>
-                          <div class="pix-info-side">
-                            <p class="instrucao-pix">Escaneie o QR Code com o app do seu banco ou copie a chave abaixo:</p>
-                            <div class="codigo-box" id="pixCode_${index}">${fatura.pix_copia_cola}</div>
-                            <button type="button" class="btn-acao btn-pix" onclick="copiarTexto('pixCode_${index}', this)">
-                              📋 Copiar Chave Pix Copia e Cola
-                            </button>
-                          </div>
-                        </div>
+                    <div class="pix-content-grid">
+                      <div class="qr-wrapper">
+                        <img src="${urlQrCode}" alt="QR Code PIX" class="qr-code-img">
                       </div>
-                    `
-                            : ""
-                    }
-
-                    ${
-                        fatura.linha_digitavel
-                            ? `
-                      <div class="pagamento-secao linha-secao">
-                        <div class="secao-titulo">Código de Barras / Linha Digitável</div>
-                        <div class="codigo-box" id="linhaCode_${index}">${fatura.linha_digitavel}</div>
-                        <button type="button" class="btn-acao btn-linha" onclick="copiarTexto('linhaCode_${index}', this)">
-                          📋 Copiar Linha Digitável
+                      <div class="pix-info-side">
+                        <p class="instrucao-pix">Escaneie o QR Code com o app do seu banco ou copie a chave abaixo:</p>
+                        <div class="codigo-box" id="pixCode_${index}">${fatura.pix_copia_cola}</div>
+                        <button type="button" class="btn-acao btn-pix" onclick="copiarTexto('pixCode_${index}', this)">
+                          📋 Copiar Chave Pix Copia e Cola
                         </button>
                       </div>
-                    `
-                            : ""
-                    }
-
-                    <div class="card-actions-footer">
-                      <a href="${fatura.link_pdf}" target="_blank" class="btn-acao btn-pdf">
-                        📄 Baixar / Imprimir Boleto em PDF
-                      </a>
                     </div>
+                  </div>
+                `
+                        : ""
+                }
+
+                ${
+                    fatura.linha_digitavel
+                        ? `
+                  <div class="pagamento-secao linha-secao">
+                    <div class="secao-titulo">Código de Barras / Linha Digitável</div>
+                    <div class="codigo-box" id="linhaCode_${index}">${fatura.linha_digitavel}</div>
+                    <button type="button" class="btn-acao btn-linha" onclick="copiarTexto('linhaCode_${index}', this)">
+                      📋 Copiar Linha Digitável
+                    </button>
+                  </div>
+                `
+                        : ""
+                }
+
+                <div class="card-actions-footer">
+                  <a href="${fatura.link_pdf}" target="_blank" class="btn-acao btn-pdf">
+                    📄 Baixar / Imprimir Boleto em PDF
+                  </a>
                 </div>
-            `;
-        });
+            </div>
+        `;
+    });
 
-        html += "</div>";
-        containerResultado.innerHTML = html;
-    }
-
-    window.copiarTexto = function(elementId, btnElement) {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        const texto = el.innerText;
-        navigator.clipboard.writeText(texto).then(() => {
-            const textoOriginal = btnElement.innerText;
-            btnElement.innerText = "✅ Copiado!";
-            btnElement.style.opacity = "0.8";
-            setTimeout(() => {
-                btnElement.innerText = textoOriginal;
-                btnElement.style.opacity = "1";
-            }, 2000);
-        });
-    };
-</script>
-
-<style is:global>
-    .segunda-via-page {
-        position: relative;
-        min-height: 100vh;
-        padding: 140px 20px 80px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: #f8fafc;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-
-    .blob {
-        position: absolute;
-        filter: blur(100px);
-        z-index: 0;
-        opacity: 0.35;
-        pointer-events: none;
-    }
-    .blob-purple {
-        top: -10%;
-        right: 10%;
-        width: 450px;
-        height: 450px;
-        background: rgba(147, 51, 234, 0.3);
-        border-radius: 50%;
-    }
-    .blob-blue {
-        top: 15%;
-        left: 5%;
-        width: 550px;
-        height: 550px;
-        background: rgba(3, 37, 208, 0.25);
-        border-radius: 50%;
-    }
-
-    .container-hero {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 720px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .hero-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .hero-header h1 {
-        font-family: var(--font-display, sans-serif);
-        font-size: 2.4rem;
-        color: #0f172a;
-        margin-bottom: 10px;
-        font-weight: 500;
-        letter-spacing: -0.03em;
-    }
-
-    .hero-header h1 strong {
-        font-weight: 700;
-        color: var(--color-primary, #0325d0);
-    }
-
-    .hero-header p {
-        color: #64748b;
-        font-size: 1.05rem;
-        max-width: 500px;
-        margin: 0 auto;
-        line-height: 1.5;
-    }
-
-    .search-box-wrapper {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        padding: 6px;
-        border-radius: 9999px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        box-sizing: border-box;
-    }
-
-    .search-pill-form {
-        display: flex;
-        align-items: center;
-        width: 100%;
-    }
-
-    .input-icon-group {
-        display: flex;
-        align-items: center;
-        flex: 1;
-        padding-left: 20px;
-        gap: 12px;
-    }
-
-    .search-icon {
-        color: #94a3b8;
-        flex-shrink: 0;
-    }
-
-    .search-pill-form input[type="text"] {
-        width: 100%;
-        border: none;
-        background: transparent;
-        font-size: 1.05rem;
-        color: #0f172a;
-        outline: none;
-    }
-
-    .search-pill-form input[type="text"]::placeholder {
-        color: #94a3b8;
-    }
-
-    .btn-search-pill {
-        background-color: #0f172a;
-        color: #ffffff;
-        border: none;
-        padding: 14px 32px;
-        border-radius: 9999px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        flex-shrink: 0;
-    }
-
-    .btn-search-pill:hover {
-        background-color: var(--color-primary, #0325d0);
-    }
-
-    /* Estilos do Filtro de Mês */
-    .filtro-wrapper {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        padding: 12px 18px;
-        border-radius: 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-    }
-
-    .filtro-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: #475569;
-    }
-
-    .filtro-select {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        background-color: #f8fafc;
-        font-size: 14px;
-        color: #0f172a;
-        outline: none;
-        cursor: pointer;
-    }
-
-    .loading-state {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 35px;
-        color: var(--color-primary, #0325d0);
-        font-weight: 600;
-    }
-
-    .spinner {
-        width: 22px;
-        height: 22px;
-        border: 3px solid rgba(3, 37, 208, 0.15);
-        border-top-color: var(--color-primary, #0325d0);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    .resultado-container {
-        width: 100%;
-        margin-top: 20px;
-    }
-
-    .faturas-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        width: 100%;
-    }
-
-    .fatura-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 28px;
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
-        box-sizing: border-box;
-        text-align: left;
-    }
-
-    .card-top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        border-radius: 9999px;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-    }
-
-    .badge-atraso { background-color: #fee2e2; color: #dc2626; }
-    .badge-atual { background-color: #dbeafe; color: #1d4ed8; }
-
-    .fatura-id {
-        font-size: 14px;
-        color: #475569;
-    }
-
-    .card-valor-section {
-        margin-bottom: 24px;
-    }
-
-    .valor-label {
-        display: block;
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: #94a3b8;
-        letter-spacing: 0.05em;
-        margin-bottom: 4px;
-    }
-
-    .fatura-valor {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.02em;
-    }
-
-    .pagamento-secao {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 16px;
-    }
-
-    .pix-secao {
-        background: #f0fdf4;
-        border-color: #bbf7d0;
-    }
-
-    .secao-titulo {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 700;
-        font-size: 13px;
-        color: #166534;
-        margin-bottom: 12px;
-    }
-
-    .linha-secao .secao-titulo {
-        color: #334155;
-    }
-
-    .pix-content-grid {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-    }
-
-    .qr-wrapper {
-        background: #ffffff;
-        padding: 8px;
-        border-radius: 10px;
-        border: 1px solid #dcfce7;
-        flex-shrink: 0;
-    }
-
-    .qr-code-img {
-        width: 130px;
-        height: 130px;
-        display: block;
-        border-radius: 6px;
-    }
-
-    .pix-info-side {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .instrucao-pix {
-        font-size: 13px;
-        color: #15803d;
-        margin: 0;
-        line-height: 1.4;
-    }
-
-    .codigo-box {
-        background: #ffffff;
-        padding: 10px 14px;
-        font-family: monospace;
-        font-size: 12px;
-        word-break: break-all;
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        color: #334155;
-        max-height: 70px;
-        overflow-y: auto;
-    }
-
-    .pix-secao .codigo-box {
-        border-color: #bbf7d0;
-    }
-
-    .btn-acao {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        width: 100%;
-        text-align: center;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 13px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-    .btn-pix {
-        background: #16a34a;
-        color: #fff;
-    }
-    .btn-pix:hover { background: #15803d; }
-
-    .btn-linha {
-        background: #475569;
-        color: #fff;
-        margin-top: 8px;
-    }
-    .btn-linha:hover { background: #334155; }
-
-    .card-actions-footer {
-        margin-top: 20px;
-    }
-
-    .btn-pdf {
-        background: #0f172a;
-        color: #ffffff;
-        font-size: 14px;
-        padding: 14px;
-    }
-    .btn-pdf:hover {
-        background: var(--color-primary, #0325d0);
-    }
-
-    .erro-msg {
-        color: #dc2626;
-        text-align: center;
-        font-weight: 600;
-        margin-top: 20px;
-        background: #fef2f2;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid #fecaca;
-    }
-
-    @media (max-width: 640px) {
-        .search-pill-form {
-            flex-direction: column;
-            background: transparent;
-            backdrop-filter: none;
-            box-shadow: none;
-            border: none;
-            padding: 0;
-            gap: 10px;
-        }
-
-        .search-box-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px;
-            border-radius: 20px;
-        }
-
-        .input-icon-group {
-            padding-left: 0;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .btn-search-pill {
-            width: 100%;
-            padding: 14px;
-        }
-
-        .pix-content-grid {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .card-top-bar {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-    }
-</style>
+    html += "</div>";
+    containerResultado.innerHTML = html;
+}
