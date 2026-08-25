@@ -80,5 +80,13 @@ if (empty($todasFaturas)) {
     exit;
 }
 
+// Ordena as faturas por data de vencimento (da mais recente para a mais antiga)
+usort($todasFaturas, function($a, $b) {
+    return strtotime($b['vencimento']) - strtotime($a['vencimento']);
+});
+
+// Limita para exibir apenas as 2 faturas mais relevantes (atual e mês anterior)
+$todasFaturas = array_slice($todasFaturas, 0, 2);
+
 echo json_encode(['sucesso' => true, 'faturas' => $todasFaturas]);
 ?>
