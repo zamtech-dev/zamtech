@@ -103,9 +103,16 @@ import "../styles/global.css";
 
                     if (data.sucesso && data.faturas && data.faturas.length > 0) {
                         faturasGlobais = data.faturas;
-                        popularFiltroMes(faturasGlobais);
+                        const mesPadrao = popularFiltroMes(faturasGlobais);
                         if (filtroContainer) filtroContainer.style.display = "block";
-                        renderizarFaturas(faturasGlobais);
+
+                        // Filtra e exibe inicialmente o mês atual (ou todos se o mês atual não tiver fatura)
+                        if (mesPadrao !== "todos") {
+                            const filtradas = faturasGlobais.filter(f => f.vencimento.startsWith(mesPadrao));
+                            renderizarFaturas(filtradas);
+                        } else {
+                            renderizarFaturas(faturasGlobais);
+                        }
                     } else {
                         if (containerResultado) containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
                     }
@@ -159,6 +166,20 @@ import "../styles/global.css";
             option.textContent = labelFormatado;
             selectMes.appendChild(option);
         });
+
+        // Descobre o mês e ano atual (YYYY-MM)
+        const agora = new Date();
+        const anoAtual = agora.getFullYear();
+        const mesAtual = String(agora.getMonth() + 1).padStart(2, '0');
+        const mesAtualStr = `${anoAtual}-${mesAtual}`;
+
+        // Se houver fatura para o mês atual, seleciona ele automaticamente
+        if (mesesUnicos.includes(mesAtualStr)) {
+            selectMes.value = mesAtualStr;
+            return mesAtualStr;
+        }
+
+        return "todos";
     }
 
     function renderizarFaturas(faturas) {
