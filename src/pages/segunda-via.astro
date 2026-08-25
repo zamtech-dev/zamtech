@@ -5,7 +5,6 @@ import "../styles/global.css";
 
 <Layout title="Segunda Via - Zamtech Fibra Óptica">
     <main class="segunda-via-page">
-        <!-- Elementos decorativos de fundo -->
         <div class="blob blob-purple"></div>
         <div class="blob blob-blue"></div>
 
@@ -45,14 +44,27 @@ import "../styles/global.css";
                 <span>Buscando faturas no sistema...</span>
             </div>
 
+            <!-- Container do Filtro de Mês -->
+            <div id="filtroMesContainer" style="display:none; width:100%; margin-top:24px;">
+                <div class="filtro-wrapper">
+                    <label for="selectMes" class="filtro-label">📅 Filtrar por mês de vencimento:</label>
+                    <select id="selectMes" class="filtro-select">
+                        <option value="todos">Todas as faturas em aberto</option>
+                    </select>
+                </div>
+            </div>
+
             <div id="resultadoFaturasModal" class="resultado-container"></div>
         </div>
     </main>
 </Layout>
 
 <script>
+    let faturasGlobais = [];
+
     document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("formSegundaViaModal");
+        const selectMes = document.getElementById("selectMes");
 
         if (form) {
             form.addEventListener("submit", async function (e) {
@@ -62,10 +74,12 @@ import "../styles/global.css";
                 const containerResultado = document.getElementById("resultadoFaturasModal");
                 const loading = document.getElementById("loadingModal");
                 const btnBuscar = document.getElementById("btnBuscarModal");
+                const filtroContainer = document.getElementById("filtroMesContainer");
 
                 if (!cpfCnpj) return;
 
                 if (containerResultado) containerResultado.innerHTML = "";
+                if (filtroContainer) filtroContainer.style.display = "none";
                 if (loading) loading.style.display = "flex";
                 if (btnBuscar) btnBuscar.disabled = true;
 
@@ -81,7 +95,6 @@ import "../styles/global.css";
                     try {
                         data = JSON.parse(rawText);
                     } catch (jsonErr) {
-                        console.error("Resposta não-JSON enviada pela API:", rawText);
                         throw new Error(rawText.length > 0 ? `Resposta do servidor: ${rawText.substring(0, 180)}` : "O servidor não retornou dados.");
                     }
 
@@ -89,83 +102,10 @@ import "../styles/global.css";
                     if (btnBuscar) btnBuscar.disabled = false;
 
                     if (data.sucesso && data.faturas && data.faturas.length > 0) {
-                        let html = '<div class="faturas-grid">';
-                        data.faturas.forEach((fatura, index) => {
-                            let badgeClass = "badge-atual";
-                            let statusText = fatura.periodo;
-                            if (fatura.periodo === "Em Atraso") {
-                                badgeClass = "badge-atraso";
-                                statusText = "⚠ Vencida / Em Atraso";
-                            } else if (fatura.periodo === "Atual") {
-                                statusText = "✓ Fatura Atual";
-                            }
-
-                            const urlQrCode = fatura.pix_copia_cola
-                                ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fatura.pix_copia_cola)}`
-                                : "";
-
-                            html += `
-                                <div class="fatura-card">
-                                    <div class="card-top-bar">
-                                        <span class="badge ${badgeClass}">${statusText}</span>
-                                        <span class="fatura-id">Vencimento: <strong>${fatura.vencimento}</strong></span>
-                                    </div>
-
-                                    <div class="card-valor-section">
-                                        <span class="valor-label">Valor Total</span>
-                                        <span class="fatura-valor">R$ ${fatura.valor}</span>
-                                    </div>
-
-                                    ${
-                                        fatura.pix_copia_cola
-                                            ? `
-                                      <div class="pagamento-secao pix-secao">
-                                        <div class="secao-titulo">
-                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                          Pagamento Instantâneo via PIX
-                                        </div>
-                                        <div class="pix-content-grid">
-                                          <div class="qr-wrapper">
-                                            <img src="${urlQrCode}" alt="QR Code PIX" class="qr-code-img">
-                                          </div>
-                                          <div class="pix-info-side">
-                                            <p class="instrucao-pix">Escaneie o QR Code com o app do seu banco ou copie a chave abaixo:</p>
-                                            <div class="codigo-box" id="pixCode_${index}">${fatura.pix_copia_cola}</div>
-                                            <button type="button" class="btn-acao btn-pix" onclick="copiarTexto('pixCode_${index}', this)">
-                                              📋 Copiar Chave Pix Copia e Cola
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    `
-                                            : ""
-                                    }
-
-                                    ${
-                                        fatura.linha_digitavel
-                                            ? `
-                                      <div class="pagamento-secao linha-secao">
-                                        <div class="secao-titulo">Código de Barras / Linha Digitável</div>
-                                        <div class="codigo-box" id="linhaCode_${index}">${fatura.linha_digitavel}</div>
-                                        <button type="button" class="btn-acao btn-linha" onclick="copiarTexto('linhaCode_${index}', this)">
-                                          📋 Copiar Linha Digitável
-                                        </button>
-                                      </div>
-                                    `
-                                            : ""
-                                    }
-
-                                    <div class="card-actions-footer">
-                                      <a href="${fatura.link_pdf}" target="_blank" class="btn-acao btn-pdf">
-                                        📄 Baixar / Imprimir Boleto em PDF
-                                      </a>
-                                    </div>
-                                </div>
-                            `;
-                        });
-
-                        html += "</div>";
-                        if (containerResultado) containerResultado.innerHTML = html;
+                        faturasGlobais = data.faturas;
+                        popularFiltroMes(faturasGlobais);
+                        if (filtroContainer) filtroContainer.style.display = "block";
+                        renderizarFaturas(faturasGlobais);
                     } else {
                         if (containerResultado) containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
                     }
@@ -178,7 +118,139 @@ import "../styles/global.css";
                 }
             });
         }
+
+        if (selectMes) {
+            selectMes.addEventListener("change", (e) => {
+                const mesSelecionado = e.target.value;
+                if (mesSelecionado === "todos") {
+                    renderizarFaturas(faturasGlobais);
+                } else {
+                    const filtradas = faturasGlobais.filter(f => f.vencimento.startsWith(mesSelecionado));
+                    renderizarFaturas(filtradas);
+                }
+            });
+        }
     });
+
+    // Função para transformar de YYYY-MM-DD para DD/MM/YYYY
+    function formatarDataBR(dataStr) {
+        if (!dataStr) return "";
+        const partes = dataStr.split("-");
+        if (partes.length === 3) {
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+        return dataStr;
+    }
+
+    function popularFiltroMes(faturas) {
+        const selectMes = document.getElementById("selectMes");
+        if (!selectMes) return;
+
+        selectMes.innerHTML = '<option value="todos">Todas as faturas em aberto</option>';
+
+        const mesesUnicos = [...new Set(faturas.map(f => f.vencimento.substring(0, 7)))];
+
+        mesesUnicos.forEach(anoMes => {
+            const [ano, mes] = anoMes.split("-");
+            const nomeMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            const labelFormatado = `${nomeMeses[parseInt(mes, 10) - 1]} de ${ano}`;
+            
+            const option = document.createElement("option");
+            option.value = anoMes;
+            option.textContent = labelFormatado;
+            selectMes.appendChild(option);
+        });
+    }
+
+    function renderizarFaturas(faturas) {
+        const containerResultado = document.getElementById("resultadoFaturasModal");
+        if (!containerResultado) return;
+
+        if (faturas.length === 0) {
+            containerResultado.innerHTML = `<p class="erro-msg">Nenhuma fatura encontrada para este mês.</p>`;
+            return;
+        }
+
+        let html = '<div class="faturas-grid">';
+        faturas.forEach((fatura, index) => {
+            let badgeClass = "badge-atual";
+            let statusText = fatura.periodo;
+            if (fatura.periodo === "Em Atraso") {
+                badgeClass = "badge-atraso";
+                statusText = "⚠ Vencida / Em Atraso";
+            } else if (fatura.periodo === "Atual") {
+                statusText = "✓ Fatura Atual";
+            }
+
+            const vencimentoFormatado = formatarDataBR(fatura.vencimento);
+
+            const urlQrCode = fatura.pix_copia_cola
+                ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fatura.pix_copia_cola)}`
+                : "";
+
+            html += `
+                <div class="fatura-card">
+                    <div class="card-top-bar">
+                        <span class="badge ${badgeClass}">${statusText}</span>
+                        <span class="fatura-id">Vencimento: <strong>${vencimentoFormatado}</strong></span>
+                    </div>
+
+                    <div class="card-valor-section">
+                        <span class="valor-label">Valor Total</span>
+                        <span class="fatura-valor">R$ ${fatura.valor}</span>
+                    </div>
+
+                    ${
+                        fatura.pix_copia_cola
+                            ? `
+                      <div class="pagamento-secao pix-secao">
+                        <div class="secao-titulo">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                          Pagamento Instantâneo via PIX
+                        </div>
+                        <div class="pix-content-grid">
+                          <div class="qr-wrapper">
+                            <img src="${urlQrCode}" alt="QR Code PIX" class="qr-code-img">
+                          </div>
+                          <div class="pix-info-side">
+                            <p class="instrucao-pix">Escaneie o QR Code com o app do seu banco ou copie a chave abaixo:</p>
+                            <div class="codigo-box" id="pixCode_${index}">${fatura.pix_copia_cola}</div>
+                            <button type="button" class="btn-acao btn-pix" onclick="copiarTexto('pixCode_${index}', this)">
+                              📋 Copiar Chave Pix Copia e Cola
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    `
+                            : ""
+                    }
+
+                    ${
+                        fatura.linha_digitavel
+                            ? `
+                      <div class="pagamento-secao linha-secao">
+                        <div class="secao-titulo">Código de Barras / Linha Digitável</div>
+                        <div class="codigo-box" id="linhaCode_${index}">${fatura.linha_digitavel}</div>
+                        <button type="button" class="btn-acao btn-linha" onclick="copiarTexto('linhaCode_${index}', this)">
+                          📋 Copiar Linha Digitável
+                        </button>
+                      </div>
+                    `
+                            : ""
+                    }
+
+                    <div class="card-actions-footer">
+                      <a href="${fatura.link_pdf}" target="_blank" class="btn-acao btn-pdf">
+                        📄 Baixar / Imprimir Boleto em PDF
+                      </a>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += "</div>";
+        containerResultado.innerHTML = html;
+    }
 
     window.copiarTexto = function(elementId, btnElement) {
         const el = document.getElementById(elementId);
@@ -330,6 +402,36 @@ import "../styles/global.css";
         background-color: var(--color-primary, #0325d0);
     }
 
+    /* Estilos do Filtro de Mês */
+    .filtro-wrapper {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 12px 18px;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    }
+
+    .filtro-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .filtro-select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background-color: #f8fafc;
+        font-size: 14px;
+        color: #0f172a;
+        outline: none;
+        cursor: pointer;
+    }
+
     .loading-state {
         display: flex;
         align-items: center;
@@ -355,10 +457,9 @@ import "../styles/global.css";
 
     .resultado-container {
         width: 100%;
-        margin-top: 30px;
+        margin-top: 20px;
     }
 
-    /* Grid e Cards de Faturas Reformulados */
     .faturas-grid {
         display: flex;
         flex-direction: column;
@@ -374,11 +475,6 @@ import "../styles/global.css";
         box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
         box-sizing: border-box;
         text-align: left;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .fatura-card:hover {
-        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08);
     }
 
     .card-top-bar {
