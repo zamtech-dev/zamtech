@@ -39,7 +39,10 @@
 
     <div class="sidebar-content">
         <div class="bloquinhos-grid">
-            <button type="button" class="bloquinho-card" id="open-modal-2via">
+            <a
+                href="/segunda-via"
+                class="bloquinho-card"
+            >
                 <div class="bloquinho-icon">
                     <img
                         src="/assets/icons/others-icons/2-via-de-contas.svg"
@@ -47,7 +50,7 @@
                     />
                 </div>
                 <span>2ª via de conta</span>
-            </button>
+            </a>
 
             <a
                 href="https://zamtech.sgp.tsmx.app/centralweb/login"
@@ -72,36 +75,6 @@
                 </div>
                 <span>Ajuda</span>
             </a>
-        </div>
-
-        <div class="modal-overlay" id="modal-2via">
-            <div class="modal-content">
-                <button type="button" class="modal-close" id="close-modal-2via"
-                    >&times;</button
-                >
-                <h2>Consulte sua 2ª Via</h2>
-                <p>Digite seu CPF ou CNPJ para consultar faturas em aberto:</p>
-
-                <form id="formSegundaViaModal">
-                    <input
-                        type="text"
-                        id="cpfCnpjModalInput"
-                        placeholder="Digite apenas números ou com pontos"
-                        required
-                        maxlength="18"
-                    />
-                    <button
-                        type="submit"
-                        id="btnBuscarModal"
-                        class="btn-buscar-modal">Buscar Faturas</button
-                    >
-                </form>
-
-                <div id="loadingModal" style="display:none;">
-                    Buscando faturas no sistema...
-                </div>
-                <div id="resultadoFaturasModal"></div>
-            </div>
         </div>
 
         <div class="menu-section-card">
@@ -450,7 +423,6 @@
     }
 
     .header-container {
-        
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -586,6 +558,7 @@
         gap: var(--space-12);
         box-shadow: var(--elevation-1);
         transition: var(--transition-default);
+        text-decoration: none;
     }
 
     .bloquinho-card:hover {
@@ -809,196 +782,10 @@
         visibility: visible;
     }
 
-    /* Estilos do Botão de 2ª Via no Header */
-    .btn-segunda-via {
-        background-color: var(--color-primary, #0325d0);
-        color: var(--color-white, #fff);
-        border: none;
-        padding: 8px 16px;
-        border-radius: var(--radius-sm);
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-    .btn-segunda-via:hover {
-        background-color: var(--color-secondary, #0756ff);
-    }
-
-    /* Estilos do Modal / Pop-up */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(8px);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        padding: 15px;
-        box-sizing: border-box;
-    }
-    .modal-overlay.active {
-        display: flex;
-    }
-    .modal-content {
-        background: #fff;
-        width: 100%;
-        max-width: 520px;
-        padding: 30px;
-        border-radius: var(--radius-sm);
-        position: relative;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-    .modal-close {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        background: none;
-        border: none;
-        font-size: 28px;
-        cursor: pointer;
-        color: #525252;
-    }
-    .modal-content h2 {
-        color: var(--color-dark-blue, #000f76);
-        margin-top: 0;
-        font-family: var(--font-display);
-    }
-    .modal-content p {
-        color: var(--color-gray-medium, #525252);
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-    .modal-content input[type="text"] {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: var(--radius-sm);
-        font-size: 15px;
-        box-sizing: border-box;
-        margin-bottom: 12px;
-    }
-    .btn-buscar-modal {
-        width: 100%;
-        padding: 12px;
-        background: var(--color-primary, #0325d0);
-        color: #fff;
-        border: none;
-        border-radius: var(--radius-sm);
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    .btn-buscar-modal:hover {
-        background: var(--color-secondary, #0756ff);
-    }
-
-    /* Cards de Resultado */
-    .lista-faturas {
-        list-style: none;
-        padding: 0;
-        margin-top: 20px;
-    }
-    .fatura-card {
-        background: #f8f9fa;
-        border: 1px solid #e0e0e0;
-        border-radius: var(--radius-sm);
-        padding: 16px;
-        margin-bottom: 15px;
-    }
-    .badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: var(--radius-sm);
-        font-size: 12px;
-        font-weight: bold;
-        color: #fff;
-        margin-bottom: 8px;
-    }
-    .badge-atraso {
-        background-color: #d9534f;
-    }
-    .badge-atual {
-        background-color: #0275d8;
-    }
-    .badge-proximo {
-        background-color: #5cb85c;
-    }
-    .fatura-card p {
-        margin: 6px 0;
-        font-size: 14px;
-        color: #333;
-    }
-    .codigo-box {
-        background: #ffffff;
-        padding: 8px;
-        font-family: monospace;
-        font-size: 11px;
-        word-break: break-all;
-        border-radius: var(--radius-sm);
-        border: 1px solid #d0d0d0;
-        display: block;
-        margin: 6px 0;
-        text-align: left;
-    }
-    .btn-acao {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 10px;
-        border: none;
-        border-radius: var(--radius-sm);
-        font-weight: bold;
-        font-size: 13px;
-        cursor: pointer;
-        text-decoration: none;
-        box-sizing: border-box;
-    }
-    .btn-pix {
-        background: #00a896;
-        color: #fff;
-        margin-top: 6px;
-    }
-    .btn-pdf {
-        background: #e7c413;
-        color: #02061f;
-        margin-top: 10px;
-    }
-    .btn-linha {
-        background: #6c757d;
-        color: #fff;
-        margin-top: 6px;
-    }
-    .erro-msg {
-        color: #d9534f;
-        text-align: center;
-        font-weight: bold;
-        margin-top: 15px;
-    }
-    #loadingModal {
-        text-align: center;
-        font-weight: bold;
-        color: var(--color-primary);
-        margin-top: 15px;
-    }
-    .qr-code-img {
-        width: 150px;
-        height: 150px;
-        margin: 8px auto;
-        display: block;
-        border: 2px solid #fff;
-        border-radius: var(--radius-sm);
-    }
-
     /* RESPONSIVIDADE */
     @media (max-width: 992px) {
         .main-header.scrolled {
-            width: 85%; /* No mobile/tablet 50% esconderia o conteúdo, então ajustamos para float em 85% */
+            width: 85%;
         }
     }
 
@@ -1019,142 +806,3 @@
         }
     }
 </style>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const modal = document.getElementById("modal-2via");
-        const openBtn = document.getElementById("open-modal-2via");
-        const closeBtn = document.getElementById("close-modal-2via");
-        const form = document.getElementById("formSegundaViaModal");
-
-        if (openBtn && modal) {
-            openBtn.addEventListener("click", () => {
-                modal.classList.add("active");
-            });
-        }
-
-        if (closeBtn && modal) {
-            closeBtn.addEventListener("click", () => {
-                modal.classList.remove("active");
-            });
-        }
-
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) {
-                modal.classList.remove("active");
-            }
-        });
-
-        if (form) {
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault();
-                const cpfCnpjInput = document.getElementById("cpfCnpjModalInput");
-                const cpfCnpj = cpfCnpjInput ? cpfCnpjInput.value.trim() : "";
-                const containerResultado = document.getElementById("resultadoFaturasModal");
-                const loading = document.getElementById("loadingModal");
-                const btnBuscar = document.getElementById("btnBuscarModal");
-
-                if (!cpfCnpj) return;
-
-                if (containerResultado) containerResultado.innerHTML = "";
-                if (loading) loading.style.display = "block";
-                if (btnBuscar) btnBuscar.disabled = true;
-
-                try {
-                    const response = await fetch("/api/segunda-via.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ cpf_cnpj: cpfCnpj }),
-                    });
-
-                    const rawText = await response.text();
-                    let data;
-                    try {
-                        data = JSON.parse(rawText);
-                    } catch (jsonErr) {
-                        console.error("Resposta não-JSON enviada pelo PHP:", rawText);
-                        throw new Error(rawText.length > 0 ? `Resposta do servidor: ${rawText.substring(0, 180)}` : "O servidor não retornou dados.");
-                    }
-
-                    if (loading) loading.style.display = "none";
-                    if (btnBuscar) btnBuscar.disabled = false;
-
-                    if (data.sucesso && data.faturas && data.faturas.length > 0) {
-                        let html = '<ul class="lista-faturas">';
-                        data.faturas.forEach((fatura, index) => {
-                            let badgeClass = "badge-atual";
-                            if (fatura.periodo === "Em Atraso") badgeClass = "badge-atraso";
-                            if (fatura.periodo === "Próximo Mês") badgeClass = "badge-proximo";
-
-                            const urlQrCode = fatura.pix_copia_cola
-                                ? `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(fatura.pix_copia_cola)}`
-                                : "";
-
-                            html += `
-                                <li class="fatura-card">
-                                <span class="badge ${badgeClass}">${fatura.periodo}</span>
-                                <p><strong>Vencimento:</strong> ${fatura.vencimento}</p>
-                                <p><strong>Valor:</strong> R$ ${fatura.valor}</p>
-
-                                ${
-                                    fatura.pix_copia_cola
-                                        ? `
-                                  <div style="background: #e6f7f5; padding: 10px; border-radius: var(--radius-sm); margin: 8px 0; text-align: center;">
-                                    <p style="margin:0 0 6px 0; color:#008775; font-weight:bold; font-size:13px;">❖ Pagamento via PIX</p>
-                                    <img src="${urlQrCode}" alt="QR Code PIX" class="qr-code-img">
-                                    <span class="codigo-box" id="pixCode_${index}">${fatura.pix_copia_cola}</span>
-                                    <button type="button" class="btn-acao btn-pix" onclick="copiarTexto('pixCode_${index}', this)">Copiar Chave Pix</button>
-                                  </div>
-                                `
-                                        : ""
-                                }
-
-                                ${
-                                    fatura.linha_digitavel
-                                        ? `
-                                  <div style="margin-top: 8px;">
-                                    <p style="margin:0 0 4px 0; font-size:13px;"><strong>Linha Digitável:</strong></p>
-                                    <span class="codigo-box" id="linhaCode_${index}">${fatura.linha_digitavel}</span>
-                                    <button type="button" class="btn-acao btn-linha" onclick="copiarTexto('linhaCode_${index}', this)">📋 Copiar Linha Digitável</button>
-                                  </div>
-                                `
-                                        : ""
-                                }
-
-                                <div style="margin-top: 10px;">
-                                  <a href="${fatura.link_pdf}" target="_blank" class="btn-acao btn-pdf">📄 Abrir / Imprimir Fatura (PDF)</a>
-                                </div>
-                              </li>
-                            `;
-                        });
-
-                        html += "</ul>";
-                        if (containerResultado) containerResultado.innerHTML = html;
-                    } else {
-                        if (containerResultado) containerResultado.innerHTML = `<p class="erro-msg">${data.mensagem || "Nenhuma fatura localizada."}</p>`;
-                    }
-                } catch (error) {
-                    if (loading) loading.style.display = "none";
-                    if (btnBuscar) btnBuscar.disabled = false;
-                    if (containerResultado) {
-                        containerResultado.innerHTML = `<p class="erro-msg">${error.message}</p>`;
-                    }
-                }
-            });
-        }
-    });
-
-    window.copiarTexto = function(elementId, btnElement) {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        const texto = el.innerText;
-        navigator.clipboard.writeText(texto).then(() => {
-            const textoOriginal = btnElement.innerText;
-            btnElement.innerText = "✅ Copiado!";
-            btnElement.style.opacity = "0.8";
-            setTimeout(() => {
-                btnElement.innerText = textoOriginal;
-                btnElement.style.opacity = "1";
-            }, 2000);
-        });
-    };
-</script>
