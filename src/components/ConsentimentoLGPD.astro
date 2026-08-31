@@ -14,7 +14,8 @@ import "../styles/global.css"
 
 <style>
     .lgpd-banner {
-        position: fixed;
+        position: relative;
+        overflow: hidden;
         bottom: 20px;
         left: 20px;
         right: 20px;
@@ -23,14 +24,25 @@ import "../styles/global.css"
         background-color: var(--color-white);
         color: var(--color-primary);
         padding: 16px 24px;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         z-index: 99999;
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: inherit;
-        border: 1px solid #374151;
-        animation: slideUp 0.4s ease-out;
+        border: 1px solid var(--color-gray-light);
+        box-shadow: var(--elevation-3);
+        animation: slideUp 0.4s var(--ease-brand);
+    }
+
+    .lgpd-banner::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-brand);
     }
 
     @keyframes slideUp {
@@ -63,30 +75,30 @@ import "../styles/global.css"
     }
 
     .lgpd-content a {
-        color: #001aff;
+        color: var(--color-primary);
         text-decoration: underline;
         font-weight: 500;
     }
 
     .lgpd-content a:hover {
-        color: #020746;
+        color: var(--color-dark-blue);
     }
 
     .lgpd-btn {
-        background-color: var(--color-secondary);
+        background: var(--gradient-brand);
         color: var(--color-white);
         border: none;
         padding: 10px 20px;
         font-weight: 600;
         font-size: 0.9rem;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         cursor: pointer;
-        transition: background-color 0.2s ease, transform 0.1s ease;
+        transition: filter 0.2s ease, transform 0.1s ease;
         white-space: nowrap;
     }
 
     .lgpd-btn:hover {
-        background-color: var(--color-primary);
+        filter: brightness(1.1);
     }
 
     .lgpd-btn:active {

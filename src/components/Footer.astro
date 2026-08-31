@@ -78,6 +78,8 @@
 
         <!-- BOTTOM LINKS -->
         <div class="footer-bottom-links">
+            <a href="/indique">Indique e Ganhe</a>
+            <span class="divider">|</span>
             <a href="/politica-de-privacidade">Políticas de Privacidade</a>
             <span class="divider">|</span>
             <a href="/termos-de-uso">Termos de Uso</a>
@@ -96,10 +98,23 @@
        RODAPÉ (FOOTER) - MAPEADO 100% NOS NOVOS DESIGN TOKENS
        ========================================================================== */
     .main-footer {
+        position: relative;
         background-color: var(--color-primary);
         color: var(--color-white);
         padding: var(--space-64) 0 var(--space-48) 0;
         font-family: var(--font-text);
+        overflow: hidden;
+    }
+
+    /* Fio de sinal assinatura Zamtech no topo do rodapé, ecoando o header */
+    .main-footer::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-signal);
     }
 
     .footer-container {
@@ -168,7 +183,8 @@
     }
 
     .social-link-item:hover {
-        opacity: 0.8;
+        opacity: 0.85;
+        transform: translateX(2px);
     }
 
     .social-icon {

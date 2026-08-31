@@ -4,7 +4,7 @@
    1. DESIGN TOKENS (SISTEMA DE CORES, ESPAÇAMENTO E TIPOGRAFIA)
    ========================================================================== */
 :root {
-    /* Paleta Oficial Zamtech */
+    /* Paleta Oficial Zamtech (inalterada) */
     --color-primary: #0325D0;
     --color-secondary: #0756FF;
     --color-dark-blue: #000F76;
@@ -17,7 +17,7 @@
     --color-gray-medium: #525252;
     --color-gray-low: #a3a3a3;
 
-    /* Tipografia */
+    /* Tipografia (inalterada) */
     --font-display: 'Red Hat Display', sans-serif;
     --font-text: 'Red Hat Text', sans-serif;
 
@@ -39,7 +39,7 @@
     --fs-h1: 2.25rem;
     /* 36px - Tamanho Máximo de Título */
 
-    /* Sistema de Grade Material Design (Múltiplos de 8px) */
+    /* Sistema de Grade (Múltiplos de 8px) */
     --space-4: 0.25rem;
     /* 4px */
     --space-8: 0.5rem;
@@ -57,21 +57,37 @@
     --space-64: 4rem;
     /* 64px */
 
-    /* Arredondamento (Material Design Standard) */
+    /* Arredondamento */
     --radius-small: 2px;
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 16px;
     --radius-gg: 32px;
     --radius-full: 9999px;
+    /* Corte assinatura Zamtech: um canto "plugado", os outros suaves.
+       É a nossa identidade de forma — remete ao conector de fibra óptica.
+       Usar com moderação: hero, cards de destaque, imagens principais. */
+    --radius-signature: 28px 28px 28px 4px;
+    --radius-signature-sm: 16px 16px 16px 4px;
 
-    /* Elevações e Sombras (Material Elevation) */
-    --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    --elevation-2: 0 3px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
-    --elevation-3: 0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.10);
+    /* Gradiente de marca — azul Zamtech, do escuro pro claro. Sem roxo:
+       o roxo (--color-purple) fica reservado só para seções gamers. */
+    --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, rgba(3, 37, 208, 0.08) 0%, rgba(7, 86, 255, 0.08) 100%);
+    --gradient-signal: linear-gradient(120deg, var(--color-dark-blue) 0%, var(--color-primary) 55%, var(--color-secondary) 100%);
+    /* Gradiente exclusivo para seções/planos gamer */
+    --gradient-gamer: linear-gradient(135deg, var(--color-primary) 0%, var(--color-purple) 100%);
 
-    /* Transição Suave */
+    /* Elevações e Sombras — discretas, tingidas de azul-marca */
+    --elevation-1: 0 1px 2px rgba(3, 15, 60, 0.05), 0 1px 1px rgba(3, 15, 60, 0.06);
+    --elevation-2: 0 3px 10px rgba(3, 15, 60, 0.08), 0 1px 3px rgba(3, 15, 60, 0.06);
+    --elevation-3: 0 10px 24px rgba(3, 15, 60, 0.10), 0 3px 8px rgba(3, 15, 60, 0.06);
+    /* Brilho de sinal — usar com moderação, só no hover do CTA principal */
+    --elevation-glow: 0 4px 14px rgba(7, 86, 255, 0.20);
+
+    /* Transições */
     --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ==========================================================================
@@ -131,8 +147,19 @@ button {
     background: none;
 }
 
+/* Foco visível consistente com a marca (acessibilidade) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+}
+
 /* ==========================================================================
-   3. CONTAINERS & LAYOUT (MATERIAL GRID)
+   3. CONTAINERS & LAYOUT
    ========================================================================== */
 .container {
     width: 100%;
@@ -201,6 +228,15 @@ p {
     color: inherit;
 }
 
+/* Destaque de texto com o gradiente de marca — usar em 1-3 palavras-chave
+   dentro de um título, nunca no título inteiro. */
+.text-gradient {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
 /* ==========================================================================
    5. COMPONENTES BASE (BOTÕES & BADGES)
    ========================================================================== */
@@ -214,17 +250,20 @@ p {
     border-radius: var(--radius-md);
     font-weight: 600;
     font-size: var(--fs-sm);
-    transition: var(--transition-default);
+    transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
 }
 
 .btn-primary {
-    background-color: var(--color-primary);
+    background: var(--gradient-brand);
     color: var(--color-white);
 }
 
 .btn-primary:hover {
-    background-color: var(--color-secondary);
-    box-shadow: var(--elevation-2);
+    filter: brightness(1.1);
+}
+
+.btn-primary:active {
+    filter: brightness(0.95);
 }
 
 .btn-outlined {
@@ -234,6 +273,7 @@ p {
 
 .btn-outlined:hover {
     background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-white);
 }
 
 /* Utilities de fundo */
@@ -249,15 +289,73 @@ p {
 
 /* Essa classe agora funciona em QUALQUER arquivo do site */
 .card-padrao {
+    position: relative;
     background-color: var(--color-gray-dark);
     border-radius: var(--radius-md);
     padding: var(--space-24);
     border: 1px solid var(--color-primary);
+    overflow: hidden;
+}
+
+/* Fio de luz no topo do card — assinatura visual sutil, sem exagero */
+.card-padrao::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-brand);
+}
+
+/* Variante com o corte assimétrico assinatura Zamtech */
+.card-signature {
+    border-radius: var(--radius-signature);
 }
 
 .titulo-secao {
+    position: relative;
     font-size: var(--fs-h2);
     color: var(--color-primary);
     text-align: center;
     margin-bottom: var(--space-32);
+    padding-bottom: var(--space-16);
+}
+
+/* Traço-assinatura sob os títulos de seção: substitui a linha genérica
+   por um degradê curto da marca. */
+.titulo-secao::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--gradient-brand);
+}
+
+/* Divisor-assinatura: linha fina em degradê para separar blocos sem
+   recorrer a bordas cinzas genéricas. */
+.divider-brand {
+    height: 1px;
+    width: 100%;
+    border: none;
+    background: linear-gradient(90deg, transparent, rgba(3, 37, 208, 0.35), transparent);
+}
+
+/* Selo/chip de marca — para tags como "Mais vendido", "Novo" etc. */
+.chip-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-12);
+    border-radius: var(--radius-full);
+    background: var(--gradient-brand);
+    color: var(--color-white);
+    font-family: var(--font-display);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }

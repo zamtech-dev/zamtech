@@ -60,8 +60,10 @@ import Layout from '../layouts/Layout.astro';
     align-items: center;
     justify-content: center;
     padding: 4rem 1rem 6rem;
-    background: var(--bg-color, #0b0f19);
-    color: var(--text-color, #ffffff);
+    background: #000f76;
+    background:
+        radial-gradient(circle, rgb(1, 7, 46) 0%, rgba(0, 2, 18, 1) 51%, rgb(0, 8, 32) 100%);
+    color: var(--color-white);
   }
 
   .desbloqueio-container {
@@ -71,24 +73,36 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .desbloqueio-card {
-    background: rgba(18, 24, 38, 0.95);
-    border: 1px solid rgba(0, 212, 255, 0.2);
-    border-radius: 16px;
+    position: relative;
+    background: rgba(10, 14, 40, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-signature-sm);
     padding: 2.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--elevation-3);
     backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+
+  .desbloqueio-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-signal);
   }
 
   .card-header-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 120, 255, 0.2));
-    border-radius: 12px;
+    background: var(--gradient-brand-soft);
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .card-header-icon img {
@@ -106,7 +120,7 @@ import Layout from '../layouts/Layout.astro';
 
   .subtitle {
     font-size: 0.95rem;
-    color: #94a3b8;
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 2rem;
     line-height: 1.5;
   }
@@ -126,44 +140,44 @@ import Layout from '../layouts/Layout.astro';
   .input-group label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #cbd5e1;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .input-group input {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid #334155;
-    border-radius: 8px;
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-sm);
+    color: var(--color-white);
     font-size: 1rem;
     transition: all 0.3s ease;
   }
 
   .input-group input:focus {
     outline: none;
-    border-color: #00d4ff;
-    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(7, 86, 255, 0.25);
   }
 
   .btn-zamtech {
     margin-top: 0.5rem;
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%);
-    color: #ffffff;
+    background: var(--gradient-brand);
+    color: var(--color-white);
     font-weight: 700;
     font-size: 1rem;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 15px rgba(0, 119, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    box-shadow: var(--elevation-2);
   }
 
   .btn-zamtech:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 119, 255, 0.5);
+    filter: brightness(1.08);
   }
 
   .btn-zamtech:disabled {
@@ -175,7 +189,7 @@ import Layout from '../layouts/Layout.astro';
   .mensagem-retorno {
     margin-top: 1.5rem;
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     line-height: 1.4;
     text-align: center;
@@ -201,13 +215,13 @@ import Layout from '../layouts/Layout.astro';
     margin-top: 2rem;
     text-align: center;
     font-size: 0.85rem;
-    color: #94a3b8;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.65);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 1.5rem;
   }
 
   .ajuda-suporte a {
-    color: #00d4ff;
+    color: var(--color-yellow);
     text-decoration: none;
     font-weight: 600;
   }

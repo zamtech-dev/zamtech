@@ -144,6 +144,11 @@ import "../styles/global.css";
         letter-spacing: -2px;
         position: relative;
         z-index: 2;
+        background: var(--gradient-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 12px 28px rgba(3, 37, 208, 0.25));
     }
 
     /* Header text */
@@ -152,8 +157,9 @@ import "../styles/global.css";
         align-items: center;
         gap: var(--space-8);
         padding: var(--space-4) var(--space-16);
-        background-color: rgba(255, 255, 255, 1);
-        border: 1px solid rgb(0, 0, 0);
+        background-color: var(--color-white);
+        border: 1px solid rgba(3, 37, 208, 0.15);
+        box-shadow: var(--elevation-1);
         border-radius: var(--radius-full);
         font-size: var(--fs-caption);
         font-weight: 600;
@@ -166,8 +172,14 @@ import "../styles/global.css";
     .status-dot {
         width: 8px;
         height: 8px;
-        background-color: #ff4757;
+        background-color: var(--color-secondary);
         border-radius: 50%;
+        animation: pulse-dot 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.35; }
     }
 
     .error-header h1 {
@@ -197,7 +209,7 @@ import "../styles/global.css";
         width: 100%;
         margin-top: var(--space-64);
         padding-top: var(--space-32);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid var(--color-gray-low);
     }
 
     .useful-links-section h2 {
@@ -235,8 +247,10 @@ import "../styles/global.css";
 
     .link-card:hover {
         color: var(--color-white);
-        background-color: var(--color-primary);
+        background: var(--gradient-brand);
         border-color: var(--color-primary);
+        transform: translateY(-3px);
+        box-shadow: var(--elevation-2);
     }
 
     .card-icon {

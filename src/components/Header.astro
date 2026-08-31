@@ -16,6 +16,7 @@
             <ul class="nav-menu-top">
                 <li><a href="/planos-residenciais">Planos Residenciais</a></li>
                 <li><a href="/planos-empresariais">Planos Empresariais</a></li>
+                <li><a href="/indique">Indique e Ganhe</a></li>
             </ul>
             <button type="button" class="btn-menu-toggle" id="open-menu">
                 <img src="/assets/icons/listras-menu.svg" alt="Ícone de Menu" />
@@ -76,6 +77,11 @@
                 <span>Ajuda</span>
             </a>
         </div>
+
+        <a href="/indique" class="menu-section-card indique-card">
+            <h3 class="section-card-title">🎁 Indique e Ganhe</h3>
+            <p class="indique-card-text">Até 100% de desconto na sua fatura indicando amigos</p>
+        </a>
 
         <div class="menu-section-card">
             <h3 class="section-card-title">Planos Recomendados</h3>
@@ -410,16 +416,33 @@
         box-sizing: border-box;
     }
 
+    /* Fio de sinal assinatura Zamtech: uma linha fina do espectro
+       azul > roxo sempre visível no topo do site. */
+    .main-header::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gradient-signal);
+        opacity: 0.9;
+    }
+
     /* ESTADO COMPACTO / GLASSMORPHISM (QUANDO ROLA A PÁGINA) */
     .main-header.scrolled {
         top: 2px;
         width: 45%;
         border-radius: 50px;
-        background: var(--color-secondary); /* Cor original com transparência */
+        background: var(--gradient-brand);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        box-shadow: var(--elevation-3);
         padding: var(--space-8) var(--space-24);
         transition: var(--transition-default);
+    }
+
+    .main-header.scrolled::after {
+        display: none;
     }
 
     .header-container {
@@ -606,6 +629,22 @@
         color: var(--color-primary);
     }
 
+    .indique-card {
+        text-decoration: none;
+        transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
+    }
+
+    .indique-card:hover {
+        border-color: var(--color-primary);
+        box-shadow: var(--elevation-2);
+    }
+
+    .indique-card-text {
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
+    }
+
     .menu-list {
         list-style: none;
         display: flex;
@@ -758,7 +797,7 @@
     }
 
     .tag-breve {
-        color: var(--color-purple);
+        color: var(--color-secondary);
         font-weight: 600;
     }
 

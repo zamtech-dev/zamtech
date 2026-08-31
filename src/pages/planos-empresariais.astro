@@ -541,7 +541,7 @@ const adicionaisEmpresarialPadrao = [
         border-radius: var(--radius-full);
         gap: var(--space-8);
         margin-top: var(--space-24);
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-gray-light);
     }
 
     .switch-btn {
@@ -560,9 +560,9 @@ const adicionaisEmpresarialPadrao = [
     }
 
     .switch-btn.active {
-        background-color: var(--color-primary);
+        background: var(--gradient-brand);
         color: var(--color-white);
-        box-shadow: var(--elevation-1);
+        box-shadow: var(--elevation-2);
     }
 
     .badge-pop {
@@ -597,12 +597,24 @@ const adicionaisEmpresarialPadrao = [
     }
 
     .table-responsive {
+        position: relative;
         width: 100%;
         overflow-x: auto;
         background-color: var(--color-white);
         border-radius: var(--radius-lg);
         box-shadow: var(--elevation-1);
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-gray-light);
+    }
+
+    .table-responsive::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: var(--space-24);
+        right: var(--space-24);
+        height: 3px;
+        border-radius: var(--radius-full);
+        background: var(--gradient-brand);
     }
 
     .b2b-services-table {
@@ -682,7 +694,7 @@ const adicionaisEmpresarialPadrao = [
         background-color: var(--color-gray-light);
         padding: var(--space-32);
         border-radius: var(--radius-lg);
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-gray-light);
         display: flex;
         flex-direction: column;
         align-items: flex-start;

@@ -4,6 +4,7 @@ const currentPath = Astro.url.pathname;
 
 const links = [
   { name: "Regulamentos", href: "/regulamentos" },
+  { name: "Indique e Ganhe", href: "/regulamento-indique-e-ganhe" },
   { name: "Política de Privacidade", href: "/politica-de-privacidade" },
   { name: "Termos de Uso", href: "/termos-de-uso" },
   { name: "Contrato de Adesão", href: "/termos-de-contrato" },
@@ -36,7 +37,6 @@ const links = [
 
 <style>
   .sidebar {
-    /* background-color: var(--color-gray-light); */
     background: linear-gradient(
       180deg,
       rgba(245, 245, 245, 1) 0%,
@@ -47,14 +47,14 @@ const links = [
     max-width: 300px;
     padding: 4rem 4rem 3rem 3rem;
     border-radius: var(--radius-lg);
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid var(--color-gray-light);
   }
 
   .sidebar h2 {
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
-    color: #111827;
+    color: var(--color-gray-dark);
   }
 
   .sidebar ul {
@@ -64,27 +64,48 @@ const links = [
   }
 
   .sidebar li {
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--color-gray-light);
   }
 
   .sidebar a {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
+    padding: 1rem 0 1rem 0.9rem;
     text-decoration: none;
-    color: #374151;
+    color: var(--color-gray-medium);
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, padding-left 0.2s var(--ease-brand);
+  }
+
+  .sidebar a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    border-radius: var(--radius-full);
+    background: var(--gradient-brand);
+    transition: height 0.2s var(--ease-brand);
   }
 
   .sidebar a:hover {
-    color: var(--color-primary); /* Troque pela cor verde da Zamtech */
+    color: var(--color-primary);
+    padding-left: 1.1rem;
+  }
+
+  .sidebar a:hover::before,
+  .sidebar a.active::before {
+    height: 70%;
   }
 
   .sidebar a.active {
-    color: var(--color-primary); /* Cor do item ativo */
+    color: var(--color-primary);
     font-weight: bold;
+    padding-left: 1.1rem;
   }
 
   .arrow {

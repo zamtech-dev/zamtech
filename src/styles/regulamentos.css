@@ -44,6 +44,7 @@
 
 .division-topic {
     border-top: 2px solid var(--color-gray-light);
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)) top left / 64px 2px no-repeat;
     padding-top: 15px;
     padding-bottom: 15px;
 }
@@ -118,7 +119,7 @@
 .img-container {
     width: 100%;
     height: 400px;
-    border-radius: var(--radius-gg);
+    border-radius: var(--radius-signature, var(--radius-gg));
     overflow: hidden;
     box-sizing: border-box;
 }

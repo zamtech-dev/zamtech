@@ -190,35 +190,47 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         position: relative;
         background-color: var(--color-white);
         border: var(--radius-small) solid var(--color-secondary);
-        border-radius: var(--radius-md);
+        border-radius: var(--radius-signature-sm);
         padding: var(--space-24) var(--space-32);
         display: flex;
         flex-direction: column;
         align-items: left;
         justify-content: space-around;
         color: var(--color-gray-dark);
-        transition: var(--transition-default);
+        transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
+        box-shadow: var(--elevation-1);
         gap: 0.4rem;
+    }
+
+    .card-plano-dinamico:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--elevation-2);
+        border-color: var(--color-primary);
     }
 
     .card-plano--featured {
         border: 2px solid var(--color-secondary);
-        background: var(--color-secondary);
+        background: var(--gradient-brand);
         color: var(--color-white);
+    }
+
+    .card-plano--featured:hover {
+        border-color: var(--color-secondary);
+        box-shadow: var(--elevation-3);
     }
 
     .card-badge {
         position: absolute;
         top: -14px;
         right: var(--space-24);
-        background-color: var(--color-secondary);
+        background: var(--gradient-brand);
         color: var(--color-white);
         font-family: var(--font-display);
         font-size: var(--fs-caption);
         font-weight: 700;
         padding: var(--space-8) var(--space-16);
         border-radius: var(--radius-full);
-        border: 2px solid var(--color-gray-light);
+        border: 2px solid var(--color-white);
     }
 
     .brand-tag {
@@ -288,7 +300,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     }
 
     .saving-tag {
-        color: var(--color-purple);
+        color: var(--color-secondary);
         font-size: var(--fs-caption);
         font-weight: 700;
         margin-bottom: var(--space-8);
