@@ -17,14 +17,14 @@ $nome = isset($input['nome']) ? trim($input['nome']) : '';
 $cpf = isset($input['cpf']) ? preg_replace('/\D/', '', $input['cpf']) : '';
 
 if ($nome === '' || $cpf === '') {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Preencha nome e CPF.']);
+    echo json_encode(['sucesso' => false, 'tipo' => 'bloqueio', 'mensagem' => 'Preencha nome e CPF.']);
     exit;
 }
 
 if (!validarCPF($cpf)) {
     // Isso também barra CNPJ (14 dígitos nunca passa na validação de CPF),
     // então já garante "só Pessoa Física" sem depender de campo nenhum do SGP.
-    echo json_encode(['sucesso' => false, 'mensagem' => 'CPF inválido.']);
+    echo json_encode(['sucesso' => false, 'tipo' => 'bloqueio', 'mensagem' => 'CPF inválido.']);
     exit;
 }
 
@@ -57,6 +57,7 @@ try {
         http_response_code(502);
         echo json_encode([
             'sucesso' => false,
+            'tipo' => 'erro',
             'mensagem' => 'Não consegui confirmar seus dados agora. Tente novamente em instantes ou fale com a gente pelo WhatsApp.',
             'permitir_whatsapp' => true,
         ]);
@@ -68,7 +69,8 @@ try {
     if (empty($clientes)) {
         echo json_encode([
             'sucesso' => false,
-            'mensagem' => 'Não encontramos um contrato ativo com esse CPF na Zamtech.',
+            'tipo' => 'bloqueio',
+            'mensagem' => 'Não encontramos um cadastro com esse CPF na Zamtech. Confira se digitou certo ou fale com a gente.',
             'permitir_whatsapp' => true,
         ]);
         exit;
@@ -87,10 +89,12 @@ try {
     }
 
     if ($contratoAtivo === null) {
+        // Regra dura: sem contrato ativo não tem link, e WhatsApp não muda isso agora.
         echo json_encode([
             'sucesso' => false,
+            'tipo' => 'bloqueio',
             'mensagem' => 'Seu contrato precisa estar ativo pra gerar o link de indicação.',
-            'permitir_whatsapp' => true,
+            'permitir_whatsapp' => false,
         ]);
         exit;
     }
@@ -108,8 +112,9 @@ try {
     if (!$temFaturaPaga) {
         echo json_encode([
             'sucesso' => false,
+            'tipo' => 'bloqueio',
             'mensagem' => 'Você só pode gerar seu link depois que a 1ª fatura do seu contrato for paga.',
-            'permitir_whatsapp' => true,
+            'permitir_whatsapp' => false,
         ]);
         exit;
     }
@@ -136,6 +141,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'sucesso' => false,
+        'tipo' => 'erro',
         'mensagem' => 'Deu um erro aqui do nosso lado. Tenta de novo em instantes ou fala com a gente pelo WhatsApp.',
         'permitir_whatsapp' => true,
     ]);

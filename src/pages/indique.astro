@@ -248,9 +248,10 @@ import "../styles/global.css";
     const mensagemIndique = document.getElementById("mensagemIndique") as HTMLElement;
     const btnGerarLink = document.getElementById("btnGerarLink") as HTMLButtonElement;
 
-    function mostrarMensagem(html: string) {
+    function mostrarMensagem(html: string, negativo = false) {
         mensagemIndique.innerHTML = html;
         mensagemIndique.classList.remove("hidden");
+        mensagemIndique.classList.toggle("negativa", negativo);
     }
 
     function whatsappFallbackUrl(nome: string, cpf: string): string {
@@ -270,6 +271,7 @@ import "../styles/global.css";
                 cpfInput.focus();
                 return;
             }
+            cpfErro.hidden = true;
 
             btnGerarLink.disabled = true;
             btnGerarLink.textContent = "Confirmando seus dados...";
@@ -306,17 +308,21 @@ import "../styles/global.css";
                         });
                     });
                 } else {
+                    // tipo 'bloqueio' = regra do programa não foi cumprida (vermelho, sem WhatsApp,
+                    // pois falar com a gente não muda o resultado agora). tipo 'erro' = problema
+                    // temporário do nosso lado ou do SGP (azul, com WhatsApp como alternativa).
+                    const negativo = data.tipo !== "erro";
                     let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
                     if (data.permitir_whatsapp) {
                         html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
                     }
-                    mostrarMensagem(html);
+                    mostrarMensagem(html, negativo);
                 }
             } catch (error) {
                 mostrarMensagem(`
                     <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
                     <a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
-                `);
+                `, false);
             } finally {
                 btnGerarLink.disabled = false;
                 btnGerarLink.textContent = "Gerar meu link de indicação";
@@ -631,6 +637,15 @@ import "../styles/global.css";
 
     .mensagem-retorno-indique.hidden {
         display: none;
+    }
+
+    /* Quando a indicação esbarra numa regra do programa (contrato inativo,
+       fatura não paga, CPF inválido etc) — vermelho, pra ficar claro que
+       não é "tenta de novo", é "isso aqui ainda não te habilita". */
+    .mensagem-retorno-indique.negativa {
+        background: #fef2f2;
+        border-color: rgba(220, 38, 38, 0.3);
+        color: #b91c1c;
     }
 
     .mensagem-retorno-indique p {
