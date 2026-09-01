@@ -127,7 +127,6 @@ try {
             'sucesso' => false,
             'tipo' => 'erro',
             'mensagem' => 'Não consegui confirmar seus dados agora. Tente novamente em instantes ou fale com a gente pelo WhatsApp.',
-            'permitir_whatsapp' => true,
         ]);
         exit;
     }
@@ -170,7 +169,6 @@ try {
             'sucesso' => false,
             'tipo' => 'erro',
             'mensagem' => 'Não consegui enviar seu cadastro agora. Tente novamente em instantes ou fale com a gente pelo WhatsApp.',
-            'permitir_whatsapp' => true,
         ]);
         exit;
     }
@@ -206,6 +204,5 @@ try {
         'sucesso' => false,
         'tipo' => 'erro',
         'mensagem' => 'Deu um erro aqui do nosso lado. Tenta de novo em instantes ou fala com a gente pelo WhatsApp.',
-        'permitir_whatsapp' => true,
     ]);
 }

@@ -59,7 +59,6 @@ try {
             'sucesso' => false,
             'tipo' => 'erro',
             'mensagem' => 'Não consegui confirmar seus dados agora. Tente novamente em instantes ou fale com a gente pelo WhatsApp.',
-            'permitir_whatsapp' => true,
         ]);
         exit;
     }
@@ -67,11 +66,14 @@ try {
     $clientes = $dadosCliente['clientes'] ?? [];
 
     if (empty($clientes)) {
+        // Bloqueio, não erro: se o CPF nem aparece como cliente, pedir o
+        // link por WhatsApp não resolve nada — a pessoa só confere o CPF
+        // digitado (o botão de WhatsApp só faz sentido quando é a gente
+        // que quebrou, não quando a regra do programa não foi cumprida).
         echo json_encode([
             'sucesso' => false,
             'tipo' => 'bloqueio',
-            'mensagem' => 'Não encontramos um cadastro com esse CPF na Zamtech. Confira se digitou certo ou fale com a gente.',
-            'permitir_whatsapp' => true,
+            'mensagem' => 'Não encontramos um cadastro com esse CPF na Zamtech. Confira se digitou certo.',
         ]);
         exit;
     }
@@ -94,7 +96,6 @@ try {
             'sucesso' => false,
             'tipo' => 'bloqueio',
             'mensagem' => 'Seu contrato precisa estar ativo pra gerar o link de indicação.',
-            'permitir_whatsapp' => false,
         ]);
         exit;
     }
@@ -114,7 +115,6 @@ try {
             'sucesso' => false,
             'tipo' => 'bloqueio',
             'mensagem' => 'Você só pode gerar seu link depois que a 1ª fatura do seu contrato for paga.',
-            'permitir_whatsapp' => false,
         ]);
         exit;
     }
@@ -143,6 +143,5 @@ try {
         'sucesso' => false,
         'tipo' => 'erro',
         'mensagem' => 'Deu um erro aqui do nosso lado. Tenta de novo em instantes ou fala com a gente pelo WhatsApp.',
-        'permitir_whatsapp' => true,
     ]);
 }

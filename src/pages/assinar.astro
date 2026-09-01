@@ -229,12 +229,12 @@ import "../styles/global.css";
                     mostrarMensagem(`<p>${data.mensagem}</p>`, false);
                     form.hidden = true;
                 } else {
-                    const negativo = data.tipo !== "erro";
+                    const ehErroDeSistema = data.tipo === "erro";
                     let html = `<p>${data.mensagem || "Não consegui enviar seu cadastro agora."}</p>`;
-                    if (data.permitir_whatsapp) {
+                    if (ehErroDeSistema) {
                         html += `<a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
                     }
-                    mostrarMensagem(html, negativo);
+                    mostrarMensagem(html, !ehErroDeSistema);
                 }
             } catch (error) {
                 mostrarMensagem(`

@@ -311,12 +311,12 @@ import "../styles/global.css";
                     // tipo 'bloqueio' = regra do programa não foi cumprida (vermelho, sem WhatsApp,
                     // pois falar com a gente não muda o resultado agora). tipo 'erro' = problema
                     // temporário do nosso lado ou do SGP (azul, com WhatsApp como alternativa).
-                    const negativo = data.tipo !== "erro";
+                    const ehErroDeSistema = data.tipo === "erro";
                     let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
-                    if (data.permitir_whatsapp) {
+                    if (ehErroDeSistema) {
                         html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
                     }
-                    mostrarMensagem(html, negativo);
+                    mostrarMensagem(html, !ehErroDeSistema);
                 }
             } catch (error) {
                 mostrarMensagem(`
