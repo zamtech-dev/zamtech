@@ -246,9 +246,20 @@ import "../styles/global.css";
 
     const form = document.getElementById("formIndique") as HTMLFormElement;
     const mensagemIndique = document.getElementById("mensagemIndique") as HTMLElement;
+    const btnGerarLink = document.getElementById("btnGerarLink") as HTMLButtonElement;
+
+    function mostrarMensagem(html: string) {
+        mensagemIndique.innerHTML = html;
+        mensagemIndique.classList.remove("hidden");
+    }
+
+    function whatsappFallbackUrl(nome: string, cpf: string): string {
+        const mensagem = `Olá! Meu nome é ${nome} e meu CPF é ${cpf}. Gostaria de participar do Indique e Ganhe Zamtech e receber meu link de indicação.`;
+        return `https://wa.me/5527995057736?text=${encodeURIComponent(mensagem)}`;
+    }
 
     if (form) {
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
             const nome = (document.getElementById("nomeIndicador") as HTMLInputElement).value.trim();
@@ -260,18 +271,56 @@ import "../styles/global.css";
                 return;
             }
 
-            // TODO (integração futura): trocar este envio manual por chamada à API do SGP
-            // para validar automaticamente se o contrato do CPF está ativo e em dia, e
-            // gerar o link de indicação (zamtech.com.br/assinar?ref=CPF) na hora.
-            // Por enquanto, a solicitação é encaminhada para o time validar manualmente
-            // pelo WhatsApp — o caminho já está aberto para plugar o SGP depois.
-            const mensagem = `Olá! Meu nome é ${nome} e meu CPF é ${cpf}. Já paguei minha primeira fatura e gostaria de participar do Indique e Ganhe Zamtech e receber meu link de indicação.`;
-            const url = `https://wa.me/5527995057736?text=${encodeURIComponent(mensagem)}`;
+            btnGerarLink.disabled = true;
+            btnGerarLink.textContent = "Confirmando seus dados...";
+            mensagemIndique.classList.add("hidden");
 
-            mensagemIndique.classList.remove("hidden");
-            mensagemIndique.textContent = "Prontinho! Vamos te chamar no WhatsApp para confirmar seus dados e liberar seu link.";
+            try {
+                const response = await fetch("/api/indique/gerar-link.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, cpf }),
+                });
 
-            window.open(url, "_blank");
+                const data = await response.json();
+
+                if (data.sucesso && data.link) {
+                    const mensagemZap = `Ei! Usa esse link pra assinar a Zamtech: ${data.link}`;
+                    mostrarMensagem(`
+                        <p>Prontinho! Esse é o seu link de indicação:</p>
+                        <div class="link-gerado-box">
+                            <input type="text" readonly value="${data.link}" id="linkGeradoInput" />
+                            <button type="button" class="btn btn-primary" id="btnCopiarLink">Copiar</button>
+                        </div>
+                        <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined">Compartilhar no WhatsApp</a>
+                    `);
+                    form.hidden = true;
+
+                    const btnCopiar = document.getElementById("btnCopiarLink") as HTMLButtonElement;
+                    const linkInput = document.getElementById("linkGeradoInput") as HTMLInputElement;
+                    btnCopiar?.addEventListener("click", () => {
+                        linkInput.select();
+                        navigator.clipboard.writeText(data.link).then(() => {
+                            btnCopiar.textContent = "Copiado!";
+                            setTimeout(() => { btnCopiar.textContent = "Copiar"; }, 2000);
+                        });
+                    });
+                } else {
+                    let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
+                    if (data.permitir_whatsapp) {
+                        html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined">Falar no WhatsApp</a>`;
+                    }
+                    mostrarMensagem(html);
+                }
+            } catch (error) {
+                mostrarMensagem(`
+                    <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
+                    <a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined">Falar no WhatsApp</a>
+                `);
+            } finally {
+                btnGerarLink.disabled = false;
+                btnGerarLink.textContent = "Gerar meu link de indicação";
+            }
         });
     }
 </script>
@@ -579,6 +628,37 @@ import "../styles/global.css";
 
     .mensagem-retorno-indique.hidden {
         display: none;
+    }
+
+    .mensagem-retorno-indique p {
+        margin-bottom: var(--space-12);
+    }
+
+    .mensagem-retorno-indique .btn {
+        width: 100%;
+    }
+
+    .link-gerado-box {
+        display: flex;
+        gap: var(--space-8);
+        margin-bottom: var(--space-12);
+    }
+
+    .link-gerado-box input {
+        flex: 1;
+        min-width: 0;
+        padding: 0 var(--space-12);
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(3, 37, 208, 0.3);
+        background: var(--color-white);
+        color: var(--color-gray-dark);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+    }
+
+    .link-gerado-box .btn {
+        width: auto;
+        flex-shrink: 0;
     }
 
     /* 6. FAQ (mesmo padrão da Central de Ajuda) */
