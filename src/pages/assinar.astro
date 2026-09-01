@@ -7,7 +7,6 @@ import "../styles/global.css";
     <section class="section-dark section assinar-hero">
         <div class="container assinar-hero-content">
             <span class="chip-brand">Você foi indicado</span>
-            <p class="nome-indicador" id="nomeIndicador" hidden></p>
             <h1>Falta pouco! Complete seus dados <span class="text-gradient">e agende sua instalação</span></h1>
             <p class="assinar-hero-subtitle">
                 Você foi indicado por um cliente Zamtech. Preencha seus dados abaixo e nosso time comercial entra em contato pra agendar a instalação da sua internet.
@@ -17,6 +16,8 @@ import "../styles/global.css";
 
     <section class="section form-section">
         <div class="container">
+            <p class="saudacao-indicador" id="nomeIndicador" hidden></p>
+
             <div class="form-wrapper card-padrao">
                 <div id="statusLink" class="status-link"></div>
 
@@ -126,6 +127,12 @@ import "../styles/global.css";
             .replace(/(\d{5})(\d{1,4})$/, "$1-$2");
     }
 
+    function escaparHtml(texto: string): string {
+        const div = document.createElement("div");
+        div.textContent = texto;
+        return div.innerHTML;
+    }
+
     function mascararCEP(valor: string): string {
         return valor.replace(/[^\d]/g, "").slice(0, 8)
             .replace(/(\d{5})(\d{1,3})$/, "$1-$2");
@@ -182,7 +189,7 @@ import "../styles/global.css";
 
                 if (data.indicador_nome) {
                     const primeiroNome = data.indicador_nome.trim().split(" ")[0];
-                    nomeIndicador.textContent = `Você foi indicado por ${primeiroNome}!`;
+                    nomeIndicador.innerHTML = `Você foi indicado por <span class="nome-destaque">${escaparHtml(primeiroNome)}</span>!`;
                     nomeIndicador.hidden = false;
                 }
             } else {
@@ -271,16 +278,6 @@ import "../styles/global.css";
         margin: 0 auto;
     }
 
-    .nome-indicador {
-        font-size: var(--fs-h5);
-        font-weight: 700;
-        color: var(--color-white);
-    }
-
-    .nome-indicador[hidden] {
-        display: none;
-    }
-
     .assinar-hero h1 {
         font-size: clamp(2rem, 4vw, var(--fs-h1));
         line-height: 1.2;
@@ -295,6 +292,22 @@ import "../styles/global.css";
 
     .form-section {
         background-color: var(--color-gray-light);
+    }
+
+    .saudacao-indicador {
+        text-align: center;
+        font-size: var(--fs-h2);
+        font-weight: 700;
+        color: var(--color-dark-blue);
+        padding: var(--space-32) 0;
+    }
+
+    .saudacao-indicador[hidden] {
+        display: none;
+    }
+
+    .nome-destaque {
+        color: var(--color-primary);
     }
 
     .form-wrapper {
