@@ -16,24 +16,58 @@ if (php_sapi_name() !== 'cli') {
     header('Content-Type: text/plain; charset=UTF-8');
 }
 
-echo "=== Portadores (Financeiro > Portadores no SGP) ===\n";
-$portadores = chamarSGP('/api/ura/portador/', []);
-if ($portadores === null) {
-    echo "Não consegui consultar (SGP fora do ar ou token sem permissão).\n";
-} else {
-    foreach ($portadores as $p) {
-        echo "  id={$p['id']}  |  {$p['descricao']}  |  {$p['codigo_banco']}\n";
+// Manda cada pedaço pro navegador assim que fica pronto, em vez de guardar
+// tudo pro final — se travar no meio, pelo menos mostra até onde chegou.
+function imprimir(string $texto): void
+{
+    echo $texto;
+    if (ob_get_level() > 0) {
+        @ob_flush();
     }
+    @flush();
 }
 
-echo "\n=== Planos de Contas (Financeiro > Plano de Contas no SGP) ===\n";
-$planos = chamarSGP('/api/ura/planoscontas/', []);
-if ($planos === null) {
-    echo "Não consegui consultar (SGP fora do ar ou token sem permissão).\n";
-} else {
-    foreach ($planos as $pc) {
-        echo "  id={$pc['id']}  |  {$pc['codigo']}  |  {$pc['descricao']}\n";
+function listarSecao(string $titulo, string $endpoint): void
+{
+    imprimir("=== {$titulo} ===\n");
+
+    try {
+        $resultado = chamarSGP($endpoint, []);
+    } catch (\Throwable $e) {
+        imprimir("ERRO ao consultar: " . $e->getMessage() . "\n\n");
+        return;
     }
+
+    if ($resultado === null) {
+        imprimir("Não consegui consultar (SGP fora do ar, token sem permissão, ou demorou demais).\n\n");
+        return;
+    }
+
+    if (!is_array($resultado) || empty($resultado)) {
+        imprimir("Consultei certinho, mas veio vazio ou num formato inesperado. Resposta crua:\n");
+        imprimir(var_export($resultado, true) . "\n\n");
+        return;
+    }
+
+    foreach ($resultado as $item) {
+        if (!is_array($item)) {
+            imprimir("  (item inesperado) " . var_export($item, true) . "\n");
+            continue;
+        }
+        $partes = [];
+        foreach ($item as $chave => $valor) {
+            $partes[] = "{$chave}={$valor}";
+        }
+        imprimir("  " . implode('  |  ', $partes) . "\n");
+    }
+    imprimir("\n");
 }
 
-echo "\nFim. Me manda esse resultado.\n";
+try {
+    listarSecao('Portadores (Financeiro > Portadores no SGP)', '/api/ura/portador/');
+    listarSecao('Planos de Contas (Financeiro > Plano de Contas no SGP)', '/api/ura/planoscontas/');
+    imprimir("Fim. Me manda esse resultado.\n");
+} catch (\Throwable $e) {
+    imprimir("ERRO GERAL: " . $e->getMessage() . "\n");
+    imprimir($e->getFile() . ':' . $e->getLine() . "\n");
+}
