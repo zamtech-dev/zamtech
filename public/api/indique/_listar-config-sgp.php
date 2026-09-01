@@ -60,8 +60,11 @@ function listarSecao(string $titulo, string $endpoint): void
 
     try {
         $resultado = chamarSGP($endpoint, []);
+        // json_encode escapa acentos por padrão (ex: "não" vira "não"),
+        // então procuro só a parte sem acento ("permitido"/"allowed") pra
+        // não deixar escapar de novo.
         $comoTexto = $resultado === null ? '' : json_encode($resultado);
-        if (stripos($comoTexto, 'não é permitido') !== false || stripos($comoTexto, 'not allowed') !== false) {
+        if (stripos($comoTexto, 'permitido') !== false || stripos($comoTexto, 'not allowed') !== false) {
             imprimir("(POST não permitido nesse endpoint, tentando via GET...)\n");
             $resultado = chamarSGPviaGET($endpoint, []);
         }
