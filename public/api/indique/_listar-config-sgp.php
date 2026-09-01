@@ -27,12 +27,44 @@ function imprimir(string $texto): void
     @flush();
 }
 
+/**
+ * Igual chamarSGP(), mas via GET (app/token na query string) — alguns
+ * endpoints de listagem simples do SGP só aceitam GET, apesar da doc
+ * mostrar exemplo em POST.
+ */
+function chamarSGPviaGET(string $endpoint, array $params): ?array
+{
+    $query = http_build_query(array_merge(['app' => SGP_APP, 'token' => SGP_TOKEN], $params));
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => SGP_URL . $endpoint . '?' . $query,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+    ]);
+    $response = curl_exec($curl);
+    $erroCurl = curl_error($curl);
+    curl_close($curl);
+
+    if ($erroCurl) {
+        return null;
+    }
+
+    $data = json_decode($response, true);
+    return is_array($data) ? $data : null;
+}
+
 function listarSecao(string $titulo, string $endpoint): void
 {
     imprimir("=== {$titulo} ===\n");
 
     try {
         $resultado = chamarSGP($endpoint, []);
+        $comoTexto = $resultado === null ? '' : json_encode($resultado);
+        if (stripos($comoTexto, 'não é permitido') !== false || stripos($comoTexto, 'not allowed') !== false) {
+            imprimir("(POST não permitido nesse endpoint, tentando via GET...)\n");
+            $resultado = chamarSGPviaGET($endpoint, []);
+        }
     } catch (\Throwable $e) {
         imprimir("ERRO ao consultar: " . $e->getMessage() . "\n\n");
         return;
