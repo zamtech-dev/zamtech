@@ -23,6 +23,23 @@ define('DB_PASS', '%rR3Zw9Q_MMmZC3s');
 // --- Aviso de desconto pendente pro financeiro ---
 define('EMAIL_FINANCEIRO', 'zamtechcomercial@gmail.com');
 
+// --- Aplicação do desconto na fatura de verdade (cancelar + gerar avulso) ---
+// Portador e Plano de Contas confirmados com você: Sicredi SGP e
+// Fibra > Mensalidade.
+define('SGP_PORTADOR_DESCONTO', 10);
+define('SGP_PLANO_CONTAS_DESCONTO', 9);
+
+// FREIO DE MÃO: enquanto isso for false, o robô só SIMULA a aplicação do
+// desconto — ele mostra no log tudo que faria (qual fatura cancelaria, qual
+// valor criaria) mas não cancela nem cria nada de verdade no SGP, e não
+// marca o desconto como "aplicado". Assim dá pra rodar contra um indicador
+// real, ler o resultado com calma e confirmar que os números batem, antes
+// de deixar o robô mexer em fatura de verdade.
+//
+// Só mude pra true depois de ter visto pelo menos uma simulação com um
+// indicador real e conferido que faz sentido.
+define('DESCONTO_APLICACAO_ATIVA', false);
+
 // --- Chave pra rodar scripts de fundo (robô, diagnósticos) manualmente
 // pelo navegador quando não tem Terminal no cPanel. Troque depois de usar. ---
 define('ROBO_CHAVE_TESTE', '920c729a5e148cdaeb8349d233306b2b');
@@ -178,6 +195,43 @@ function enviarEmailAprovacao(
         . "Desconto: " . number_format($percentual, 0) . "% na próxima fatura do indicador\n\n"
         . "Pra aprovar ou rejeitar, acesse:\n{$link}\n\n"
         . "— Robô Indique e Ganhe, Zamtech";
+
+    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n";
+
+    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+}
+
+/**
+ * Email pro financeiro quando um indicador acumula 2+ descontos aprovados
+ * ao mesmo tempo (o caso de 100% que vocês nunca fizeram na prática). O
+ * robô NÃO tenta calcular isso sozinho — só avisa pra alguém decidir à mão.
+ */
+function enviarEmailAlertaAcumulo(string $indicadorCpf, string $indicadorNome, int $quantidade): void
+{
+    $assunto = 'Indique e Ganhe - ATENÇÃO: acúmulo de descontos precisa de revisão manual';
+    $corpo = "Olá!\n\n"
+        . "O indicador {$indicadorNome} (CPF {$indicadorCpf}) tem {$quantidade} descontos aprovados ao mesmo tempo, esperando aplicação.\n\n"
+        . "Isso é o caso de acúmulo (ex: 2 indicações = 100%) que vocês nunca aplicaram na prática antes. Por segurança, o robô NÃO vai calcular isso sozinho nem mexer em nenhuma fatura desse indicador.\n\n"
+        . "Alguém do financeiro precisa olhar os descontos desse CPF (tabela descontos, status = aprovado) e decidir manualmente como aplicar.\n\n"
+        . "— Robô Indique e Ganhe, Zamtech";
+
+    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n";
+
+    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+}
+
+/**
+ * Email URGENTE pro financeiro quando o robô cancela uma fatura mas, por
+ * algum motivo, não consegue criar a fatura avulsa substituta em seguida.
+ * Isso deixa o cliente sem nenhuma fatura naquele ciclo — precisa de
+ * atenção humana imediata, não pode esperar o próximo dia.
+ */
+function enviarEmailAlertaCritico(string $mensagem): void
+{
+    $assunto = 'Indique e Ganhe - URGENTE: fatura cancelada sem substituta';
+    $corpo = "Atenção!\n\n{$mensagem}\n\nIsso precisa ser resolvido manualmente no SGP o quanto antes.\n\n— Robô Indique e Ganhe, Zamtech";
 
     $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
         . "Content-Type: text/plain; charset=UTF-8\r\n";

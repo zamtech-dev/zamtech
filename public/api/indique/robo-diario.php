@@ -45,6 +45,9 @@ foreach ($pendentes as $indicado) {
     processarIndicado($conn, $indicado);
 }
 
+echo "\n";
+aplicarDescontosAprovados($conn);
+
 $conn->close();
 echo "Fim.\n";
 
@@ -176,4 +179,224 @@ function criarDescontoSeNecessario(mysqli $conn, array $indicado): void
 
     enviarEmailAprovacao($token, $indicacao['indicador_nome'], $indicadorCpf, $indicado['indicado_nome'], 50.00);
     echo "  -> Desconto criado e email de aprovação enviado pro financeiro.\n";
+}
+
+/**
+ * Procura um valor entre vários nomes de campo possíveis num item vindo do
+ * SGP. A doc às vezes não deixa 100% claro qual é o nome exato do campo,
+ * então em vez de arriscar um KeyError (ou pior, ler o campo errado
+ * silenciosamente), a gente tenta cada opção em ordem e devolve null se
+ * nenhuma existir — quem chama decide o que fazer com null.
+ */
+function pegarCampo(array $item, array $possiveisChaves)
+{
+    foreach ($possiveisChaves as $chave) {
+        if (isset($item[$chave]) && $item[$chave] !== '') {
+            return $item[$chave];
+        }
+    }
+    return null;
+}
+
+/**
+ * Etapa final do Indique e Ganhe: pega cada desconto já aprovado pelo
+ * financeiro e aplica de verdade na fatura do indicador — cancela a
+ * próxima fatura em aberto e cria uma nova só no valor com desconto, do
+ * mesmo jeito que a Raiane fazia manualmente no IXC.
+ *
+ * Enquanto DESCONTO_APLICACAO_ATIVA (em _config.php) estiver false, essa
+ * função só MOSTRA o que faria, sem cancelar nem criar nada de verdade.
+ */
+function aplicarDescontosAprovados(mysqli $conn): void
+{
+    echo "Aplicando descontos aprovados" . (DESCONTO_APLICACAO_ATIVA ? '' : ' (modo SIMULAÇÃO, nada real é alterado)') . "...\n";
+
+    $stmt = $conn->prepare(
+        "SELECT id, indicador_cpfcnpj, indicado_id, percentual
+         FROM descontos
+         WHERE status = 'aprovado'
+         ORDER BY indicador_cpfcnpj, id"
+    );
+    $stmt->execute();
+    $aprovados = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    if (empty($aprovados)) {
+        echo "  Nenhum desconto aprovado esperando aplicação.\n";
+        return;
+    }
+
+    // Agrupa por indicador, pra pegar o caso raro de 2+ descontos aprovados
+    // ao mesmo tempo pro mesmo indicador (acúmulo sem precedente real).
+    $porIndicador = [];
+    foreach ($aprovados as $desconto) {
+        $porIndicador[$desconto['indicador_cpfcnpj']][] = $desconto;
+    }
+
+    foreach ($porIndicador as $indicadorCpf => $descontosDoIndicador) {
+        if (count($descontosDoIndicador) > 1) {
+            $quantidade = count($descontosDoIndicador);
+            echo "  [{$indicadorCpf}] {$quantidade} descontos aprovados ao mesmo tempo — caso sem precedente, não vou calcular sozinho. Avisando financeiro.\n";
+            $stmt = $conn->prepare('SELECT indicador_nome FROM indicacoes WHERE indicador_cpfcnpj = ? LIMIT 1');
+            $stmt->bind_param('s', $indicadorCpf);
+            $stmt->execute();
+            $nomeRow = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+            enviarEmailAlertaAcumulo($indicadorCpf, $nomeRow['indicador_nome'] ?? $indicadorCpf, count($descontosDoIndicador));
+            continue;
+        }
+
+        aplicarUmDesconto($conn, $descontosDoIndicador[0]);
+    }
+}
+
+/**
+ * Aplica um único desconto aprovado (o caso normal: 1 indicador, 1
+ * desconto de 50% esperando).
+ */
+function aplicarUmDesconto(mysqli $conn, array $desconto): void
+{
+    $indicadorCpf = $desconto['indicador_cpfcnpj'];
+    $percentual = (float) $desconto['percentual'];
+
+    $dadosIndicador = chamarSGP('/api/ura/clientes/', ['cpfcnpj' => $indicadorCpf]);
+    if ($dadosIndicador === null) {
+        echo "  [{$indicadorCpf}] SGP fora do ar agora, tenta de novo amanhã.\n";
+        return;
+    }
+
+    $cliente = $dadosIndicador['clientes'][0] ?? null;
+    if ($cliente === null) {
+        echo "  [{$indicadorCpf}] Não achei esse cliente no SGP, tenta de novo amanhã.\n";
+        return;
+    }
+
+    $contratoAtivo = null;
+    foreach (($cliente['contratos'] ?? []) as $contrato) {
+        if (strtolower(trim($contrato['status'] ?? '')) === 'ativo') {
+            $contratoAtivo = $contrato;
+            break;
+        }
+    }
+
+    if ($contratoAtivo === null) {
+        echo "  [{$indicadorCpf}] Não tem mais contrato ativo (cancelou) — perdeu o direito, não aplico o desconto.\n";
+        return;
+    }
+
+    $contratoId = pegarCampo($contratoAtivo, ['id', 'contrato_id', 'contrato']);
+    if ($contratoId === null) {
+        echo "  [{$indicadorCpf}] Achei o contrato ativo mas não consegui identificar o ID dele nos dados do SGP — preciso olhar isso com calma antes de continuar. Não vou arriscar. Dados brutos do contrato:\n";
+        echo '  ' . var_export($contratoAtivo, true) . "\n";
+        return;
+    }
+
+    // Fatura "cancelável" = ainda não paga e ainda não cancelada. Pega a de
+    // vencimento mais próximo (a "próxima fatura", no sentido que a Raiane
+    // usava no IXC).
+    $candidatas = [];
+    foreach (($cliente['titulos'] ?? []) as $titulo) {
+        $status = strtolower(trim($titulo['status'] ?? ''));
+        if (!in_array($status, ['pago', 'liquidado', 'baixado', 'cancelado'], true)) {
+            $candidatas[] = $titulo;
+        }
+    }
+
+    if (empty($candidatas)) {
+        echo "  [{$indicadorCpf}] Ainda não tem fatura em aberto pra aplicar o desconto. Espero e tento de novo amanhã.\n";
+        return;
+    }
+
+    usort($candidatas, function ($a, $b) {
+        $vA = pegarCampo($a, ['vencimento', 'data_vencimento', 'dt_vencimento']) ?? '9999-12-31';
+        $vB = pegarCampo($b, ['vencimento', 'data_vencimento', 'dt_vencimento']) ?? '9999-12-31';
+        return strcmp((string) $vA, (string) $vB);
+    });
+    $faturaAlvo = $candidatas[0];
+
+    $faturaId = pegarCampo($faturaAlvo, ['id', 'titulo_id', 'fatura_id']);
+    $valorFatura = pegarCampo($faturaAlvo, ['valor', 'valor_total', 'valor_fatura', 'valor_cobranca']);
+    $vencimento = pegarCampo($faturaAlvo, ['vencimento', 'data_vencimento', 'dt_vencimento']);
+
+    if ($faturaId === null || $valorFatura === null || $vencimento === null) {
+        echo "  [{$indicadorCpf}] Achei uma fatura em aberto, mas não bati o pé em algum campo dela (id/valor/vencimento) nos dados do SGP — não vou arriscar cancelar no escuro. Dados brutos da fatura:\n";
+        echo '  ' . var_export($faturaAlvo, true) . "\n";
+        return;
+    }
+
+    $valorFatura = (float) $valorFatura;
+    $valorDesconto = round($valorFatura * ($percentual / 100), 2);
+    $valorPago = round($valorFatura - $valorDesconto, 2);
+
+    $indicadoNome = '';
+    $stmt = $conn->prepare('SELECT indicado_nome FROM indicados WHERE id = ? LIMIT 1');
+    $stmt->bind_param('i', $desconto['indicado_id']);
+    $stmt->execute();
+    $indicadoRow = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    $indicadoNome = $indicadoRow['indicado_nome'] ?? ('indicado #' . $desconto['indicado_id']);
+
+    $motivoCancelamento = "Desconto Indique e Ganhe ({$percentual}%) - indicação de {$indicadoNome} validada";
+    $observacaoAvulso = "Indique e Ganhe: {$percentual}% de desconto sobre fatura original de R$ " . number_format($valorFatura, 2, ',', '.')
+        . " (indicação de {$indicadoNome} validada). Fatura original #{$faturaId} cancelada.";
+
+    echo "  [{$indicadorCpf}] Fatura #{$faturaId}, vencimento {$vencimento}, valor R$ " . number_format($valorFatura, 2, ',', '.')
+        . " -> com {$percentual}% de desconto, indicador paga R$ " . number_format($valorPago, 2, ',', '.') . ".\n";
+
+    if (!DESCONTO_APLICACAO_ATIVA) {
+        echo "  [{$indicadorCpf}] SIMULAÇÃO: cancelaria a fatura #{$faturaId} e criaria uma avulsa de R$ " . number_format($valorPago, 2, ',', '.')
+            . " vencendo em {$vencimento}, contrato #{$contratoId}, portador " . SGP_PORTADOR_DESCONTO . ", plano de contas " . SGP_PLANO_CONTAS_DESCONTO . ". Nada foi alterado de verdade.\n";
+        return;
+    }
+
+    $respostaCancelar = chamarSGP("/api/banco/titulo/{$faturaId}/cancelar/", ['motivo' => $motivoCancelamento]);
+    if ($respostaCancelar === null) {
+        echo "  [{$indicadorCpf}] Não consegui cancelar a fatura #{$faturaId} agora (SGP não respondeu certo). Tenta de novo amanhã, nada foi alterado.\n";
+        return;
+    }
+
+    $comoTexto = json_encode($respostaCancelar);
+    if (stripos($comoTexto, 'erro') !== false || stripos($comoTexto, 'error') !== false) {
+        echo "  [{$indicadorCpf}] SGP recusou o cancelamento da fatura #{$faturaId}: {$comoTexto}. Nada foi alterado, tenta de novo amanhã.\n";
+        return;
+    }
+
+    echo "  [{$indicadorCpf}] Fatura #{$faturaId} cancelada. Criando a fatura avulsa com desconto...\n";
+
+    $respostaAvulso = chamarSGP('/api/ura/cliente/titulo/avulso/add/', [
+        'contrato' => (int) $contratoId,
+        'portador' => SGP_PORTADOR_DESCONTO,
+        'parcelas' => 1,
+        'valor' => $valorPago,
+        'data_vencimento' => $vencimento,
+        'plano_contas' => SGP_PLANO_CONTAS_DESCONTO,
+        'observacao' => $observacaoAvulso,
+    ]);
+
+    $novoTituloId = is_array($respostaAvulso) ? ($respostaAvulso[0]['titulo_id'] ?? null) : null;
+
+    if ($novoTituloId === null) {
+        // Situação crítica: já cancelamos a fatura original e a nova não
+        // foi criada. O cliente fica sem fatura nenhuma nesse ciclo até
+        // alguém resolver à mão — por isso o email urgente, não só o log.
+        $mensagem = "Cancelei a fatura #{$faturaId} do indicador {$indicadorCpf} (indicação de {$indicadoNome}), "
+            . "mas NÃO consegui criar a fatura avulsa substituta de R$ " . number_format($valorPago, 2, ',', '.') . ".\n"
+            . "Resposta do SGP: " . json_encode($respostaAvulso);
+        echo "  [{$indicadorCpf}] ERRO CRÍTICO: {$mensagem}\n";
+        enviarEmailAlertaCritico($mensagem);
+        return;
+    }
+
+    $stmt = $conn->prepare(
+        "UPDATE descontos
+         SET status = 'aplicado', fatura_id = ?, valor_fatura = ?, valor_desconto = ?, valor_pago = ?, data_aplicacao = NOW()
+         WHERE id = ?"
+    );
+    $novoTituloId = (int) $novoTituloId;
+    $descontoId = (int) $desconto['id'];
+    $stmt->bind_param('idddi', $novoTituloId, $valorFatura, $valorDesconto, $valorPago, $descontoId);
+    $stmt->execute();
+    $stmt->close();
+
+    echo "  [{$indicadorCpf}] Pronto! Fatura avulsa #{$novoTituloId} criada com desconto, desconto marcado como aplicado.\n";
 }
