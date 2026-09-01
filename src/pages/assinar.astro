@@ -7,6 +7,7 @@ import "../styles/global.css";
     <section class="section-dark section assinar-hero">
         <div class="container assinar-hero-content">
             <span class="chip-brand">Você foi indicado</span>
+            <p class="nome-indicador" id="nomeIndicador" hidden></p>
             <h1>Falta pouco! Complete seus dados <span class="text-gradient">e agende sua instalação</span></h1>
             <p class="assinar-hero-subtitle">
                 Você foi indicado por um cliente Zamtech. Preencha seus dados abaixo e nosso time comercial entra em contato pra agendar a instalação da sua internet.
@@ -131,6 +132,7 @@ import "../styles/global.css";
     }
 
     const statusLink = document.getElementById("statusLink") as HTMLElement;
+    const nomeIndicador = document.getElementById("nomeIndicador") as HTMLElement;
     const form = document.getElementById("formAssinar") as HTMLFormElement;
     const mensagemAssinar = document.getElementById("mensagemAssinar") as HTMLElement;
     const btnAssinar = document.getElementById("btnAssinar") as HTMLButtonElement;
@@ -177,6 +179,12 @@ import "../styles/global.css";
             if (data.valido) {
                 statusLink.innerHTML = "";
                 form.hidden = false;
+
+                if (data.indicador_nome) {
+                    const primeiroNome = data.indicador_nome.trim().split(" ")[0];
+                    nomeIndicador.textContent = `Você foi indicado por ${primeiroNome}!`;
+                    nomeIndicador.hidden = false;
+                }
             } else {
                 statusLink.innerHTML = `<p class="status-link-erro">${data.mensagem || "Esse link de indicação não é válido."}</p>`;
             }
@@ -261,6 +269,16 @@ import "../styles/global.css";
         gap: var(--space-16);
         max-width: 720px;
         margin: 0 auto;
+    }
+
+    .nome-indicador {
+        font-size: var(--fs-h5);
+        font-weight: 700;
+        color: var(--color-white);
+    }
+
+    .nome-indicador[hidden] {
+        display: none;
     }
 
     .assinar-hero h1 {

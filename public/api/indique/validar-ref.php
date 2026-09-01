@@ -43,7 +43,7 @@ try {
         exit;
     }
 
-    echo json_encode(['valido' => true]);
+    echo json_encode(['valido' => true, 'indicador_nome' => $indicacao['indicador_nome']]);
 } catch (\Throwable $e) {
     error_log('Indique e Ganhe - validar-ref.php falhou: ' . $e->getMessage());
     http_response_code(500);
