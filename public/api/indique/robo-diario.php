@@ -13,11 +13,21 @@
 require_once __DIR__ . '/_config.php';
 
 // Trava de segurança: só roda via linha de comando (o jeito que a Tarefa
-// Cron chama). Se alguém tentar abrir essa URL num navegador, barra na
-// hora — isso não é uma página pública, é um robô de fundo.
+// Cron chama) OU, pra dar pra testar manualmente sem Terminal no cPanel,
+// via navegador com a chave secreta certa na URL. Sem a chave certa, barra
+// na hora — isso não é uma página pública, é um robô de fundo.
+//
+// IMPORTANTE: depois de testar, troque essa chave por outra qualquer (ou
+// apague esse bloco todo) — ela fica exposta em texto no código.
+define('ROBO_CHAVE_TESTE', '920c729a5e148cdaeb8349d233306b2b');
+
 if (php_sapi_name() !== 'cli') {
-    http_response_code(403);
-    exit('Acesso negado.');
+    $chaveInformada = $_GET['chave'] ?? '';
+    if (!hash_equals(ROBO_CHAVE_TESTE, $chaveInformada)) {
+        http_response_code(403);
+        exit('Acesso negado.');
+    }
+    header('Content-Type: text/plain; charset=UTF-8');
 }
 
 $conn = conectarBanco();
