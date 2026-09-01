@@ -292,7 +292,7 @@ import "../styles/global.css";
                             <input type="text" readonly value="${data.link}" id="linkGeradoInput" />
                             <button type="button" class="btn btn-primary" id="btnCopiarLink">Copiar</button>
                         </div>
-                        <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined">Compartilhar no WhatsApp</a>
+                        <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Compartilhar no WhatsApp</a>
                     `);
                     form.hidden = true;
 
@@ -308,14 +308,14 @@ import "../styles/global.css";
                 } else {
                     let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
                     if (data.permitir_whatsapp) {
-                        html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined">Falar no WhatsApp</a>`;
+                        html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
                     }
                     mostrarMensagem(html);
                 }
             } catch (error) {
                 mostrarMensagem(`
                     <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
-                    <a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined">Falar no WhatsApp</a>
+                    <a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
                 `);
             } finally {
                 btnGerarLink.disabled = false;
@@ -555,7 +555,7 @@ import "../styles/global.css";
     .indique-form {
         display: flex;
         flex-direction: column;
-        gap: var(--space-20);
+        gap: var(--space-24);
     }
 
     .input-group {
@@ -588,7 +588,9 @@ import "../styles/global.css";
 
     .input-erro {
         display: block;
+        margin-top: var(--space-4);
         font-size: var(--fs-caption);
+        line-height: 1.5;
         color: #dc2626;
     }
 
@@ -596,6 +598,7 @@ import "../styles/global.css";
         display: flex;
         align-items: flex-start;
         gap: var(--space-8);
+        line-height: 1.5;
         font-size: var(--fs-caption);
         color: var(--color-gray-medium);
         line-height: 1.5;
@@ -659,6 +662,18 @@ import "../styles/global.css";
     .link-gerado-box .btn {
         width: auto;
         flex-shrink: 0;
+    }
+
+    /* Variante do botão outlined pra usar sobre fundo claro (o .btn-outlined
+       global é branco-sobre-branco aqui, some de vista) */
+    .btn-outlined-light {
+        border: 1px solid var(--color-primary);
+        color: var(--color-primary);
+        background-color: transparent;
+    }
+
+    .btn-outlined-light:hover {
+        background-color: rgba(3, 37, 208, 0.08);
     }
 
     /* 6. FAQ (mesmo padrão da Central de Ajuda) */
