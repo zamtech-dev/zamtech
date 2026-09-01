@@ -23,6 +23,10 @@ define('DB_PASS', '%rR3Zw9Q_MMmZC3s');
 // --- Aviso de desconto pendente pro financeiro ---
 define('EMAIL_FINANCEIRO', 'zamtechcomercial@gmail.com');
 
+// --- Chave pra rodar scripts de fundo (robô, diagnósticos) manualmente
+// pelo navegador quando não tem Terminal no cPanel. Troque depois de usar. ---
+define('ROBO_CHAVE_TESTE', '920c729a5e148cdaeb8349d233306b2b');
+
 // --- CPFs de teste ---
 // Esses CPFs nunca são bloqueados por "já foi indicado antes" — o
 // registro anterior é apagado automaticamente a cada novo teste, pra

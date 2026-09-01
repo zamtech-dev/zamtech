@@ -17,10 +17,8 @@ require_once __DIR__ . '/_config.php';
 // via navegador com a chave secreta certa na URL. Sem a chave certa, barra
 // na hora — isso não é uma página pública, é um robô de fundo.
 //
-// IMPORTANTE: depois de testar, troque essa chave por outra qualquer (ou
-// apague esse bloco todo) — ela fica exposta em texto no código.
-define('ROBO_CHAVE_TESTE', '920c729a5e148cdaeb8349d233306b2b');
-
+// A chave (ROBO_CHAVE_TESTE) agora mora no _config.php, compartilhada com
+// outros scripts de fundo.
 if (php_sapi_name() !== 'cli') {
     $chaveInformada = $_GET['chave'] ?? '';
     if (!hash_equals(ROBO_CHAVE_TESTE, $chaveInformada)) {
