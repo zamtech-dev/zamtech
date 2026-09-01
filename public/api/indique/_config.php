@@ -23,6 +23,14 @@ define('DB_PASS', '%rR3Zw9Q_MMmZC3s');
 // --- Aviso de desconto pendente pro financeiro ---
 define('EMAIL_FINANCEIRO', 'zamtechcomercial@gmail.com');
 
+// --- CPFs de teste ---
+// Esses CPFs nunca são bloqueados por "já foi indicado antes" — o
+// registro anterior é apagado automaticamente a cada novo teste, pra
+// poder testar o fluxo do /assinar quantas vezes quiser sem precisar
+// mexer no phpMyAdmin toda hora. USE SÓ PRA TESTE, nunca CPF de cliente
+// de verdade.
+define('CPFS_DE_TESTE', ['03766282514']);
+
 /**
  * Abre a conexão com o banco. Se der erro, já responde em JSON e encerra
  * a requisição (nenhum endpoint precisa se preocupar com isso de novo).

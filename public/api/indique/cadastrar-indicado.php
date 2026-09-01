@@ -92,13 +92,29 @@ try {
     $stmt->close();
 
     if ($jaIndicado) {
-        $conn->close();
-        echo json_encode([
-            'sucesso' => false,
-            'tipo' => 'bloqueio',
-            'mensagem' => 'Esse CPF já está participando de uma indicação. Cada pessoa só pode ser indicada uma vez.',
-        ]);
-        exit;
+        if (in_array($cpf, CPFS_DE_TESTE, true)) {
+            // CPF de teste: apaga o registro (e qualquer desconto ligado a
+            // ele) e deixa seguir o fluxo normal, como se fosse a 1ª vez.
+            $del = $conn->prepare(
+                'DELETE d FROM descontos d JOIN indicados i ON i.id = d.indicado_id WHERE i.indicado_cpfcnpj = ?'
+            );
+            $del->bind_param('s', $cpf);
+            $del->execute();
+            $del->close();
+
+            $del = $conn->prepare('DELETE FROM indicados WHERE indicado_cpfcnpj = ?');
+            $del->bind_param('s', $cpf);
+            $del->execute();
+            $del->close();
+        } else {
+            $conn->close();
+            echo json_encode([
+                'sucesso' => false,
+                'tipo' => 'bloqueio',
+                'mensagem' => 'Esse CPF já está participando de uma indicação. Cada pessoa só pode ser indicada uma vez.',
+            ]);
+            exit;
+        }
     }
 
     // --- 4. Esse CPF já é cliente Zamtech? Programa vale só pra gente nova. ---
