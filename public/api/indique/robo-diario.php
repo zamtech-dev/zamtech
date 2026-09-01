@@ -284,7 +284,7 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
         return;
     }
 
-    $contratoId = pegarCampo($contratoAtivo, ['id', 'contrato_id', 'contrato']);
+    $contratoId = pegarCampo($contratoAtivo, ['id', 'contratoId', 'contrato_id', 'contrato']);
     if ($contratoId === null) {
         echo "  [{$indicadorCpf}] Achei o contrato ativo mas não consegui identificar o ID dele nos dados do SGP — preciso olhar isso com calma antes de continuar. Não vou arriscar. Dados brutos do contrato:\n";
         echo '  ' . var_export($contratoAtivo, true) . "\n";
@@ -308,15 +308,15 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
     }
 
     usort($candidatas, function ($a, $b) {
-        $vA = pegarCampo($a, ['vencimento', 'data_vencimento', 'dt_vencimento']) ?? '9999-12-31';
-        $vB = pegarCampo($b, ['vencimento', 'data_vencimento', 'dt_vencimento']) ?? '9999-12-31';
+        $vA = pegarCampo($a, ['vencimento', 'dataVencimento', 'data_vencimento', 'dt_vencimento']) ?? '9999-12-31';
+        $vB = pegarCampo($b, ['vencimento', 'dataVencimento', 'data_vencimento', 'dt_vencimento']) ?? '9999-12-31';
         return strcmp((string) $vA, (string) $vB);
     });
     $faturaAlvo = $candidatas[0];
 
-    $faturaId = pegarCampo($faturaAlvo, ['id', 'titulo_id', 'fatura_id']);
-    $valorFatura = pegarCampo($faturaAlvo, ['valor', 'valor_total', 'valor_fatura', 'valor_cobranca']);
-    $vencimento = pegarCampo($faturaAlvo, ['vencimento', 'data_vencimento', 'dt_vencimento']);
+    $faturaId = pegarCampo($faturaAlvo, ['id', 'tituloId', 'titulo_id', 'fatura_id']);
+    $valorFatura = pegarCampo($faturaAlvo, ['valor', 'valorTotal', 'valor_total', 'valor_fatura', 'valor_cobranca']);
+    $vencimento = pegarCampo($faturaAlvo, ['vencimento', 'dataVencimento', 'data_vencimento', 'dt_vencimento']);
 
     if ($faturaId === null || $valorFatura === null || $vencimento === null) {
         echo "  [{$indicadorCpf}] Achei uma fatura em aberto, mas não bati o pé em algum campo dela (id/valor/vencimento) nos dados do SGP — não vou arriscar cancelar no escuro. Dados brutos da fatura:\n";
