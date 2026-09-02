@@ -16,16 +16,12 @@ header('Content-Type: text/plain; charset=UTF-8');
 
 $agora = date('Y-m-d H:i:s');
 $assunto = "Indique e Ganhe - teste de email ({$agora})";
-$corpo = "Esse é um email de teste, disparado na mão, só pra confirmar se o mail() do servidor tá entregando de verdade em " . EMAIL_FINANCEIRO . ".\n\n"
-    . "Se você tá lendo isso (mesmo que tenha caído no spam), funcionou!\n\n"
+$corpo = "Esse é um email de teste, disparado na mão, só pra confirmar se o envio via SMTP tá entregando de verdade em " . EMAIL_FINANCEIRO . ".\n\n"
+    . "Se você tá lendo isso, funcionou!\n\n"
     . "Horário do envio: {$agora}";
 
-$headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
-    . "Content-Type: text/plain; charset=UTF-8\r\n";
+$enviado = enviarEmailViaSmtp(EMAIL_FINANCEIRO, $assunto, $corpo);
 
-$enviado = mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
-
-echo "Tentei mandar um email de teste pra " . EMAIL_FINANCEIRO . ".\n";
-echo "mail() retornou: " . ($enviado ? 'true (o servidor aceitou tentar enviar)' : 'false (o servidor recusou nem tentar)') . "\n\n";
-echo "Isso NÃO garante que chegou na caixa de entrada de verdade -- só diz que o servidor da Hostgator aceitou processar o envio.\n";
-echo "Confere a caixa de entrada E a pasta de spam/lixo eletrônico do " . EMAIL_FINANCEIRO . " agora.\n";
+echo "Tentei mandar um email de teste pra " . EMAIL_FINANCEIRO . " via SMTP (" . SMTP_HOST . ").\n";
+echo "Resultado: " . ($enviado ? 'SUCESSO -- o servidor confirmou o recebimento.' : 'FALHOU -- confere se SMTP_HOST, SMTP_USUARIO e SMTP_SENHA em _config.php já foram preenchidos certinho.') . "\n\n";
+echo "Se deu sucesso, confere a caixa de entrada do " . EMAIL_FINANCEIRO . " (deve chegar rapidinho, sem cair em spam).\n";

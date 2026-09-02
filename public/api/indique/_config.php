@@ -23,6 +23,31 @@ define('DB_PASS', '%rR3Zw9Q_MMmZC3s');
 // --- Aviso de desconto pendente pro financeiro ---
 define('EMAIL_FINANCEIRO', 'zamtechcomercial@gmail.com');
 
+// --- Envio de email via SMTP autenticado ---
+// Por que isso existe: o mail() nativo da Hostgator manda o email dizendo
+// "From: ...@zamtech.com.br", mas o SPF do domínio não autoriza o servidor
+// da Hostgator a mandar email como zamtech.com.br (e quem cuida do DNS do
+// domínio não libera inclusão nova) — então o Gmail recusa ou joga fora.
+//
+// A solução: mandar autenticado direto pelo servidor de email de verdade
+// do domínio (a Dynu, que já é quem recebe o email de vocês — é o mesmo
+// jeito que o Outlook/Thunderbird da Carol usa pra mandar pelo
+// comercial@zamtech.com.br). Como é o servidor oficial do domínio, passa
+// no SPF sem precisar mexer em nada de DNS, e não custa nada extra.
+//
+// Como configurar (a Carol consegue pegar isso no painel da Dynu, na parte
+// de configuração de cliente de email / SMTP de saída do comercial@
+// zamtech.com.br — o mesmo que ela usaria pra configurar o Outlook):
+// 1. Nome do servidor SMTP de saída (algo tipo "nome-smtp.dynu.com").
+// 2. Porta (normalmente 587 com TLS, ou 465 com SSL).
+// 3. Usuário: o email completo, comercial@zamtech.com.br.
+// 4. Senha: a mesma senha que a Carol usa pra entrar nesse email.
+define('SMTP_HOST', 'zamtech-com-br-smtp.dynu.com');
+define('SMTP_PORTA', 587);
+define('SMTP_USUARIO', 'comercial@zamtech.com.br');
+define('SMTP_SENHA', '@Zamtech33');
+define('SMTP_NOME_REMETENTE', 'Zamtech Indique e Ganhe');
+
 // --- Aplicação do desconto na fatura de verdade (cancelar + gerar avulso) ---
 // Portador e Plano de Contas confirmados com você: Sicredi SGP e
 // Fibra > Mensalidade.
@@ -173,10 +198,116 @@ function gerarTokenAprovacao(mysqli $conn): string
 }
 
 /**
+ * Manda um email "de verdade", autenticado via SMTP (não usa o mail()
+ * nativo do PHP, que não é confiável pra esse domínio — ver o comentário de
+ * SMTP_HOST lá em cima). Fala o protocolo SMTP na mão, linha por linha, sem
+ * precisar instalar nenhuma biblioteca externa (não temos Composer/Terminal
+ * na Hostgator). Funciona com qualquer servidor SMTP (Dynu, Gmail, etc) —
+ * só depende das constantes SMTP_* configuradas.
+ *
+ * Devolve true se o servidor confirmou o recebimento, false se algo falhou
+ * — quem chama decide o que fazer (tentar de novo amanhã, avisar de outro
+ * jeito, etc). Nunca lança exceção: um email que falha não pode derrubar o
+ * robô no meio do processamento de indicados.
+ */
+function enviarEmailViaSmtp(string $destinatario, string $assunto, string $corpo): bool
+{
+    if (SMTP_HOST === '' || SMTP_SENHA === '') {
+        error_log('Indique e Ganhe - SMTP: falta configurar SMTP_HOST e/ou SMTP_SENHA em _config.php.');
+        return false;
+    }
+
+    // Porta 465 é SSL "direto" desde o primeiro byte da conexão; as outras
+    // portas conectam sem criptografia e usam STARTTLS logo depois.
+    $protocolo = (SMTP_PORTA === 465) ? 'ssl' : 'tcp';
+    $conexao = @stream_socket_client($protocolo . '://' . SMTP_HOST . ':' . SMTP_PORTA, $erroNum, $erroMsg, 15);
+    if (!$conexao) {
+        error_log("Indique e Ganhe - SMTP: não consegui conectar ({$erroMsg})");
+        return false;
+    }
+
+    // Cada resposta do servidor SMTP pode vir em várias linhas; só a
+    // última tem um espaço (em vez de hífen) logo depois do código de 3
+    // dígitos — é o jeito de saber que a resposta terminou.
+    $ler = function () use ($conexao): string {
+        $resposta = '';
+        while ($linha = fgets($conexao, 515)) {
+            $resposta .= $linha;
+            if (isset($linha[3]) && $linha[3] === ' ') {
+                break;
+            }
+        }
+        return $resposta;
+    };
+    $mandar = function (string $comando) use ($conexao): void {
+        fwrite($conexao, $comando . "\r\n");
+    };
+
+    $ler(); // saudação inicial do servidor (220)
+    $mandar('EHLO zamtech.com.br');
+    $ler();
+
+    // Porta 465 já é SSL direto na conexão; porta 587 (ou outras) usa
+    // STARTTLS pra "promover" a conexão pra criptografada no meio do
+    // caminho. Só faz STARTTLS se não for a porta 465.
+    if (SMTP_PORTA !== 465) {
+        $mandar('STARTTLS');
+        if (strpos($ler(), '220') !== 0) {
+            fclose($conexao);
+            error_log('Indique e Ganhe - SMTP: STARTTLS recusado.');
+            return false;
+        }
+
+        if (!stream_socket_enable_crypto($conexao, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+            fclose($conexao);
+            error_log('Indique e Ganhe - SMTP: falha ao iniciar TLS.');
+            return false;
+        }
+
+        $mandar('EHLO zamtech.com.br');
+        $ler();
+    }
+
+    $mandar('AUTH LOGIN');
+    $ler();
+    $mandar(base64_encode(SMTP_USUARIO));
+    $ler();
+    $mandar(base64_encode(SMTP_SENHA));
+    if (strpos($ler(), '235') !== 0) {
+        fclose($conexao);
+        error_log('Indique e Ganhe - SMTP: autenticação recusada (confere SMTP_USUARIO e SMTP_SENHA em _config.php).');
+        return false;
+    }
+
+    $mandar('MAIL FROM:<' . SMTP_USUARIO . '>');
+    $ler();
+    $mandar('RCPT TO:<' . $destinatario . '>');
+    $ler();
+    $mandar('DATA');
+    $ler();
+
+    $cabecalhos = 'From: ' . SMTP_NOME_REMETENTE . ' <' . SMTP_USUARIO . ">\r\n"
+        . "To: <{$destinatario}>\r\n"
+        . "Subject: =?UTF-8?B?" . base64_encode($assunto) . "?=\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n";
+
+    // No protocolo SMTP, uma linha com só um ponto marca o fim da
+    // mensagem — se o corpo tiver uma linha assim por acaso, duplica o
+    // ponto pra não confundir o servidor.
+    $corpoEscapado = preg_replace('/^\./m', '..', $corpo);
+
+    $mandar($cabecalhos . "\r\n" . $corpoEscapado . "\r\n.");
+    $respostaEnvio = $ler();
+
+    $mandar('QUIT');
+    fclose($conexao);
+
+    return strpos($respostaEnvio, '250') === 0;
+}
+
+/**
  * Manda o email pro financeiro avisando que tem um desconto de indicação
- * esperando aprovação. Usa o mail() nativo do PHP (Hostgator já manda sem
- * precisar de serviço externo) — se cair em spam no início, é coisa de
- * configuração de DNS (SPF/DKIM) do domínio, não do código em si.
+ * esperando aprovação.
  */
 function enviarEmailAprovacao(
     string $tokenAprovacao,
@@ -196,10 +327,7 @@ function enviarEmailAprovacao(
         . "Pra aprovar ou rejeitar, acesse:\n{$link}\n\n"
         . "— Robô Indique e Ganhe, Zamtech";
 
-    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
-        . "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+    enviarEmailViaSmtp(EMAIL_FINANCEIRO, $assunto, $corpo);
 }
 
 /**
@@ -216,10 +344,7 @@ function enviarEmailAlertaAcumulo(string $indicadorCpf, string $indicadorNome, i
         . "Alguém do financeiro precisa olhar os descontos desse CPF (tabela descontos, status = aprovado) e decidir manualmente como aplicar.\n\n"
         . "— Robô Indique e Ganhe, Zamtech";
 
-    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
-        . "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+    enviarEmailViaSmtp(EMAIL_FINANCEIRO, $assunto, $corpo);
 }
 
 /**
@@ -245,10 +370,7 @@ function enviarEmailDescontoCanceladoAtraso(
         . "Não precisa fazer nada — é só um aviso. Se quiser conferir, o registro está na tabela descontos com status 'rejeitado'.\n\n"
         . "— Robô Indique e Ganhe, Zamtech";
 
-    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
-        . "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+    enviarEmailViaSmtp(EMAIL_FINANCEIRO, $assunto, $corpo);
 }
 
 /**
@@ -262,8 +384,5 @@ function enviarEmailAlertaCritico(string $mensagem): void
     $assunto = 'Indique e Ganhe - URGENTE: fatura cancelada sem substituta';
     $corpo = "Atenção!\n\n{$mensagem}\n\nIsso precisa ser resolvido manualmente no SGP o quanto antes.\n\n— Robô Indique e Ganhe, Zamtech";
 
-    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
-        . "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+    enviarEmailViaSmtp(EMAIL_FINANCEIRO, $assunto, $corpo);
 }
