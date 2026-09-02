@@ -385,18 +385,19 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
     }
 
     $respostaCancelar = chamarSGP("/api/banco/titulo/{$faturaId}/cancelar/", ['motivo' => $motivoCancelamento]);
-    if ($respostaCancelar === null) {
-        echo "  [{$indicadorCpf}] Não consegui cancelar a fatura #{$faturaId} agora (SGP não respondeu certo). Tenta de novo amanhã, nada foi alterado.\n";
-        return;
-    }
 
-    // Não confio só no texto da resposta do cancelamento (já vimos na
-    // prática que o SGP pode responder "de boa", sem palavra de erro
-    // nenhuma, e mesmo assim não cancelar nada de verdade). Em vez disso,
-    // busco os dados do cliente DE NOVO no SGP e confiro se essa fatura
-    // realmente virou "cancelado". Só sigo pra criar a avulsa depois dessa
-    // confirmação — criar a avulsa sem ter certeza que a original foi
-    // cancelada dobraria a cobrança do cliente.
+    // Não decido só pela resposta dessa chamada — ela pode "falhar" (null,
+    // por timeout ou conexão caindo) mesmo que o SGP já tenha processado o
+    // cancelamento do outro lado (já vimos isso acontecer na prática: a
+    // chamada deu timeout, mas a fatura foi cancelada mesmo assim). E
+    // também não confio só no texto de uma resposta "sem erro" (já vimos
+    // isso mentir também). O único jeito confiável é buscar os dados do
+    // cliente DE NOVO no SGP e conferir com os próprios olhos se essa
+    // fatura realmente virou "cancelado" antes de seguir pra criar a
+    // avulsa — criar a avulsa sem essa certeza dobraria a cobrança do
+    // cliente, e não criar quando já cancelou de verdade deixa ele sem
+    // fatura nenhuma. Os dois erros já aconteceram um teste cada, então
+    // agora sempre confere.
     $dadosConferencia = chamarSGP('/api/ura/clientes/', ['cpfcnpj' => $indicadorCpf]);
     $statusAposCancelar = null;
     foreach (($dadosConferencia['clientes'][0]['titulos'] ?? []) as $tituloConferencia) {
@@ -408,11 +409,13 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
     }
 
     if ($statusAposCancelar !== 'cancelado') {
-        $mensagem = "Tentei cancelar a fatura #{$faturaId} do indicador {$indicadorCpf} (indicação de {$indicadoNome}), mas conferindo de novo no SGP ela continua com status '"
-            . ($statusAposCancelar ?? 'não encontrada') . "' — ou seja, NÃO foi cancelada de verdade, mesmo a chamada não tendo dado erro explícito.\n\n"
-            . "Por segurança, NÃO criei a fatura avulsa (isso evitaria cobrar a mais em cima da fatura original). Resposta bruta que o SGP deu pro cancelamento: " . json_encode($respostaCancelar);
-        echo "  [{$indicadorCpf}] ERRO: {$mensagem}\n";
-        enviarEmailAlertaCritico($mensagem);
+        // Nada de ruim aconteceu aqui: a fatura original continua intacta
+        // (ninguém foi cobrado a mais nem a menos), só não consegui
+        // confirmar o cancelamento ainda. Não é uma emergência — o robô
+        // tenta de novo amanhã sozinho (o desconto continua "aprovado").
+        // Não precisa de email urgente pra isso, só registra no log.
+        echo "  [{$indicadorCpf}] Tentei cancelar a fatura #{$faturaId}, mas conferindo de novo no SGP ela continua com status '"
+            . ($statusAposCancelar ?? 'não encontrada') . "' — ainda não confirmei o cancelamento. Não criei a avulsa por segurança. Tenta de novo amanhã.\n";
         return;
     }
 
