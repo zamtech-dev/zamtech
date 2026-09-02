@@ -46,6 +46,7 @@ import "../styles/global.css";
                         <div class="input-group input-group--cep">
                             <label for="cepIndicado">CEP</label>
                             <input type="text" id="cepIndicado" required placeholder="00000-000" inputmode="numeric" maxlength="9" autocomplete="off" />
+                            <span class="input-dica" id="cepStatus" hidden></span>
                         </div>
                         <div class="input-group input-group--uf">
                             <label for="ufIndicado">UF</label>
@@ -148,15 +149,61 @@ import "../styles/global.css";
     const cpfErro = document.getElementById("cpfIndicadoErro") as HTMLElement;
     const telefoneInput = document.getElementById("telefoneIndicado") as HTMLInputElement;
     const cepInput = document.getElementById("cepIndicado") as HTMLInputElement;
+    const cepStatus = document.getElementById("cepStatus") as HTMLElement;
     const ufInput = document.getElementById("ufIndicado") as HTMLInputElement;
+    const logradouroInput = document.getElementById("logradouroIndicado") as HTMLInputElement;
+    const bairroInput = document.getElementById("bairroIndicado") as HTMLInputElement;
+    const cidadeInput = document.getElementById("cidadeIndicado") as HTMLInputElement;
+    const numeroInput = document.getElementById("numeroIndicado") as HTMLInputElement;
 
     cpfInput?.addEventListener("input", () => {
         cpfInput.value = mascararCPF(cpfInput.value);
         cpfErro.hidden = true;
     });
     telefoneInput?.addEventListener("input", () => { telefoneInput.value = mascararTelefone(telefoneInput.value); });
-    cepInput?.addEventListener("input", () => { cepInput.value = mascararCEP(cepInput.value); });
     ufInput?.addEventListener("input", () => { ufInput.value = ufInput.value.toUpperCase().slice(0, 2); });
+
+    function mostrarDicaCep(texto: string, negativo = false) {
+        cepStatus.textContent = texto;
+        cepStatus.hidden = texto === "";
+        cepStatus.classList.toggle("input-dica--erro", negativo);
+    }
+
+    // Busca o endereço assim que o CEP fica completo (8 dígitos), pra pessoa
+    // não precisar digitar rua/bairro/cidade na mão. API pública do próprio
+    // Correios via ViaCEP — grátis, sem chave, sem custo nenhum pra gente.
+    async function buscarEnderecoPorCep(cep: string) {
+        mostrarDicaCep("Buscando endereço...");
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+
+            if (data.erro) {
+                mostrarDicaCep("CEP não encontrado. Preencha o endereço manualmente.", true);
+                return;
+            }
+
+            if (logradouroInput && data.logradouro) logradouroInput.value = data.logradouro;
+            if (bairroInput && data.bairro) bairroInput.value = data.bairro;
+            if (cidadeInput && data.localidade) cidadeInput.value = data.localidade;
+            if (ufInput && data.uf) ufInput.value = data.uf;
+
+            mostrarDicaCep("Endereço encontrado! Confira e complete o número.");
+            numeroInput?.focus();
+        } catch (error) {
+            mostrarDicaCep("Não consegui buscar o endereço agora. Preencha manualmente.", true);
+        }
+    }
+
+    cepInput?.addEventListener("input", () => {
+        cepInput.value = mascararCEP(cepInput.value);
+        const cepLimpo = cepInput.value.replace(/\D/g, "");
+        if (cepLimpo.length === 8) {
+            buscarEnderecoPorCep(cepLimpo);
+        } else {
+            mostrarDicaCep("");
+        }
+    });
 
     function mostrarMensagem(html: string, negativo = false) {
         mensagemAssinar.innerHTML = html;
@@ -166,6 +213,10 @@ import "../styles/global.css";
 
     const params = new URLSearchParams(window.location.search);
     const ref = (params.get("ref") || "").trim();
+
+    // Guardado aqui na 1ª chamada (validar-ref.php) pra poder usar depois,
+    // lá no botão de WhatsApp que aparece quando o cadastro dá certo.
+    let indicadorNomeCompleto = "";
 
     async function iniciar() {
         if (!ref) {
@@ -188,7 +239,8 @@ import "../styles/global.css";
                 form.hidden = false;
 
                 if (data.indicador_nome) {
-                    const primeiroNome = data.indicador_nome.trim().split(" ")[0];
+                    indicadorNomeCompleto = data.indicador_nome.trim();
+                    const primeiroNome = indicadorNomeCompleto.split(" ")[0];
                     nomeIndicador.innerHTML = `Você foi indicado por <span class="nome-destaque">${escaparHtml(primeiroNome)}</span>!`;
                     nomeIndicador.hidden = false;
                 }
@@ -241,7 +293,16 @@ import "../styles/global.css";
                 const data = await response.json();
 
                 if (data.sucesso) {
-                    mostrarMensagem(`<p>${data.mensagem}</p>`, false);
+                    // Carol monitora o SGP na mão (sem robô nenhum olhando isso), então
+                    // quanto mais rápido ela souber que caiu um pré-cadastro novo, mais
+                    // rápido ela consegue converter e agendar a instalação. Por isso o
+                    // botão: a pessoa avisa direto no WhatsApp, sem precisar a gente ficar
+                    // ficando de olho o dia inteiro esperando aparecer.
+                    const mensagemZap = `Oi! Acabei de fazer meu pré-cadastro no site${indicadorNomeCompleto ? ` (indicado por ${indicadorNomeCompleto})` : ""}. Meu nome é ${dados.nome}, CPF ${dados.cpf}. Pode conferir e agilizar minha instalação?`;
+                    mostrarMensagem(`
+                        <p>${data.mensagem}</p>
+                        <a href="https://wa.me/5527995057736?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">Avisar no WhatsApp que já me cadastrei</a>
+                    `, false);
                     form.hidden = true;
                 } else {
                     const ehErroDeSistema = data.tipo === "erro";
@@ -408,6 +469,22 @@ import "../styles/global.css";
         display: none;
     }
 
+    .input-dica {
+        display: block;
+        margin-top: var(--space-4);
+        font-size: var(--fs-caption);
+        line-height: 1.5;
+        color: var(--color-gray-medium);
+    }
+
+    .input-dica[hidden] {
+        display: none;
+    }
+
+    .input-dica--erro {
+        color: #dc2626;
+    }
+
     .checkbox-group {
         display: flex;
         align-items: flex-start;
@@ -428,46 +505,6 @@ import "../styles/global.css";
         color: var(--color-primary);
         text-decoration: underline;
         font-weight: 600;
-    }
-
-    .mensagem-retorno-indique {
-        margin-top: var(--space-16);
-        padding: var(--space-12) var(--space-16);
-        border-radius: var(--radius-sm);
-        background: var(--gradient-brand-soft);
-        border: 1px solid rgba(3, 37, 208, 0.2);
-        color: var(--color-primary);
-        font-size: var(--fs-sm);
-        font-weight: 600;
-        text-align: center;
-    }
-
-    .mensagem-retorno-indique.hidden {
-        display: none;
-    }
-
-    .mensagem-retorno-indique.negativa {
-        background: #fef2f2;
-        border-color: rgba(220, 38, 38, 0.3);
-        color: #b91c1c;
-    }
-
-    .mensagem-retorno-indique p {
-        margin-bottom: var(--space-12);
-    }
-
-    .mensagem-retorno-indique .btn {
-        width: 100%;
-    }
-
-    .btn-outlined-light {
-        border: 1px solid var(--color-primary);
-        color: var(--color-primary);
-        background-color: transparent;
-    }
-
-    .btn-outlined-light:hover {
-        background-color: rgba(3, 37, 208, 0.08);
     }
 
     .btn-lg {

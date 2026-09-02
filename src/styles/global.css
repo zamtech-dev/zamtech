@@ -17,6 +17,16 @@
     --color-gray-medium: #525252;
     --color-gray-low: #a3a3a3;
 
+    /* Cores semânticas de status (sucesso/erro/alerta) — usadas em badges,
+       mensagens de retorno e cards de pagamento em todo o site, pra parar
+       de cada página inventar seu próprio vermelho/verde. */
+    --color-success: #15803d;
+    --color-success-bg: #f0fdf4;
+    --color-success-border: #bbf7d0;
+    --color-danger: #b91c1c;
+    --color-danger-bg: #fef2f2;
+    --color-danger-border: #fecaca;
+
     /* Tipografia (inalterada) */
     --font-display: 'Red Hat Display', sans-serif;
     --font-text: 'Red Hat Text', sans-serif;
@@ -105,11 +115,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #000f76;
-    background: radial-gradient(circle,
-            rgb(1, 7, 46) 0%,
-            rgba(0, 2, 18, 1) 51%,
-            rgb(0, 8, 32) 100%);
+    background-color: #000217;
+    /* Textura de fibra óptica (asset já existente, "background-abstract-dark.webp")
+       por baixo do degradê de sempre. O degradê continua fazendo o vinheteamento
+       (escurece as bordas pra não brigar com o texto), e a imagem só dá uma
+       profundidade a mais no fundo — mesma ideia que já era usada com a versão
+       branca dela em .social-proof-section (index.astro), agora replicada aqui
+       pra ficar padrão em toda seção escura do site. */
+    background-image:
+        radial-gradient(circle,
+            rgba(1, 7, 46, 0.55) 0%,
+            rgba(0, 2, 18, 0.85) 51%,
+            rgba(0, 8, 32, 0.95) 100%),
+        url("/assets/img/backgrounds/background-abstract-dark.webp");
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
     color: var(--color-white);
 }
 
@@ -266,6 +287,23 @@ p {
     filter: brightness(0.95);
 }
 
+/* Estado desativado, padrão pra qualquer botão .btn do site (ex: "Gerar meu
+   link" em /indique, que só libera depois que o formulário inteiro tá
+   preenchido certo). Fica cinza e sem os efeitos de hover/active. */
+.btn:disabled {
+    background: var(--color-gray-low);
+    color: var(--color-white);
+    cursor: not-allowed;
+    filter: none;
+    box-shadow: none;
+    opacity: 0.75;
+}
+
+.btn:disabled:hover,
+.btn:disabled:active {
+    filter: none;
+}
+
 .btn-outlined {
     border: 1px solid var(--color-white);
     color: var(--color-white);
@@ -343,6 +381,51 @@ p {
     width: 100%;
     border: none;
     background: linear-gradient(90deg, transparent, rgba(3, 37, 208, 0.35), transparent);
+}
+
+.btn-outlined-light {
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    background-color: transparent;
+}
+
+.btn-outlined-light:hover {
+    background-color: rgba(3, 37, 208, 0.08);
+}
+
+/* Caixa de retorno de formulário (sucesso/aviso), usada em /indique,
+   /assinar e /segunda-via — visual único pra qualquer mensagem de resposta
+   de formulário no site inteiro. */
+.mensagem-retorno-indique {
+    margin-top: var(--space-16);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-sm);
+    background: var(--gradient-brand-soft);
+    border: 1px solid rgba(3, 37, 208, 0.2);
+    color: var(--color-primary);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-align: center;
+}
+
+.mensagem-retorno-indique.hidden {
+    display: none;
+}
+
+/* Quando o formulário esbarra numa regra/erro — vermelho, pra ficar claro
+   que não é "tenta de novo", é "isso aqui não pode seguir assim". */
+.mensagem-retorno-indique.negativa {
+    background: var(--color-danger-bg);
+    border-color: rgba(220, 38, 38, 0.3);
+    color: var(--color-danger);
+}
+
+.mensagem-retorno-indique p {
+    margin-bottom: var(--space-12);
+}
+
+.mensagem-retorno-indique .btn {
+    width: 100%;
 }
 
 /* Selo/chip de marca — para tags como "Mais vendido", "Novo" etc. */

@@ -1013,17 +1013,26 @@ import Layout from "../layouts/Layout.astro";
     }
 
     /* SEÇÕES ESCURAS GLOBAIS */
+    /* Mesmo tratamento do .section-dark global (global.css): degradê de sempre
+       por cima da textura "background-abstract-dark.webp", só pra essa página
+       ficar visualmente igual ao /assinar e /indique em vez de um azul chapado
+       sem nenhuma textura. */
     .dark-section {
         display: flex;
         flex-direction: column;
         align-items: center;
-        background: #000f76;
-        background: radial-gradient(
+        background-color: #000217;
+        background-image:
+            radial-gradient(
                 circle,
-                rgb(1, 7, 46) 0%,
-                rgba(0, 2, 18, 1) 51%,
-                rgb(0, 8, 32) 100%
-            );
+                rgba(1, 7, 46, 0.55) 0%,
+                rgba(0, 2, 18, 0.85) 51%,
+                rgba(0, 8, 32, 0.95) 100%
+            ),
+            url("/assets/img/backgrounds/background-abstract-dark.webp");
+        background-size: cover, cover;
+        background-position: center, center;
+        background-repeat: no-repeat, no-repeat;
         color: var(--color-white);
     }
 

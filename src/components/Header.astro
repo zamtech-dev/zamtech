@@ -429,20 +429,40 @@
         opacity: 0.9;
     }
 
-    /* ESTADO COMPACTO / GLASSMORPHISM (QUANDO ROLA A PÁGINA) */
+    /* ESTADO COMPACTO (QUANDO ROLA A PÁGINA) */
     .main-header.scrolled {
         top: 2px;
-        width: 75%;
-        border-radius: 50px;
-        background: var(--gradient-brand);
+        /* Largura fixa em % ficava espremendo "Planos Residenciais / Planos
+           Empresariais / Indique e Ganhe" em telas de notebook (era mais
+           apertado em telas GRANDES do que no breakpoint de tablet logo
+           abaixo — o oposto do esperado). Com clamp() a pílula nunca fica
+           menor que 700px enquanto tiver espaço, mas também não estica além
+           da conta em telas muito largas. */
+        width: clamp(700px, 46vw, 860px);
+        max-width: 94vw;
+        border-radius: var(--radius-full);
+        /* Voltou a ser fundo sólido (sem blur/vidro), só que agora
+           --color-dark-blue (#000F76) em vez do --gradient-brand de antes. */
+        background: var(--color-dark-blue);
         border: 1px solid rgba(255, 255, 255, 0.2);
         box-shadow: var(--elevation-3);
-        padding: var(--space-8) var(--space-24);
+        padding: var(--space-12) var(--space-32);
         transition: var(--transition-default);
     }
 
     .main-header.scrolled::after {
         display: none;
+    }
+
+    /* Texto do menu um pouco mais compacto só no estado "pílula" — junto com
+       o gap garantido no .header-container, evita que os links encostem na
+       logo em telas de notebook (~1280-1440px), onde a pílula é mais estreita. */
+    .main-header.scrolled .nav-menu-top {
+        gap: var(--space-16);
+    }
+
+    .main-header.scrolled .nav-menu-top a {
+        font-size: var(--fs-sm);
     }
 
     .header-container {
@@ -451,6 +471,11 @@
         align-items: center;
         width: 100%;
         height: 30px;
+        /* Respiro mínimo garantido entre a logo e o menu, mesmo se a pílula
+           do header compactado ficar apertada — antes dependia só do
+           space-between "sobrar espaço", e quando não sobrava, o texto
+           "Planos Residenciais" ficava colado na logo. */
+        gap: var(--space-24);
     }
 
     .brand-logo {
@@ -460,7 +485,7 @@
     }
 
     .main-header.scrolled .brand-logo {
-        height: 24px; /* Redução sutil na logo ao compactar */
+        height: 28px; /* Redução sutil na logo ao compactar */
     }
 
     .menu-top-wrapper {
@@ -481,6 +506,7 @@
         font-family: var(--font-display);
         font-size: var(--fs-body);
         font-weight: 500;
+        white-space: nowrap;
         transition: var(--transition-default);
     }
 
@@ -495,7 +521,7 @@
         background-color: var(--color-secondary);
         color: var(--color-white);
         padding: var(--space-8) var(--space-32);
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius-md);
         font-family: var(--font-display);
         font-size: var(--fs-body);
         font-weight: 600;
@@ -504,7 +530,7 @@
     }
 
     .main-header.scrolled .btn-menu-toggle {
-        border-radius: 20px; /* Adapta o botão ao formato pílula do header */
+        border-radius: var(--radius-full); /* Adapta o botão ao formato pílula do header */
     }
 
     .btn-menu-toggle:hover {
@@ -572,7 +598,7 @@
     .bloquinho-card {
         background-color: var(--color-white);
         border: 1px solid rgba(114, 114, 114, 0.08);
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius-md);
         padding: var(--space-16) var(--space-8);
         display: flex;
         flex-direction: column;
@@ -614,7 +640,7 @@
     .menu-section-card {
         background-color: var(--color-white);
         border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius-md);
         padding: var(--space-24);
         box-shadow: var(--elevation-1);
         display: flex;
@@ -635,8 +661,11 @@
     }
 
     .indique-card:hover {
-        border-color: var(--color-primary);
+        /* Mesma cor de borda que os bloquinhos (2ª via, Login, Ajuda) usam no
+           hover deles — antes ficava azul aqui e cinza nos outros. */
+        border-color: var(--color-gray-low);
         box-shadow: var(--elevation-2);
+        transform: translateY(-2px);
     }
 
     .indique-card-text {
@@ -661,7 +690,7 @@
         align-items: center;
         gap: var(--space-12);
         padding: var(--space-12) var(--space-16);
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius-md);
         color: var(--color-gray-dark);
         font-family: var(--font-text);
         font-size: var(--fs-sm);
@@ -782,7 +811,7 @@
         font-weight: 400;
         color: var(--color-gray-medium);
         padding: var(--space-8) var(--space-12);
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius-md);
         transition: var(--transition-default);
     }
 

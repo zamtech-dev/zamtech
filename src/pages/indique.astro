@@ -148,7 +148,7 @@ import "../styles/global.css";
                         <span>Li e concordo com o <a href="/regulamento-indique-e-ganhe" target="_blank">Regulamento do Indique e Ganhe</a> e com a <a href="/politica-de-privacidade" target="_blank">Política de Privacidade</a> da Zamtech.</span>
                     </label>
 
-                    <button type="submit" class="btn btn-primary btn-lg" id="btnGerarLink">Gerar meu link de indicação</button>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btnGerarLink" disabled>Gerar meu link de indicação</button>
                 </form>
 
                 <div id="mensagemIndique" class="mensagem-retorno-indique hidden"></div>
@@ -236,11 +236,14 @@ import "../styles/global.css";
 
     const cpfInput = document.getElementById("cpfIndicador") as HTMLInputElement;
     const cpfErro = document.getElementById("cpfErro") as HTMLElement;
+    const nomeInput = document.getElementById("nomeIndicador") as HTMLInputElement;
+    const termosCheckbox = document.getElementById("termosIndique") as HTMLInputElement;
 
     if (cpfInput) {
         cpfInput.addEventListener("input", () => {
             cpfInput.value = mascararCPF(cpfInput.value);
             cpfErro.hidden = true;
+            atualizarEstadoBotaoGerarLink();
         });
     }
 
@@ -248,10 +251,25 @@ import "../styles/global.css";
     const mensagemIndique = document.getElementById("mensagemIndique") as HTMLElement;
     const btnGerarLink = document.getElementById("btnGerarLink") as HTMLButtonElement;
 
-    function mostrarMensagem(html: string, negativo = false) {
+    // Botão "Gerar meu link" começa cinza/travado (atributo disabled já vem
+    // assim no HTML). Só libera (fica azul, clicável) quando nome + CPF
+    // válido + checkbox "Li e concordo" estiverem todos OK ao mesmo tempo.
+    function atualizarEstadoBotaoGerarLink() {
+        const nomeOk = !!nomeInput?.value.trim();
+        const cpfOk = !!cpfInput?.value && validarCPF(cpfInput.value);
+        const termosOk = !!termosCheckbox?.checked;
+        if (btnGerarLink) btnGerarLink.disabled = !(nomeOk && cpfOk && termosOk);
+    }
+
+    nomeInput?.addEventListener("input", atualizarEstadoBotaoGerarLink);
+    termosCheckbox?.addEventListener("change", atualizarEstadoBotaoGerarLink);
+    atualizarEstadoBotaoGerarLink();
+
+    function mostrarMensagem(html: string, negativo = false, sucesso = false) {
         mensagemIndique.innerHTML = html;
         mensagemIndique.classList.remove("hidden");
         mensagemIndique.classList.toggle("negativa", negativo);
+        mensagemIndique.classList.toggle("sucesso", sucesso);
     }
 
     function whatsappFallbackUrl(nome: string, cpf: string): string {
@@ -283,22 +301,35 @@ import "../styles/global.css";
         if (data.sucesso && data.link) {
             const mensagemZap = `Ei! Usa esse link pra assinar a Zamtech: ${data.link}`;
             mostrarMensagem(`
-                <p>Prontinho! Esse é o seu link de indicação:</p>
-                <div class="link-gerado-box">
-                    <input type="text" readonly value="${data.link}" id="linkGeradoInput" />
-                    <button type="button" class="btn btn-primary" id="btnCopiarLink">Copiar</button>
+                <div class="link-sucesso-card">
+                    <span class="chip-brand">✓ Link pronto</span>
+                    <p class="link-sucesso-texto">Esse é o seu link de indicação. Envie pra quem você quer indicar:</p>
+                    <div class="link-copy-row">
+                        <span class="link-copy-valor" id="linkGeradoValor">${data.link}</span>
+                        <button type="button" class="btn-copiar-link" id="btnCopiarLink" aria-label="Copiar link de indicação">
+                            <svg id="iconeCopiar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <span id="textoCopiar">Copiar</span>
+                        </button>
+                    </div>
+                    <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg btn-compartilhar-zap">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2m0 1.67c2.25 0 4.36.88 5.95 2.47a8.38 8.38 0 0 1 2.46 5.95c0 4.64-3.78 8.41-8.42 8.41a8.4 8.4 0 0 1-4.29-1.17l-.31-.18-3.12.82.83-3.04-.2-.32a8.35 8.35 0 0 1-1.28-4.47c0-4.64 3.78-8.42 8.42-8.42Zm-4.65 4.42c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.25 3.74.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.23-.16-.48-.28-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.78.97-.14.17-.29.19-.53.06-.25-.13-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.44-.06-.13-.56-1.37-.78-1.87-.2-.48-.41-.42-.56-.43h-.4Z"/></svg>
+                        Compartilhar no WhatsApp
+                    </a>
                 </div>
-                <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Compartilhar no WhatsApp</a>
-            `);
+            `, false, true);
             form.hidden = true;
 
             const btnCopiar = document.getElementById("btnCopiarLink") as HTMLButtonElement;
-            const linkInput = document.getElementById("linkGeradoInput") as HTMLInputElement;
+            const iconeCopiar = document.getElementById("iconeCopiar") as HTMLElement;
+            const textoCopiar = document.getElementById("textoCopiar") as HTMLElement;
             btnCopiar?.addEventListener("click", () => {
-                linkInput.select();
                 navigator.clipboard.writeText(data.link).then(() => {
-                    btnCopiar.textContent = "Copiado!";
-                    setTimeout(() => { btnCopiar.textContent = "Copiar"; }, 2000);
+                    btnCopiar.classList.add("copiado");
+                    textoCopiar.textContent = "Copiado!";
+                    setTimeout(() => {
+                        btnCopiar.classList.remove("copiado");
+                        textoCopiar.textContent = "Copiar";
+                    }, 2000);
                 });
             });
         } else if (data.tipo === "escolher_contrato" && Array.isArray(data.contratos)) {
@@ -686,39 +717,6 @@ import "../styles/global.css";
         font-weight: 600;
     }
 
-    .mensagem-retorno-indique {
-        margin-top: var(--space-16);
-        padding: var(--space-12) var(--space-16);
-        border-radius: var(--radius-sm);
-        background: var(--gradient-brand-soft);
-        border: 1px solid rgba(3, 37, 208, 0.2);
-        color: var(--color-primary);
-        font-size: var(--fs-sm);
-        font-weight: 600;
-        text-align: center;
-    }
-
-    .mensagem-retorno-indique.hidden {
-        display: none;
-    }
-
-    /* Quando a indicação esbarra numa regra do programa (contrato inativo,
-       fatura não paga, CPF inválido etc) — vermelho, pra ficar claro que
-       não é "tenta de novo", é "isso aqui ainda não te habilita". */
-    .mensagem-retorno-indique.negativa {
-        background: #fef2f2;
-        border-color: rgba(220, 38, 38, 0.3);
-        color: #b91c1c;
-    }
-
-    .mensagem-retorno-indique p {
-        margin-bottom: var(--space-12);
-    }
-
-    .mensagem-retorno-indique .btn {
-        width: 100%;
-    }
-
     .contratos-lista {
         display: flex;
         flex-direction: column;
@@ -750,39 +748,97 @@ import "../styles/global.css";
         cursor: default;
     }
 
-    .link-gerado-box {
-        display: flex;
-        gap: var(--space-8);
-        margin-bottom: var(--space-12);
+    /* Estado de sucesso ("seu link tá pronto") tem visual próprio — desliga
+       a caixa genérica de mensagem e deixa o card abaixo assumir sozinho. */
+    .mensagem-retorno-indique.sucesso {
+        background: none;
+        border: none;
+        padding: 0;
+        text-align: left;
+        color: inherit;
     }
 
-    .link-gerado-box input {
+    .link-sucesso-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+        background: var(--gradient-brand-soft);
+        border: 1px solid rgba(3, 37, 208, 0.15);
+        border-radius: var(--radius-signature-sm);
+        padding: var(--space-24);
+        overflow: hidden;
+    }
+
+    .link-sucesso-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-brand);
+    }
+
+    .link-sucesso-texto {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-dark);
+    }
+
+    .link-copy-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        background: var(--color-white);
+        border: 1px solid rgba(3, 37, 208, 0.2);
+        border-radius: var(--radius-md);
+        padding: var(--space-12) var(--space-12) var(--space-12) var(--space-16);
+        box-shadow: var(--elevation-1);
+    }
+
+    .link-copy-valor {
         flex: 1;
         min-width: 0;
-        padding: 0 var(--space-12);
-        border-radius: var(--radius-sm);
-        border: 1px solid rgba(3, 37, 208, 0.3);
-        background: var(--color-white);
-        color: var(--color-gray-dark);
+        font-family: var(--font-text);
         font-size: var(--fs-sm);
-        font-weight: 500;
-    }
-
-    .link-gerado-box .btn {
-        width: auto;
-        flex-shrink: 0;
-    }
-
-    /* Variante do botão outlined pra usar sobre fundo claro (o .btn-outlined
-       global é branco-sobre-branco aqui, some de vista) */
-    .btn-outlined-light {
-        border: 1px solid var(--color-primary);
+        font-weight: 600;
         color: var(--color-primary);
-        background-color: transparent;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
     }
 
-    .btn-outlined-light:hover {
-        background-color: rgba(3, 37, 208, 0.08);
+    .link-copy-valor::-webkit-scrollbar {
+        display: none;
+    }
+
+    .btn-copiar-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+        flex-shrink: 0;
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-sm);
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        transition: var(--transition-default);
+    }
+
+    .btn-copiar-link:hover {
+        filter: brightness(1.1);
+    }
+
+    .btn-copiar-link.copiado {
+        background: var(--color-success);
+    }
+
+    .btn-compartilhar-zap {
+        width: 100%;
+        gap: var(--space-8);
     }
 
     /* 6. FAQ (mesmo padrão da Central de Ajuda) */

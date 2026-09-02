@@ -20,10 +20,7 @@ import "../styles/global.css";
                 <!-- CARD 0: INDIQUE E GANHE -->
                 <a href="/regulamento-indique-e-ganhe" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/others-icons/beneficios.svg"
-                            alt="Indique e Ganhe"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/others-icons/beneficios.svg")`} role="img" aria-label="Indique e Ganhe"></span>
                     </div>
                     <div class="card-content">
                         <h3>Indique e Ganhe</h3>
@@ -39,10 +36,7 @@ import "../styles/global.css";
                 <!-- CARD 1: POLÍTICA DE PRIVACIDADE -->
                 <a href="/politica-de-privacidade" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/regulamentos/politica-de-privacidade.svg"
-                            alt="Política de Privacidade"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/politica-de-privacidade.svg")`} role="img" aria-label="Política de Privacidade"></span>
                     </div>
                     <div class="card-content">
                         <h3>Política de Privacidade</h3>
@@ -58,10 +52,7 @@ import "../styles/global.css";
                 <!-- CARD 2: TERMOS DE USO -->
                 <a href="/termos-de-uso" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/regulamentos/termos-de-uso.svg"
-                            alt="Termos de Uso"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/termos-de-uso.svg")`} role="img" aria-label="Termos de Uso"></span>
                     </div>
                     <div class="card-content">
                         <h3>Termos de Uso e Serviços</h3>
@@ -76,10 +67,7 @@ import "../styles/global.css";
                 <!-- CARD 3: TERMO DE CONTRATO -->
                 <a href="/termos-de-contrato" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/regulamentos/contrato-de-prestacao.svg"
-                            alt="Termos de Contrato"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/contrato-de-prestacao.svg")`} role="img" aria-label="Termos de Contrato"></span>
                     </div>
                     <div class="card-content">
                         <h3>Contrato de Prestação de Serviços</h3>
@@ -94,10 +82,7 @@ import "../styles/global.css";
                 <!-- CARD 4: TERMO DE ADESÃO -->
                 <a href="/termos-de-adesao" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/regulamentos/termos-de-adesao.svg"
-                            alt="Termo de Adesão"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/termos-de-adesao.svg")`} role="img" aria-label="Termo de Adesão"></span>
                     </div>
                     <div class="card-content">
                         <h3>Termo de Adesão</h3>
@@ -111,10 +96,7 @@ import "../styles/global.css";
 
                 <a href="/compromisso" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/regulamentos/compromisso.svg"
-                            alt="Termo de Adesão"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/compromisso.svg")`} role="img" aria-label="Termo de Adesão"></span>
                     </div>
                     <div class="card-content">
                         <h3>Compromisso Institucional</h3>
@@ -131,10 +113,7 @@ import "../styles/global.css";
 
                 <a href="/vacinacao" class="regulamento-card">
                     <div class="card-icon">
-                        <img
-                            src="/assets/icons/regulamentos/vacinacao-covid.svg"
-                            alt="Vacinação Covid 19"
-                        />
+                        <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/vacinacao-covid.svg")`} role="img" aria-label="Vacinação Covid 19"></span>
                     </div>
                     <div class="card-content">
                         <h3>Compromisso - Vacinação Covid-19</h3>
@@ -238,9 +217,27 @@ import "../styles/global.css";
         box-shadow: var(--elevation-1);
     }
 
-    .card-icon img {
+    /* Ícone "mascarado": em vez de mostrar a cor original do SVG (alguns
+       arquivos vinham pretos, outros já vinham azuis — inconsistente), a
+       gente usa o SVG só como silhueta e pinta tudo com a mesma cor da
+       marca. Assim os 7 ícones desta grade ficam sempre idênticos, não
+       importa a cor do arquivo original. */
+    .icon-mask {
         width: 24px;
         height: 24px;
+        /* #0756ff é exatamente a cor que os OUTROS 6 ícones desse grid já
+           usavam no arquivo original (conferido no SVG) — é ela que fica
+           igual em todos os 7, e é a cor que você disse ser a mais usada
+           na marca. */
+        background-color: var(--color-secondary);
+        -webkit-mask-image: var(--icon-src);
+        mask-image: var(--icon-src);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
     }
 
     .card-content h3 {

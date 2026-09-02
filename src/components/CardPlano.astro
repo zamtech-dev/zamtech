@@ -191,15 +191,14 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         background-color: var(--color-white);
         border: var(--radius-small) solid var(--color-secondary);
         border-radius: var(--radius-signature-sm);
-        padding: var(--space-24) var(--space-32);
+        padding: var(--space-24);
         display: flex;
         flex-direction: column;
         align-items: left;
-        justify-content: space-around;
         color: var(--color-gray-dark);
         transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
         box-shadow: var(--elevation-1);
-        gap: 0.4rem;
+        gap: var(--space-4);
     }
 
     .card-plano-dinamico:hover {
@@ -261,7 +260,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         display: flex;
         flex: row;
         align-items: center;
-        margin: var(--space-16) 0;
+        margin: var(--space-12) 0;
     }
 
     .currency {
@@ -316,18 +315,20 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     .plan-description {
         font-size: var(--fs-sm);
         color: var(--color-gray-dark);
-        margin-bottom: var(--space-24);
+        margin-bottom: var(--space-16);
+        line-height: 1.4;
     }
 
     .card-plano--featured .plan-description {
         font-size: var(--fs-sm);
         color: var(--color-white);
-        margin-bottom: var(--space-24);
+        margin-bottom: var(--space-16);
+        line-height: 1.4;
     }
 
     .resources-list {
         list-style: none;
-        margin-bottom: var(--space-24);
+        margin-bottom: var(--space-16);
     }
 
     .resources-list li {
@@ -335,7 +336,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         align-items: center;
         gap: var(--space-8);
         font-size: var(--fs-sm);
-        margin-bottom: var(--space-8);
+        margin-bottom: var(--space-4);
     }
 
     .resources-list img {
@@ -347,14 +348,14 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     .adicionais-container {
         padding: var(--space-0);
         border-radius: var(--radius-md);
-        margin-bottom: var(--space-24);
+        margin-bottom: var(--space-16);
     }
 
     .adicionais-title {
         display: block;
         font-size: var(--fs-caption);
         font-weight: 700;
-        margin-bottom: var(--space-12);
+        margin-bottom: var(--space-8);
         color: var(--color-secondary);
     }
 
@@ -362,7 +363,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         display: block;
         font-size: var(--fs-caption);
         font-weight: 700;
-        margin-bottom: var(--space-12);
+        margin-bottom: var(--space-8);
         color: var(--color-white);
     }
 
@@ -370,8 +371,8 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: var(--space-12);
-        gap: 1rem;
+        margin-bottom: var(--space-8);
+        gap: var(--space-16);
     }
 
     .adicional-item:last-child {

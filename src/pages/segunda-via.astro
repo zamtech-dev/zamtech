@@ -342,22 +342,19 @@ import "../styles/global.css";
     }
 
     .hero-header h1 {
-        font-family: var(--font-display, sans-serif);
-        font-size: 2.4rem;
-        color: var(--color-gray-dark, #141414);
-        margin-bottom: 10px;
-        font-weight: 500;
-        letter-spacing: -0.03em;
+        font-size: clamp(2rem, 4vw, var(--fs-h1));
+        color: var(--color-gray-dark);
+        margin-bottom: var(--space-8);
+        line-height: 1.2;
     }
 
     .hero-header h1 strong {
-        font-weight: 700;
-        color: var(--color-primary, #0325d0);
+        color: var(--color-primary);
     }
 
     .hero-header p {
-        color: var(--color-gray-medium, #525252);
-        font-size: 1.05rem;
+        color: var(--color-gray-medium);
+        font-size: var(--fs-body);
         max-width: 500px;
         margin: 0 auto;
         line-height: 1.5;
@@ -407,13 +404,13 @@ import "../styles/global.css";
     }
 
     .btn-search-pill {
-        background: var(--gradient-brand, #0325d0);
-        color: #ffffff;
+        background: var(--gradient-brand);
+        color: var(--color-white);
         border: none;
         padding: 14px 32px;
-        border-radius: var(--radius-full, 9999px);
+        border-radius: var(--radius-full);
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: var(--fs-sm);
         cursor: pointer;
         transition: all 0.2s var(--ease-brand, ease);
         flex-shrink: 0;
@@ -424,30 +421,30 @@ import "../styles/global.css";
     }
 
     .filtro-wrapper {
-        background: #ffffff;
-        border: 1px solid var(--color-gray-light, #e5e5e5);
-        padding: 12px 18px;
-        border-radius: 14px;
+        background: var(--color-white);
+        border: 1px solid var(--color-gray-light);
+        padding: var(--space-12) var(--space-16);
+        border-radius: var(--radius-lg);
         display: flex;
         flex-direction: column;
-        gap: 6px;
-        box-shadow: var(--elevation-1, 0 4px 6px -1px rgba(0,0,0,0.02));
+        gap: var(--space-8);
+        box-shadow: var(--elevation-1);
     }
 
     .filtro-label {
-        font-size: 13px;
+        font-size: var(--fs-caption);
         font-weight: 600;
-        color: var(--color-gray-medium, #525252);
+        color: var(--color-gray-medium);
     }
 
     .filtro-select {
         width: 100%;
-        padding: 10px 14px;
-        border: 1px solid var(--color-gray-low, #a3a3a3);
-        border-radius: 8px;
-        background-color: var(--color-gray-light, #f5f5f5);
-        font-size: 14px;
-        color: var(--color-gray-dark, #141414);
+        padding: var(--space-8) var(--space-12);
+        border: 1px solid var(--color-gray-low);
+        border-radius: var(--radius-md);
+        background-color: var(--color-gray-light);
+        font-size: var(--fs-sm);
+        color: var(--color-gray-dark);
         outline: none;
         cursor: pointer;
     }
@@ -489,10 +486,10 @@ import "../styles/global.css";
 
     .fatura-card {
         position: relative;
-        background: #ffffff;
-        border: 1px solid var(--color-gray-light, #e5e5e5);
-        border-radius: var(--radius-signature-sm, 20px);
-        padding: 28px;
+        background: var(--color-white);
+        border: 1px solid var(--color-gray-light);
+        border-radius: var(--radius-signature-sm);
+        padding: var(--space-24);
         box-shadow: var(--elevation-1, 0 10px 30px -5px rgba(0, 0, 0, 0.04));
         box-sizing: border-box;
         text-align: left;
@@ -521,20 +518,20 @@ import "../styles/global.css";
     .badge {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        border-radius: 9999px;
-        font-size: 12px;
+        gap: var(--space-4);
+        padding: var(--space-4) var(--space-12);
+        border-radius: var(--radius-full);
+        font-size: var(--fs-caption);
         font-weight: 700;
         letter-spacing: 0.03em;
     }
 
-    .badge-atraso { background-color: #fee2e2; color: #dc2626; }
-    .badge-atual { background-color: rgba(3, 37, 208, 0.1); color: var(--color-primary, #0325d0); }
+    .badge-atraso { background-color: var(--color-danger-bg); color: var(--color-danger); }
+    .badge-atual { background-color: rgba(3, 37, 208, 0.1); color: var(--color-primary); }
 
     .fatura-id {
-        font-size: 14px;
-        color: var(--color-gray-medium, #525252);
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
     }
 
     .card-valor-section {
@@ -543,10 +540,10 @@ import "../styles/global.css";
 
     .valor-label {
         display: block;
-        font-size: 12px;
+        font-size: var(--fs-caption);
         font-weight: 600;
         text-transform: uppercase;
-        color: var(--color-gray-low, #a3a3a3);
+        color: var(--color-gray-low);
         letter-spacing: 0.05em;
         margin-bottom: 4px;
     }
@@ -559,30 +556,30 @@ import "../styles/global.css";
     }
 
     .pagamento-secao {
-        background: var(--color-gray-light, #f8fafc);
-        border: 1px solid var(--color-gray-light, #e2e8f0);
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 16px;
+        background: var(--color-gray-light);
+        border: 1px solid var(--color-gray-light);
+        border-radius: var(--radius-lg);
+        padding: var(--space-16);
+        margin-bottom: var(--space-16);
     }
 
     .pix-secao {
-        background: #f0fdf4;
-        border-color: #bbf7d0;
+        background: var(--color-success-bg);
+        border-color: var(--color-success-border);
     }
 
     .secao-titulo {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--space-8);
         font-weight: 700;
-        font-size: 13px;
-        color: #166534;
-        margin-bottom: 12px;
+        font-size: var(--fs-caption);
+        color: var(--color-success);
+        margin-bottom: var(--space-12);
     }
 
     .linha-secao .secao-titulo {
-        color: var(--color-dark-blue, #000f76);
+        color: var(--color-dark-blue);
     }
 
     .pix-content-grid {
@@ -592,10 +589,10 @@ import "../styles/global.css";
     }
 
     .qr-wrapper {
-        background: #ffffff;
-        padding: 8px;
-        border-radius: 10px;
-        border: 1px solid #dcfce7;
+        background: var(--color-white);
+        padding: var(--space-8);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-success-border);
         flex-shrink: 0;
     }
 
@@ -603,93 +600,93 @@ import "../styles/global.css";
         width: 130px;
         height: 130px;
         display: block;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
     }
 
     .pix-info-side {
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: var(--space-8);
     }
 
     .instrucao-pix {
-        font-size: 13px;
-        color: #15803d;
+        font-size: var(--fs-caption);
+        color: var(--color-success);
         margin: 0;
         line-height: 1.4;
     }
 
     .codigo-box {
-        background: #ffffff;
-        padding: 10px 14px;
+        background: var(--color-white);
+        padding: var(--space-8) var(--space-12);
         font-family: monospace;
-        font-size: 12px;
+        font-size: var(--fs-caption);
         word-break: break-all;
-        border-radius: 8px;
-        border: 1px solid var(--color-gray-low, #a3a3a3);
-        color: var(--color-gray-dark, #141414);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-gray-low);
+        color: var(--color-gray-dark);
         max-height: 70px;
         overflow-y: auto;
     }
 
     .pix-secao .codigo-box {
-        border-color: #bbf7d0;
+        border-color: var(--color-success-border);
     }
 
     .btn-acao {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: var(--space-8);
         width: 100%;
         text-align: center;
-        padding: 12px;
+        padding: var(--space-12);
         border: none;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         font-weight: 600;
-        font-size: 13px;
+        font-size: var(--fs-caption);
         cursor: pointer;
         text-decoration: none;
-        transition: all 0.2s ease;
+        transition: var(--transition-default);
     }
 
     .btn-pix {
-        background: #16a34a;
-        color: #fff;
+        background: var(--color-success);
+        color: var(--color-white);
     }
-    .btn-pix:hover { background: #15803d; }
+    .btn-pix:hover { filter: brightness(0.9); }
 
     .btn-linha {
-        background: var(--color-dark-blue, #000f76);
-        color: #fff;
-        margin-top: 8px;
+        background: var(--color-dark-blue);
+        color: var(--color-white);
+        margin-top: var(--space-8);
     }
-    .btn-linha:hover { background: var(--color-primary, #0325d0); }
+    .btn-linha:hover { background: var(--color-primary); }
 
     .card-actions-footer {
-        margin-top: 20px;
+        margin-top: var(--space-24);
     }
 
     .btn-pdf {
-        background: var(--gradient-brand, #0325d0);
-        color: #ffffff;
-        font-size: 14px;
-        padding: 14px;
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        font-size: var(--fs-sm);
+        padding: var(--space-16);
     }
     .btn-pdf:hover {
         filter: brightness(1.08);
     }
 
     .erro-msg {
-        color: #dc2626;
+        color: var(--color-danger);
         text-align: center;
         font-weight: 600;
-        margin-top: 20px;
-        background: #fef2f2;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid #fecaca;
+        margin-top: var(--space-24);
+        background: var(--color-danger-bg);
+        padding: var(--space-16);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-danger-border);
     }
 
     @media (max-width: 640px) {
@@ -706,13 +703,13 @@ import "../styles/global.css";
         .search-box-wrapper {
             background: rgba(255, 255, 255, 0.95);
             padding: 10px;
-            border-radius: 20px;
+            border-radius: var(--radius-lg);
         }
 
         .input-icon-group {
             padding-left: 0;
             padding-bottom: 8px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--color-gray-light);
         }
 
         .btn-search-pill {

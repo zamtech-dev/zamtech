@@ -41,7 +41,7 @@ const adicionaisEmpresarialPadrao = [
                 <span class="subtitulo-tag">Soluções em Conectividade & Voz</span>
                 <h2 class="titulo-secao-local">Planos Projetados para o Seu Negócio</h2>
                 <p class="desc-secao">
-                    Escolha a categoria ideal para a infraestrutura, comunicação e segurança da sua empresa.
+                    Escolha a velocidade ideal pra sua empresa. Cada faixa tem uma opção só de internet e uma com combo (voz e/ou câmera) já incluso.
                 </p>
 
                 <div class="switch-container">
@@ -56,7 +56,11 @@ const adicionaisEmpresarialPadrao = [
             </div>
 
             <div id="grid-conectividade" class="plans-grid">
-                
+                <!-- Ordenado por velocidade (600 → 850 → 1G), e dentro de cada
+                     velocidade sempre o plano só-internet antes do combo com
+                     voz/câmera — assim dá pra comparar "quanto custa a mais
+                     pra levar o combo" olhando os cards um do lado do outro,
+                     em vez de eles espalhados e parecendo produtos soltos. -->
                 <CardPlano
                     nome="Empresarial 600 - Start"
                     velocidade="600 Mega 100% Fibra"
@@ -72,38 +76,15 @@ const adicionaisEmpresarialPadrao = [
                 />
 
                 <CardPlano
-                    nome="Empresarial 850 - Escala Voice"
-                    velocidade="850 Mega + 1 Linha Fixa"
+                    nome="Empresarial 600 - Start Secure"
+                    velocidade="600 Mega + Voz + Câmera"
                     precoBase={189.90}
-                    badge="MAIS VENDIDO PARA EMPRESAS"
-                    descricao="Alta velocidade combinada com telefonia fixa profissional para otimizar o atendimento de lojas e empresas em crescimento."
-                    isFeatured={true}
+                    descricao="O plano Start com linha telefônica e câmera em nuvem já incluídas, numa única fatura simplificada."
                     recursos={[
-                        "850 Mega 100% Fibra Óptica",
-                        "1 Linha Telefônica Fixa inclusa",
-                        "Suporte Especializado B2B",
-                        "Atendimento ao cliente com qualidade HD"
-                    ]}
-                    adicionais={[
-                        { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
-                        { nome: "Câmera Inteligente Nuvem", preco: 39.90 },
-                        { nome: "Ponto Wi-Fi Mesh B2B", preco: 39.90 },
-                        { nome: "PABX em Nuvem Essential", preco: 49.90 }
-                    ]}
-                />
-
-                <CardPlano
-                    nome="Empresarial 1G - Prime Secure"
-                    velocidade="1 Giga + Voz + Câmera Nuvem"
-                    precoBase={239.90}
-                    badge="SOLUÇÃO COMPLETA B2B"
-                    descricao="Conectividade máxima, linha de atendimento comercial e monitoramento inteligente salvo 100% em nuvem."
-                    isFeatured={true}
-                    recursos={[
-                        "1 Gbps (1.000 Mega) de Ultravelocidade",
-                        "1 Linha Telefônica Fixa B2B",
-                        "1 Câmera de Monitoramento em Nuvem",
-                        "Acesso ao vivo e gravações pelo App Zamtech"
+                        "600 Mega 100% Fibra Óptica",
+                        "1 Linha Telefônica + 1 Câmera em Nuvem",
+                        "Zero custo com DVRs ou equipamentos caros",
+                        "Monitoramento 24h via aplicativo"
                     ]}
                     adicionais={[
                         { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
@@ -128,6 +109,27 @@ const adicionaisEmpresarialPadrao = [
                 />
 
                 <CardPlano
+                    nome="Empresarial 850 - Escala Voice"
+                    velocidade="850 Mega + 1 Linha Fixa"
+                    precoBase={189.90}
+                    badge="MAIS VENDIDO PARA EMPRESAS"
+                    descricao="O plano Escala com telefonia fixa profissional inclusa, pra otimizar o atendimento de lojas e empresas em crescimento."
+                    isFeatured={true}
+                    recursos={[
+                        "850 Mega 100% Fibra Óptica",
+                        "1 Linha Telefônica Fixa inclusa",
+                        "Suporte Especializado B2B",
+                        "Atendimento ao cliente com qualidade HD"
+                    ]}
+                    adicionais={[
+                        { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
+                        { nome: "Câmera Inteligente Nuvem", preco: 39.90 },
+                        { nome: "Ponto Wi-Fi Mesh B2B", preco: 39.90 },
+                        { nome: "PABX em Nuvem Essential", preco: 49.90 }
+                    ]}
+                />
+
+                <CardPlano
                     nome="Empresarial 1G - Prime"
                     velocidade="1 Giga 100% Fibra"
                     precoBase={169.90}
@@ -142,15 +144,17 @@ const adicionaisEmpresarialPadrao = [
                 />
 
                 <CardPlano
-                    nome="Empresarial 600 - Start Secure"
-                    velocidade="600 Mega + Voz + Câmera"
-                    precoBase={189.90}
-                    descricao="Internet, linha telefônica comercial e segurança por vídeo em nuvem em uma única fatura simplificada."
+                    nome="Empresarial 1G - Prime Secure"
+                    velocidade="1 Giga + Voz + Câmera Nuvem"
+                    precoBase={239.90}
+                    badge="SOLUÇÃO COMPLETA B2B"
+                    descricao="O plano Prime com linha de atendimento comercial e monitoramento inteligente 100% em nuvem já inclusos."
+                    isFeatured={true}
                     recursos={[
-                        "600 Mega 100% Fibra Óptica",
-                        "1 Linha Telefônica + 1 Câmera em Nuvem",
-                        "Zero custo com DVRs ou equipamentos caros",
-                        "Monitoramento 24h via aplicativo"
+                        "1 Gbps (1.000 Mega) de Ultravelocidade",
+                        "1 Linha Telefônica Fixa B2B",
+                        "1 Câmera de Monitoramento em Nuvem",
+                        "Acesso ao vivo e gravações pelo App Zamtech"
                     ]}
                     adicionais={[
                         { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
@@ -267,7 +271,7 @@ const adicionaisEmpresarialPadrao = [
                     precoBase={129.90}
                     descricao="Comunicação sem limites de ramais para grandes operações, relatórios e integrações de sistema."
                     recursos={[
-                        "Capacidade de Ramais Ilimitados*",
+                        "Ramais sob demanda para grandes operações",
                         "URA Avançada com horários flexíveis",
                         "Filas inteligentes de atendimento",
                         "API para integração com CRMs e sistemas"

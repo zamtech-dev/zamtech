@@ -5,7 +5,16 @@ import '../styles/global.css';
 import ConsentimentoLGPD from '../components/ConsentimentoLGPD.astro';
 import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
 
-const { title = "Zamtech - Fibra Óptica" } = Astro.props;
+const {
+    title = "Zamtech - Fibra Óptica",
+    description = "Internet fibra óptica de alta velocidade, PABX em nuvem e monitoramento para sua casa ou empresa. Conheça os planos Zamtech.",
+} = Astro.props;
+
+// Imagem usada quando um link do site é compartilhado (WhatsApp, Facebook, etc).
+// Antes não existia nenhuma tag og:image — o link caía sem preview nenhum.
+// "background-internet-zamtech.webp" já existia em assets, nunca tinha sido
+// usada em lugar nenhum, e é exatamente a cara da marca (fibra + azul).
+const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-internet-zamtech.webp";
 ---
 
 <!DOCTYPE html>
@@ -15,6 +24,20 @@ const { title = "Zamtech - Fibra Óptica" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="facebook-domain-verification" content="h426fzl53ebrz63ufxh48cd36x1jon" />
     <title>{title}</title>
+    <meta name="description" content={description}>
+
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Zamtech Fibra Óptica">
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={ogImage}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+
     <link rel="shortcut icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" type="image/x-icon">
     <link rel="apple-touch-icon" href="/assets/icons/website-global-icons/icon-zamtech.svg">
 </head>
