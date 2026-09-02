@@ -291,6 +291,16 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
         return;
     }
 
+    // Precisa do nome do indicado mais cedo agora, porque tanto o caminho
+    // normal quanto o caminho "cancelou por atraso" usam ele.
+    $stmt = $conn->prepare('SELECT indicado_nome FROM indicados WHERE id = ? LIMIT 1');
+    $indicadoIdBusca = (int) $desconto['indicado_id'];
+    $stmt->bind_param('i', $indicadoIdBusca);
+    $stmt->execute();
+    $indicadoRow = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    $indicadoNome = $indicadoRow['indicado_nome'] ?? ('indicado #' . $desconto['indicado_id']);
+
     // Fatura "cancelável" = ainda não paga e ainda não cancelada. Pega a de
     // vencimento mais próximo (a "próxima fatura", no sentido que a Raiane
     // usava no IXC).
@@ -305,6 +315,39 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
     if (empty($candidatas)) {
         echo "  [{$indicadorCpf}] Ainda não tem fatura em aberto pra aplicar o desconto. Espero e tento de novo amanhã.\n";
         return;
+    }
+
+    // Regra do regulamento: quem está em atraso não participa e perde o
+    // benefício desse ciclo (não é só "espera", é cancelado mesmo).
+    // "Em atraso" = alguma fatura em aberto com vencimento já passado.
+    $hoje = date('Y-m-d');
+    foreach ($candidatas as $tituloAberto) {
+        $vencimentoAberto = pegarCampo($tituloAberto, ['vencimento', 'dataVencimento', 'data_vencimento', 'dt_vencimento']);
+        if ($vencimentoAberto !== null && (string) $vencimentoAberto < $hoje) {
+            echo "  [{$indicadorCpf}] Tem fatura vencida em {$vencimentoAberto} — pelo regulamento, quem está em atraso não participa. Cancelando esse desconto.\n";
+
+            $motivo = 'Indicador com fatura em atraso no momento da aplicação do desconto - bonificação cancelada conforme regulamento.';
+            $descontoIdCancelar = (int) $desconto['id'];
+            $stmt = $conn->prepare("UPDATE descontos SET status = 'rejeitado', motivo_rejeicao = ? WHERE id = ?");
+            $stmt->bind_param('si', $motivo, $descontoIdCancelar);
+            $stmt->execute();
+            $stmt->close();
+
+            $stmt = $conn->prepare('SELECT indicador_nome FROM indicacoes WHERE indicador_cpfcnpj = ? LIMIT 1');
+            $stmt->bind_param('s', $indicadorCpf);
+            $stmt->execute();
+            $nomeIndicadorRow = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            enviarEmailDescontoCanceladoAtraso(
+                $indicadorCpf,
+                $nomeIndicadorRow['indicador_nome'] ?? $indicadorCpf,
+                $indicadoNome,
+                $percentual,
+                (string) $vencimentoAberto
+            );
+            return;
+        }
     }
 
     usort($candidatas, function ($a, $b) {
@@ -327,14 +370,6 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
     $valorFatura = (float) $valorFatura;
     $valorDesconto = round($valorFatura * ($percentual / 100), 2);
     $valorPago = round($valorFatura - $valorDesconto, 2);
-
-    $indicadoNome = '';
-    $stmt = $conn->prepare('SELECT indicado_nome FROM indicados WHERE id = ? LIMIT 1');
-    $stmt->bind_param('i', $desconto['indicado_id']);
-    $stmt->execute();
-    $indicadoRow = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    $indicadoNome = $indicadoRow['indicado_nome'] ?? ('indicado #' . $desconto['indicado_id']);
 
     $motivoCancelamento = "Desconto Indique e Ganhe ({$percentual}%) - indicação de {$indicadoNome} validada";
     $observacaoAvulso = "Indique e Ganhe: {$percentual}% de desconto sobre fatura original de R$ " . number_format($valorFatura, 2, ',', '.')

@@ -223,6 +223,35 @@ function enviarEmailAlertaAcumulo(string $indicadorCpf, string $indicadorNome, i
 }
 
 /**
+ * Email pro financeiro avisando que um desconto aprovado foi cancelado
+ * automaticamente porque o indicador estava com fatura em atraso no
+ * momento da aplicação — conforme o regulamento, quem está em atraso não
+ * participa e perde o benefício daquele ciclo.
+ */
+function enviarEmailDescontoCanceladoAtraso(
+    string $indicadorCpf,
+    string $indicadorNome,
+    string $indicadoNome,
+    float $percentual,
+    string $vencimentoAtrasado
+): void {
+    $assunto = 'Indique e Ganhe - desconto cancelado (indicador em atraso)';
+    $corpo = "Olá!\n\n"
+        . "Um desconto que já estava aprovado foi cancelado automaticamente porque, na hora de aplicar, o indicador estava com uma fatura vencida (vencimento {$vencimentoAtrasado}).\n\n"
+        . "Conforme o regulamento, quem está em atraso não participa do ciclo e perde o benefício.\n\n"
+        . "Indicador: {$indicadorNome} (CPF {$indicadorCpf})\n"
+        . "Indicado validado: {$indicadoNome}\n"
+        . "Desconto cancelado: " . number_format($percentual, 0) . "%\n\n"
+        . "Não precisa fazer nada — é só um aviso. Se quiser conferir, o registro está na tabela descontos com status 'rejeitado'.\n\n"
+        . "— Robô Indique e Ganhe, Zamtech";
+
+    $headers = "From: Zamtech Indique e Ganhe <noreply@zamtech.com.br>\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n";
+
+    @mail(EMAIL_FINANCEIRO, '=?UTF-8?B?' . base64_encode($assunto) . '?=', $corpo, $headers);
+}
+
+/**
  * Email URGENTE pro financeiro quando o robô cancela uma fatura mas, por
  * algum motivo, não consegue criar a fatura avulsa substituta em seguida.
  * Isso deixa o cliente sem nenhuma fatura naquele ciclo — precisa de
