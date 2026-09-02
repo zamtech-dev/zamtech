@@ -134,6 +134,24 @@ function chamarSGP(string $endpoint, array $params): ?array
 }
 
 /**
+ * Procura um valor entre vários nomes de campo possíveis num item vindo do
+ * SGP. A doc às vezes não deixa 100% claro qual é o nome exato do campo,
+ * então em vez de arriscar um KeyError (ou pior, ler o campo errado
+ * silenciosamente), a gente tenta cada opção em ordem e devolve null se
+ * nenhuma existir — quem chama decide o que fazer com null. Usada tanto no
+ * robô quanto no gerar-link.php.
+ */
+function pegarCampo(array $item, array $possiveisChaves)
+{
+    foreach ($possiveisChaves as $chave) {
+        if (isset($item[$chave]) && $item[$chave] !== '') {
+            return $item[$chave];
+        }
+    }
+    return null;
+}
+
+/**
  * Valida CPF pelo algoritmo oficial de dígitos verificadores.
  * Só aceita CPF (11 dígitos) — CNPJ (14 dígitos) já cai fora daqui,
  * então isso também garante "só Pessoa Física" sem depender de um campo
@@ -335,13 +353,14 @@ function enviarEmailAprovacao(
  * ao mesmo tempo (o caso de 100% que vocês nunca fizeram na prática). O
  * robô NÃO tenta calcular isso sozinho — só avisa pra alguém decidir à mão.
  */
-function enviarEmailAlertaAcumulo(string $indicadorCpf, string $indicadorNome, int $quantidade): void
+function enviarEmailAlertaAcumulo(string $indicadorCpf, string $indicadorNome, int $quantidade, string $detalhes = ''): void
 {
     $assunto = 'Indique e Ganhe - ATENÇÃO: acúmulo de descontos precisa de revisão manual';
     $corpo = "Olá!\n\n"
-        . "O indicador {$indicadorNome} (CPF {$indicadorCpf}) tem {$quantidade} descontos aprovados ao mesmo tempo, esperando aplicação.\n\n"
-        . "Isso é o caso de acúmulo (ex: 2 indicações = 100%) que vocês nunca aplicaram na prática antes. Por segurança, o robô NÃO vai calcular isso sozinho nem mexer em nenhuma fatura desse indicador.\n\n"
-        . "Alguém do financeiro precisa olhar os descontos desse CPF (tabela descontos, status = aprovado) e decidir manualmente como aplicar.\n\n"
+        . "O indicador {$indicadorNome} (CPF {$indicadorCpf}) tem {$quantidade} descontos esperando aplicação ao mesmo tempo.\n\n"
+        . "Isso é o caso de acúmulo (ex: 2 indicações = 100% de desconto) que vocês nunca aplicaram na prática antes. Por segurança, o robô NÃO calculou nada sozinho nem mexeu em nenhuma fatura desse indicador — nenhuma fatura foi tocada, pode ficar tranquilo(a).\n\n"
+        . ($detalhes !== '' ? "Detalhes:\n{$detalhes}\n\n" : '')
+        . "O que fazer: decida quanto de desconto (%) esse indicador deve receber no total, depois aplique manualmente no SGP — cancela a próxima fatura em aberto do contrato dele e cria uma avulsa no valor já com o desconto, do mesmo jeito que sempre foi feito (portador Sicredi, plano de contas Fibra > Mensalidade).\n\n"
         . "— Robô Indique e Ganhe, Zamtech";
 
     enviarEmailViaSmtp(EMAIL_FINANCEIRO, $assunto, $corpo);

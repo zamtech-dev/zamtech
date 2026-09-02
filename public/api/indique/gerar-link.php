@@ -1,6 +1,43 @@
 <?php
 require_once __DIR__ . '/_config.php';
 
+/**
+ * Monta um texto simples pra mostrar um contrato na tela de "qual contrato
+ * você quer usar?" — tenta achar o nome do plano e o valor (olhando numa
+ * fatura desse contrato), mas se não achar nada, ainda mostra o número do
+ * contrato, nunca fica em branco.
+ */
+function descreverContratoParaEscolha(array $contrato, array $titulosDoCliente): array
+{
+    $id = (int) pegarCampo($contrato, ['id', 'contratoId', 'contrato_id', 'contrato']);
+    $planoNome = pegarCampo($contrato, ['plano', 'planoNome', 'nome_plano', 'descricaoPlano', 'plano_nome']);
+    $endereco = pegarCampo($contrato, ['endereco', 'enderecoInstalacao', 'logradouro']);
+
+    $valor = null;
+    foreach ($titulosDoCliente as $titulo) {
+        $contratoDoTitulo = pegarCampo($titulo, ['clientecontrato_id', 'contrato_id', 'contratoId', 'contrato']);
+        if ($contratoDoTitulo !== null && (string) $contratoDoTitulo === (string) $id) {
+            $valor = pegarCampo($titulo, ['valor', 'valorTotal', 'valor_total', 'valor_fatura']);
+            break;
+        }
+    }
+
+    $partes = [];
+    if ($planoNome !== null) {
+        $partes[] = $planoNome;
+    }
+    if ($valor !== null) {
+        $partes[] = 'R$ ' . number_format((float) $valor, 2, ',', '.') . '/mês';
+    }
+    if ($endereco !== null) {
+        $partes[] = $endereco;
+    }
+
+    $descricao = !empty($partes) ? implode(' — ', $partes) : "Contrato #{$id}";
+
+    return ['id' => $id, 'descricao' => $descricao];
+}
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
@@ -79,18 +116,17 @@ try {
     }
 
     $cliente = $clientes[0];
+    $titulosDoCliente = $cliente['titulos'] ?? [];
 
     // Precisa ter pelo menos um contrato Ativo.
-    $contratoAtivo = null;
+    $contratosAtivos = [];
     foreach (($cliente['contratos'] ?? []) as $contrato) {
-        $status = strtolower(trim($contrato['status'] ?? ''));
-        if ($status === 'ativo') {
-            $contratoAtivo = $contrato;
-            break;
+        if (strtolower(trim($contrato['status'] ?? '')) === 'ativo') {
+            $contratosAtivos[] = $contrato;
         }
     }
 
-    if ($contratoAtivo === null) {
+    if (empty($contratosAtivos)) {
         // Regra dura: sem contrato ativo não tem link, e WhatsApp não muda isso agora.
         echo json_encode([
             'sucesso' => false,
@@ -100,9 +136,52 @@ try {
         exit;
     }
 
-    // Precisa ter pelo menos uma fatura já paga (comprova que passou da 1ª fatura).
+    // Quem tem só 1 contrato ativo segue direto, sem perguntar nada. Quem
+    // tem mais de 1 precisa escolher qual contrato quer usar pra indicar —
+    // sem isso, a gente não saberia em qual contrato aplicar o desconto lá
+    // na frente (é pra evitar exatamente o problema que a gente conversou:
+    // desconto caindo no contrato errado).
+    $contratoEscolhidoId = isset($input['contrato_id']) ? preg_replace('/\D/', '', (string) $input['contrato_id']) : '';
+
+    $contratoAtivo = null;
+    if (count($contratosAtivos) === 1) {
+        $contratoAtivo = $contratosAtivos[0];
+    } elseif ($contratoEscolhidoId !== '') {
+        foreach ($contratosAtivos as $contrato) {
+            $idContrato = pegarCampo($contrato, ['id', 'contratoId', 'contrato_id', 'contrato']);
+            if ($idContrato !== null && (string) $idContrato === $contratoEscolhidoId) {
+                $contratoAtivo = $contrato;
+                break;
+            }
+        }
+        if ($contratoAtivo === null) {
+            echo json_encode(['sucesso' => false, 'tipo' => 'bloqueio', 'mensagem' => 'Esse contrato não é válido. Recarregue a página e tenta de novo.']);
+            exit;
+        }
+    } else {
+        $opcoes = [];
+        foreach ($contratosAtivos as $contrato) {
+            $opcoes[] = descreverContratoParaEscolha($contrato, $titulosDoCliente);
+        }
+        echo json_encode([
+            'sucesso' => false,
+            'tipo' => 'escolher_contrato',
+            'mensagem' => 'Vimos que você tem mais de um contrato com a gente. Qual deles você quer usar pra indicar?',
+            'contratos' => $opcoes,
+        ]);
+        exit;
+    }
+
+    $contratoId = (int) pegarCampo($contratoAtivo, ['id', 'contratoId', 'contrato_id', 'contrato']);
+
+    // Precisa ter pelo menos uma fatura já paga NESSE contrato (comprova
+    // que passou da 1ª fatura) — não vale fatura paga de outro contrato.
     $temFaturaPaga = false;
-    foreach (($cliente['titulos'] ?? []) as $titulo) {
+    foreach ($titulosDoCliente as $titulo) {
+        $contratoDoTitulo = pegarCampo($titulo, ['clientecontrato_id', 'contrato_id', 'contratoId', 'contrato']);
+        if ($contratoDoTitulo === null || (string) $contratoDoTitulo !== (string) $contratoId) {
+            continue;
+        }
         $status = strtolower(trim($titulo['status'] ?? ''));
         if (in_array($status, ['pago', 'liquidado', 'baixado'], true)) {
             $temFaturaPaga = true;
@@ -114,14 +193,13 @@ try {
         echo json_encode([
             'sucesso' => false,
             'tipo' => 'bloqueio',
-            'mensagem' => 'Você só pode gerar seu link depois que a 1ª fatura do seu contrato for paga.',
+            'mensagem' => 'Você só pode gerar seu link depois que a 1ª fatura desse contrato for paga.',
         ]);
         exit;
     }
 
     // Elegível! Gera o código e salva.
     $codigo = gerarCodigoIndicacao($conn);
-    $contratoId = (int) ($contratoAtivo['contrato'] ?? 0);
 
     $stmt = $conn->prepare(
         'INSERT INTO indicacoes (codigo, indicador_cpfcnpj, indicador_nome, indicador_contrato_id) VALUES (?, ?, ?, ?)'

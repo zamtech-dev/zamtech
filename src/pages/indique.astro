@@ -259,6 +259,96 @@ import "../styles/global.css";
         return `https://wa.me/5527995057736?text=${encodeURIComponent(mensagem)}`;
     }
 
+    type Contrato = { id: number; descricao: string };
+
+    // Faz a chamada pra API. Separado do handler de submit pra poder chamar
+    // de novo depois que a pessoa escolhe o contrato (2ª chamada, agora com
+    // contrato_id preenchido).
+    async function chamarGerarLink(nome: string, cpf: string, contratoId?: number) {
+        const corpo: Record<string, unknown> = { nome, cpf };
+        if (contratoId) corpo.contrato_id = contratoId;
+
+        const response = await fetch("/api/indique/gerar-link.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(corpo),
+        });
+        return response.json();
+    }
+
+    // Trata a resposta da API — chamado tanto depois do 1º envio do
+    // formulário quanto depois de escolher um contrato na tela de "qual
+    // contrato você quer usar?".
+    function tratarRespostaGerarLink(data: any, nome: string, cpf: string) {
+        if (data.sucesso && data.link) {
+            const mensagemZap = `Ei! Usa esse link pra assinar a Zamtech: ${data.link}`;
+            mostrarMensagem(`
+                <p>Prontinho! Esse é o seu link de indicação:</p>
+                <div class="link-gerado-box">
+                    <input type="text" readonly value="${data.link}" id="linkGeradoInput" />
+                    <button type="button" class="btn btn-primary" id="btnCopiarLink">Copiar</button>
+                </div>
+                <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Compartilhar no WhatsApp</a>
+            `);
+            form.hidden = true;
+
+            const btnCopiar = document.getElementById("btnCopiarLink") as HTMLButtonElement;
+            const linkInput = document.getElementById("linkGeradoInput") as HTMLInputElement;
+            btnCopiar?.addEventListener("click", () => {
+                linkInput.select();
+                navigator.clipboard.writeText(data.link).then(() => {
+                    btnCopiar.textContent = "Copiado!";
+                    setTimeout(() => { btnCopiar.textContent = "Copiar"; }, 2000);
+                });
+            });
+        } else if (data.tipo === "escolher_contrato" && Array.isArray(data.contratos)) {
+            mostrarEscolhaContrato(nome, cpf, data.contratos, data.mensagem);
+        } else {
+            // tipo 'bloqueio' = regra do programa não foi cumprida (vermelho, sem WhatsApp,
+            // pois falar com a gente não muda o resultado agora). tipo 'erro' = problema
+            // temporário do nosso lado ou do SGP (azul, com WhatsApp como alternativa).
+            const ehErroDeSistema = data.tipo === "erro";
+            let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
+            if (ehErroDeSistema) {
+                html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
+            }
+            mostrarMensagem(html, !ehErroDeSistema);
+        }
+    }
+
+    // Mostra a lista de contratos ativos pra pessoa escolher qual usar pra
+    // indicar. Ao clicar num contrato, chama a API de novo já com o
+    // contrato_id — sem precisar redigitar nome/CPF.
+    function mostrarEscolhaContrato(nome: string, cpf: string, contratos: Contrato[], mensagem: string) {
+        const opcoesHtml = contratos
+            .map((c) => `<button type="button" class="contrato-opcao" data-contrato-id="${c.id}">${c.descricao}</button>`)
+            .join("");
+
+        mostrarMensagem(`
+            <p>${mensagem}</p>
+            <div class="contratos-lista">${opcoesHtml}</div>
+        `);
+        form.hidden = true;
+
+        mensagemIndique.querySelectorAll<HTMLButtonElement>(".contrato-opcao").forEach((botao) => {
+            botao.addEventListener("click", async () => {
+                const contratoId = Number(botao.dataset.contratoId);
+                mensagemIndique.querySelectorAll<HTMLButtonElement>(".contrato-opcao").forEach((b) => (b.disabled = true));
+                botao.textContent = "Gerando seu link...";
+
+                try {
+                    const data = await chamarGerarLink(nome, cpf, contratoId);
+                    tratarRespostaGerarLink(data, nome, cpf);
+                } catch (error) {
+                    mostrarMensagem(`
+                        <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
+                        <a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+                    `, false);
+                }
+            });
+        });
+    }
+
     if (form) {
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -278,46 +368,8 @@ import "../styles/global.css";
             mensagemIndique.classList.add("hidden");
 
             try {
-                const response = await fetch("/api/indique/gerar-link.php", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ nome, cpf }),
-                });
-
-                const data = await response.json();
-
-                if (data.sucesso && data.link) {
-                    const mensagemZap = `Ei! Usa esse link pra assinar a Zamtech: ${data.link}`;
-                    mostrarMensagem(`
-                        <p>Prontinho! Esse é o seu link de indicação:</p>
-                        <div class="link-gerado-box">
-                            <input type="text" readonly value="${data.link}" id="linkGeradoInput" />
-                            <button type="button" class="btn btn-primary" id="btnCopiarLink">Copiar</button>
-                        </div>
-                        <a href="https://wa.me/?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Compartilhar no WhatsApp</a>
-                    `);
-                    form.hidden = true;
-
-                    const btnCopiar = document.getElementById("btnCopiarLink") as HTMLButtonElement;
-                    const linkInput = document.getElementById("linkGeradoInput") as HTMLInputElement;
-                    btnCopiar?.addEventListener("click", () => {
-                        linkInput.select();
-                        navigator.clipboard.writeText(data.link).then(() => {
-                            btnCopiar.textContent = "Copiado!";
-                            setTimeout(() => { btnCopiar.textContent = "Copiar"; }, 2000);
-                        });
-                    });
-                } else {
-                    // tipo 'bloqueio' = regra do programa não foi cumprida (vermelho, sem WhatsApp,
-                    // pois falar com a gente não muda o resultado agora). tipo 'erro' = problema
-                    // temporário do nosso lado ou do SGP (azul, com WhatsApp como alternativa).
-                    const ehErroDeSistema = data.tipo === "erro";
-                    let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
-                    if (ehErroDeSistema) {
-                        html += `<a href="${whatsappFallbackUrl(nome, cpf)}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
-                    }
-                    mostrarMensagem(html, !ehErroDeSistema);
-                }
+                const data = await chamarGerarLink(nome, cpf);
+                tratarRespostaGerarLink(data, nome, cpf);
             } catch (error) {
                 mostrarMensagem(`
                     <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
@@ -665,6 +717,37 @@ import "../styles/global.css";
 
     .mensagem-retorno-indique .btn {
         width: 100%;
+    }
+
+    .contratos-lista {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+        margin-top: var(--space-4);
+    }
+
+    .contrato-opcao {
+        width: 100%;
+        padding: var(--space-12) var(--space-16);
+        border: 1px solid rgba(3, 37, 208, 0.3);
+        border-radius: var(--radius-sm);
+        background: var(--color-white);
+        color: var(--color-primary);
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .contrato-opcao:hover:not(:disabled) {
+        background: var(--gradient-brand-soft);
+        border-color: var(--color-primary);
+    }
+
+    .contrato-opcao:disabled {
+        opacity: 0.6;
+        cursor: default;
     }
 
     .link-gerado-box {

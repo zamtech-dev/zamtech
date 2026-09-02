@@ -182,23 +182,6 @@ function criarDescontoSeNecessario(mysqli $conn, array $indicado): void
 }
 
 /**
- * Procura um valor entre vários nomes de campo possíveis num item vindo do
- * SGP. A doc às vezes não deixa 100% claro qual é o nome exato do campo,
- * então em vez de arriscar um KeyError (ou pior, ler o campo errado
- * silenciosamente), a gente tenta cada opção em ordem e devolve null se
- * nenhuma existir — quem chama decide o que fazer com null.
- */
-function pegarCampo(array $item, array $possiveisChaves)
-{
-    foreach ($possiveisChaves as $chave) {
-        if (isset($item[$chave]) && $item[$chave] !== '') {
-            return $item[$chave];
-        }
-    }
-    return null;
-}
-
-/**
  * Etapa final do Indique e Ganhe: pega cada desconto já aprovado pelo
  * financeiro e aplica de verdade na fatura do indicador — cancela a
  * próxima fatura em aberto e cria uma nova só no valor com desconto, do
@@ -242,7 +225,19 @@ function aplicarDescontosAprovados(mysqli $conn): void
             $stmt->execute();
             $nomeRow = $stmt->get_result()->fetch_assoc();
             $stmt->close();
-            enviarEmailAlertaAcumulo($indicadorCpf, $nomeRow['indicador_nome'] ?? $indicadorCpf, count($descontosDoIndicador));
+
+            $linhasDetalhe = [];
+            foreach ($descontosDoIndicador as $descontoDoGrupo) {
+                $stmt = $conn->prepare('SELECT indicado_nome FROM indicados WHERE id = ? LIMIT 1');
+                $indicadoIdGrupo = (int) $descontoDoGrupo['indicado_id'];
+                $stmt->bind_param('i', $indicadoIdGrupo);
+                $stmt->execute();
+                $nomeIndicadoGrupo = $stmt->get_result()->fetch_assoc()['indicado_nome'] ?? ('indicado #' . $indicadoIdGrupo);
+                $stmt->close();
+                $linhasDetalhe[] = "- {$descontoDoGrupo['percentual']}% pela indicação de {$nomeIndicadoGrupo}";
+            }
+
+            enviarEmailAlertaAcumulo($indicadorCpf, $nomeRow['indicador_nome'] ?? $indicadorCpf, count($descontosDoIndicador), implode("\n", $linhasDetalhe));
             continue;
         }
 
@@ -271,16 +266,69 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
         return;
     }
 
-    $contratoAtivo = null;
+    // Precisa do nome do indicado e do código da indicação mais cedo agora
+    // — o código da indicação é como a gente descobre qual contrato
+    // específico o indicador estava usando quando gerou o link (importante
+    // pra quem tem mais de um contrato, ver comentário abaixo).
+    $stmt = $conn->prepare('SELECT indicado_nome, indicacao_codigo FROM indicados WHERE id = ? LIMIT 1');
+    $indicadoIdBusca = (int) $desconto['indicado_id'];
+    $stmt->bind_param('i', $indicadoIdBusca);
+    $stmt->execute();
+    $indicadoRow = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    $indicadoNome = $indicadoRow['indicado_nome'] ?? ('indicado #' . $desconto['indicado_id']);
+
+    // Quem tem mais de um contrato ativo (ex: um plano de R$ 89,90 e outro
+    // de R$ 119,90) não pode ter a fatura escolhida "no chute" entre os
+    // dois. Por isso a gente trava no MESMO contrato que o indicador tinha
+    // quando gerou o link de indicação (indicacoes.indicador_contrato_id,
+    // salvo lá em gerar-link.php) — nunca "qualquer contrato ativo".
+    $indicadorContratoId = null;
+    if ($indicadoRow !== null) {
+        $stmt = $conn->prepare('SELECT indicador_contrato_id FROM indicacoes WHERE codigo = ? LIMIT 1');
+        $stmt->bind_param('s', $indicadoRow['indicacao_codigo']);
+        $stmt->execute();
+        $indicacaoRow = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        $indicadorContratoId = $indicacaoRow['indicador_contrato_id'] ?? null;
+    }
+
+    $contratosAtivos = [];
     foreach (($cliente['contratos'] ?? []) as $contrato) {
         if (strtolower(trim($contrato['status'] ?? '')) === 'ativo') {
-            $contratoAtivo = $contrato;
-            break;
+            $contratosAtivos[] = $contrato;
         }
     }
 
-    if ($contratoAtivo === null) {
+    if (empty($contratosAtivos)) {
         echo "  [{$indicadorCpf}] Não tem mais contrato ativo (cancelou) — perdeu o direito, não aplico o desconto.\n";
+        return;
+    }
+
+    $contratoAtivo = null;
+    if ($indicadorContratoId !== null) {
+        foreach ($contratosAtivos as $contrato) {
+            $idContrato = pegarCampo($contrato, ['id', 'contratoId', 'contrato_id', 'contrato']);
+            if ($idContrato !== null && (string) $idContrato === (string) $indicadorContratoId) {
+                $contratoAtivo = $contrato;
+                break;
+            }
+        }
+
+        if ($contratoAtivo === null) {
+            echo "  [{$indicadorCpf}] O contrato #{$indicadorContratoId} (o que ele usou pra gerar o link) não está mais ativo — perdeu o direito ao desconto nesse contrato, não aplico.\n";
+            return;
+        }
+    } elseif (count($contratosAtivos) === 1) {
+        // Indicação antiga, de antes dessa trava existir — só é seguro
+        // assumir "o contrato ativo" se só tiver um mesmo.
+        $contratoAtivo = $contratosAtivos[0];
+    } else {
+        echo "  [{$indicadorCpf}] Esse indicador tem " . count($contratosAtivos) . " contratos ativos e a indicação não registrou qual deles ele usou pra gerar o link — não vou adivinhar qual desconta. Avisando financeiro.\n";
+        enviarEmailAlertaCritico(
+            "O indicador {$indicadorCpf} (indicação de {$indicadoNome}) tem " . count($contratosAtivos) . " contratos ativos, e não dá pra saber qual deles deve receber o desconto (a indicação é antiga e não registrou o contrato de origem).\n\n"
+            . "O que fazer: veja no SGP (aba Contratos do cliente) qual dos contratos deve receber o desconto de {$percentual}%, depois aplique manualmente — cancela a próxima fatura em aberto DAQUELE contrato e cria uma avulsa no valor com desconto (portador Sicredi, plano de contas Fibra > Mensalidade), do mesmo jeito de sempre."
+        );
         return;
     }
 
@@ -290,16 +338,6 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
         echo '  ' . var_export($contratoAtivo, true) . "\n";
         return;
     }
-
-    // Precisa do nome do indicado mais cedo agora, porque tanto o caminho
-    // normal quanto o caminho "cancelou por atraso" usam ele.
-    $stmt = $conn->prepare('SELECT indicado_nome FROM indicados WHERE id = ? LIMIT 1');
-    $indicadoIdBusca = (int) $desconto['indicado_id'];
-    $stmt->bind_param('i', $indicadoIdBusca);
-    $stmt->execute();
-    $indicadoRow = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    $indicadoNome = $indicadoRow['indicado_nome'] ?? ('indicado #' . $desconto['indicado_id']);
 
     // Se esse indicador já tem outro desconto aplicado numa fatura que
     // ainda não foi paga, não empilha um segundo desconto sozinho — isso é
@@ -332,19 +370,28 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
                 $nomeRow = $stmt2->get_result()->fetch_assoc();
                 $stmt2->close();
 
-                enviarEmailAlertaAcumulo($indicadorCpf, $nomeRow['indicador_nome'] ?? $indicadorCpf, 2);
+                $valorTituloExistente = pegarCampo($tituloExistente, ['valor', 'valorTotal', 'valor_total', 'valor_fatura']);
+                $detalhes = "- Já aplicado antes: fatura avulsa #{$outro['fatura_id']}, ainda em aberto, valor atual R$ "
+                    . number_format((float) ($valorTituloExistente ?? 0), 2, ',', '.') . "\n"
+                    . "- Esperando aplicação agora: {$percentual}% de desconto pela indicação de {$indicadoNome}";
+
+                enviarEmailAlertaAcumulo($indicadorCpf, $nomeRow['indicador_nome'] ?? $indicadorCpf, 2, $detalhes);
                 return;
             }
         }
     }
 
-    // Fatura "cancelável" = ainda não paga e ainda não cancelada. Pega a de
-    // vencimento mais próximo (a "próxima fatura", no sentido que a Raiane
-    // usava no IXC).
+    // Fatura "cancelável" = do contrato certo (ver acima), ainda não paga e
+    // ainda não cancelada. Pega a de vencimento mais próximo (a "próxima
+    // fatura", no sentido que a Raiane usava no IXC). Quem tem mais de um
+    // contrato NÃO pode ter fatura do contrato errado escolhida aqui.
     $candidatas = [];
     foreach (($cliente['titulos'] ?? []) as $titulo) {
         $status = strtolower(trim($titulo['status'] ?? ''));
-        if (!in_array($status, ['pago', 'liquidado', 'baixado', 'cancelado'], true)) {
+        $contratoDoTitulo = pegarCampo($titulo, ['clientecontrato_id', 'contrato_id', 'contratoId', 'contrato']);
+        $mesmoContrato = $contratoDoTitulo !== null && (string) $contratoDoTitulo === (string) $contratoId;
+
+        if ($mesmoContrato && !in_array($status, ['pago', 'liquidado', 'baixado', 'cancelado'], true)) {
             $candidatas[] = $titulo;
         }
     }
