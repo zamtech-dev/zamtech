@@ -301,6 +301,43 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
     $stmt->close();
     $indicadoNome = $indicadoRow['indicado_nome'] ?? ('indicado #' . $desconto['indicado_id']);
 
+    // Se esse indicador já tem outro desconto aplicado numa fatura que
+    // ainda não foi paga, não empilha um segundo desconto sozinho — isso é
+    // exatamente o caso de acúmulo (2+ indicações) que vocês nunca
+    // calcularam na prática. Sem essa checagem, o robô ia achar "a próxima
+    // fatura em aberto" e ela podia ser bem a avulsa que o desconto
+    // anterior já criou — calculando 50% em cima de um valor já
+    // descontado, o que dá o desconto errado. Mais seguro parar e avisar.
+    $stmt = $conn->prepare(
+        "SELECT id, fatura_id FROM descontos WHERE indicador_cpfcnpj = ? AND status = 'aplicado' AND id != ? AND fatura_id IS NOT NULL"
+    );
+    $descontoIdAtual = (int) $desconto['id'];
+    $stmt->bind_param('si', $indicadorCpf, $descontoIdAtual);
+    $stmt->execute();
+    $outrosAplicados = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    foreach ($outrosAplicados as $outro) {
+        foreach (($cliente['titulos'] ?? []) as $tituloExistente) {
+            $idExistente = pegarCampo($tituloExistente, ['id', 'tituloId', 'titulo_id', 'fatura_id']);
+            $statusExistente = strtolower(trim($tituloExistente['status'] ?? ''));
+            $aindaAberto = !in_array($statusExistente, ['pago', 'liquidado', 'baixado', 'cancelado'], true);
+
+            if ($idExistente !== null && (string) $idExistente === (string) $outro['fatura_id'] && $aindaAberto) {
+                echo "  [{$indicadorCpf}] Esse indicador já tem outro desconto aplicado (fatura #{$outro['fatura_id']}) ainda em aberto — é um caso de acúmulo, não vou empilhar sozinho. Avisando financeiro.\n";
+
+                $stmt2 = $conn->prepare('SELECT indicador_nome FROM indicacoes WHERE indicador_cpfcnpj = ? LIMIT 1');
+                $stmt2->bind_param('s', $indicadorCpf);
+                $stmt2->execute();
+                $nomeRow = $stmt2->get_result()->fetch_assoc();
+                $stmt2->close();
+
+                enviarEmailAlertaAcumulo($indicadorCpf, $nomeRow['indicador_nome'] ?? $indicadorCpf, 2);
+                return;
+            }
+        }
+    }
+
     // Fatura "cancelável" = ainda não paga e ainda não cancelada. Pega a de
     // vencimento mais próximo (a "próxima fatura", no sentido que a Raiane
     // usava no IXC).
