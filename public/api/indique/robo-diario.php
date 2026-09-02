@@ -390,13 +390,33 @@ function aplicarUmDesconto(mysqli $conn, array $desconto): void
         return;
     }
 
-    $comoTexto = json_encode($respostaCancelar);
-    if (stripos($comoTexto, 'erro') !== false || stripos($comoTexto, 'error') !== false) {
-        echo "  [{$indicadorCpf}] SGP recusou o cancelamento da fatura #{$faturaId}: {$comoTexto}. Nada foi alterado, tenta de novo amanhã.\n";
+    // Não confio só no texto da resposta do cancelamento (já vimos na
+    // prática que o SGP pode responder "de boa", sem palavra de erro
+    // nenhuma, e mesmo assim não cancelar nada de verdade). Em vez disso,
+    // busco os dados do cliente DE NOVO no SGP e confiro se essa fatura
+    // realmente virou "cancelado". Só sigo pra criar a avulsa depois dessa
+    // confirmação — criar a avulsa sem ter certeza que a original foi
+    // cancelada dobraria a cobrança do cliente.
+    $dadosConferencia = chamarSGP('/api/ura/clientes/', ['cpfcnpj' => $indicadorCpf]);
+    $statusAposCancelar = null;
+    foreach (($dadosConferencia['clientes'][0]['titulos'] ?? []) as $tituloConferencia) {
+        $idConferencia = pegarCampo($tituloConferencia, ['id', 'tituloId', 'titulo_id', 'fatura_id']);
+        if ($idConferencia !== null && (string) $idConferencia === (string) $faturaId) {
+            $statusAposCancelar = strtolower(trim($tituloConferencia['status'] ?? ''));
+            break;
+        }
+    }
+
+    if ($statusAposCancelar !== 'cancelado') {
+        $mensagem = "Tentei cancelar a fatura #{$faturaId} do indicador {$indicadorCpf} (indicação de {$indicadoNome}), mas conferindo de novo no SGP ela continua com status '"
+            . ($statusAposCancelar ?? 'não encontrada') . "' — ou seja, NÃO foi cancelada de verdade, mesmo a chamada não tendo dado erro explícito.\n\n"
+            . "Por segurança, NÃO criei a fatura avulsa (isso evitaria cobrar a mais em cima da fatura original). Resposta bruta que o SGP deu pro cancelamento: " . json_encode($respostaCancelar);
+        echo "  [{$indicadorCpf}] ERRO: {$mensagem}\n";
+        enviarEmailAlertaCritico($mensagem);
         return;
     }
 
-    echo "  [{$indicadorCpf}] Fatura #{$faturaId} cancelada. Criando a fatura avulsa com desconto...\n";
+    echo "  [{$indicadorCpf}] Fatura #{$faturaId} cancelada (confirmei de novo no SGP). Criando a fatura avulsa com desconto...\n";
 
     $respostaAvulso = chamarSGP('/api/ura/cliente/titulo/avulso/add/', [
         'contrato' => (int) $contratoId,
