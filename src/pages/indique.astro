@@ -717,37 +717,6 @@ import "../styles/global.css";
         font-weight: 600;
     }
 
-    .contratos-lista {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-8);
-        margin-top: var(--space-4);
-    }
-
-    .contrato-opcao {
-        width: 100%;
-        padding: var(--space-12) var(--space-16);
-        border: 1px solid rgba(3, 37, 208, 0.3);
-        border-radius: var(--radius-sm);
-        background: var(--color-white);
-        color: var(--color-primary);
-        font-size: var(--fs-sm);
-        font-weight: 600;
-        text-align: left;
-        cursor: pointer;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
-
-    .contrato-opcao:hover:not(:disabled) {
-        background: var(--gradient-brand-soft);
-        border-color: var(--color-primary);
-    }
-
-    .contrato-opcao:disabled {
-        opacity: 0.6;
-        cursor: default;
-    }
-
     /* Estado de sucesso ("seu link tá pronto") tem visual próprio — desliga
        a caixa genérica de mensagem e deixa o card abaixo assumir sozinho. */
     .mensagem-retorno-indique.sucesso {
@@ -758,88 +727,13 @@ import "../styles/global.css";
         color: inherit;
     }
 
-    .link-sucesso-card {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-12);
-        background: var(--gradient-brand-soft);
-        border: 1px solid rgba(3, 37, 208, 0.15);
-        border-radius: var(--radius-signature-sm);
-        padding: var(--space-24);
-        overflow: hidden;
-    }
-
-    .link-sucesso-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: var(--gradient-brand);
-    }
-
-    .link-sucesso-texto {
-        font-size: var(--fs-sm);
-        color: var(--color-gray-dark);
-    }
-
-    .link-copy-row {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: var(--space-8);
-        background: var(--color-white);
-        border: 1px solid rgba(3, 37, 208, 0.2);
-        border-radius: var(--radius-md);
-        padding: var(--space-12) var(--space-12) var(--space-12) var(--space-16);
-        box-shadow: var(--elevation-1);
-    }
-
-    .link-copy-valor {
-        flex: 1;
-        min-width: 0;
-        font-family: var(--font-text);
-        font-size: var(--fs-sm);
-        font-weight: 600;
-        color: var(--color-primary);
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: none;
-    }
-
-    .link-copy-valor::-webkit-scrollbar {
-        display: none;
-    }
-
-    .btn-copiar-link {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-8);
-        flex-shrink: 0;
-        padding: var(--space-8) var(--space-16);
-        border-radius: var(--radius-sm);
-        background: var(--gradient-brand);
-        color: var(--color-white);
-        font-size: var(--fs-caption);
-        font-weight: 700;
-        transition: var(--transition-default);
-    }
-
-    .btn-copiar-link:hover {
-        filter: brightness(1.1);
-    }
-
-    .btn-copiar-link.copiado {
-        background: var(--color-success);
-    }
-
-    .btn-compartilhar-zap {
-        width: 100%;
-        gap: var(--space-8);
-    }
+    /* .contratos-lista, .contrato-opcao, .link-sucesso-card e companhia estão
+       no <style is:global> lá embaixo, não aqui — são classes que só existem
+       depois que o JS injeta HTML via innerHTML (resposta da API), e um
+       <style> comum do Astro (escopado) não alcança elemento que não estava
+       no HTML original da página. Foi por isso que a caixa do link ficava
+       sem nenhum estilo (sem fundo, sem borda, sem respiro) mesmo com o CSS
+       certinho escrito — o seletor simplesmente nunca "batia" no elemento. */
 
     /* 6. FAQ (mesmo padrão da Central de Ajuda) */
     .faq-indique-section {
@@ -934,5 +828,126 @@ import "../styles/global.css";
         .indique-hero-actions .btn {
             width: 100%;
         }
+    }
+</style>
+
+<!-- Estilo GLOBAL (não escopado) só pra classes que aparecem em HTML
+     injetado via JS (mostrarEscolhaContrato / tratarRespostaGerarLink).
+     O <style> escopado do Astro só alcança o que já existia no HTML da
+     página; qualquer coisa que o JS cria depois com innerHTML precisa
+     estar aqui, senão o CSS existe no arquivo mas nunca aplica. -->
+<style is:global>
+    .contratos-lista {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+        margin-top: var(--space-4);
+    }
+
+    .contrato-opcao {
+        width: 100%;
+        padding: var(--space-12) var(--space-16);
+        border: 1px solid rgba(3, 37, 208, 0.3);
+        border-radius: var(--radius-sm);
+        background: var(--color-white);
+        color: var(--color-primary);
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .contrato-opcao:hover:not(:disabled) {
+        background: var(--gradient-brand-soft);
+        border-color: var(--color-primary);
+    }
+
+    .contrato-opcao:disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    .link-sucesso-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+        background: var(--gradient-brand-soft);
+        border: 1px solid rgba(3, 37, 208, 0.15);
+        border-radius: var(--radius-signature-sm);
+        padding: var(--space-24);
+        overflow: hidden;
+    }
+
+    .link-sucesso-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-brand);
+    }
+
+    .link-sucesso-texto {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-dark);
+    }
+
+    .link-copy-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        background: var(--color-white);
+        border: 1px solid rgba(3, 37, 208, 0.2);
+        border-radius: var(--radius-md);
+        padding: var(--space-12) var(--space-12) var(--space-12) var(--space-16);
+        box-shadow: var(--elevation-1);
+    }
+
+    .link-copy-valor {
+        flex: 1;
+        min-width: 0;
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        color: var(--color-primary);
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+    .link-copy-valor::-webkit-scrollbar {
+        display: none;
+    }
+
+    .btn-copiar-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+        flex-shrink: 0;
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-sm);
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        transition: var(--transition-default);
+    }
+
+    .btn-copiar-link:hover {
+        filter: brightness(1.1);
+    }
+
+    .btn-copiar-link.copiado {
+        background: var(--color-success);
+    }
+
+    .btn-compartilhar-zap {
+        width: 100%;
+        gap: var(--space-8);
     }
 </style>
