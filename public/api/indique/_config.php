@@ -63,7 +63,7 @@ define('SGP_PLANO_CONTAS_DESCONTO', 9);
 //
 // Só mude pra true depois de ter visto pelo menos uma simulação com um
 // indicador real e conferido que faz sentido.
-define('DESCONTO_APLICACAO_ATIVA', true);
+define('DESCONTO_APLICACAO_ATIVA', false);
 
 // --- Chave pra rodar scripts de fundo (robô, diagnósticos) manualmente
 // pelo navegador quando não tem Terminal no cPanel. Troque depois de usar. ---
