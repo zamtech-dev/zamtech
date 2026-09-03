@@ -16,6 +16,13 @@ interface Props {
     recursos?: string[];
     adicionais?: Adicional[];
     isFeatured?: boolean;
+    // "whatsapp" (padrão, usado em /planos-residenciais e /planos-empresariais):
+    // botão manda direto pro WhatsApp com o plano + adicionais escolhidos.
+    // "selecionar" (usado em /contratar): botão não manda pra lugar nenhum
+    // sozinho — dispara o evento "zamtech:plano-selecionado" com o plano já
+    // calculado (nome, preço final, adicionais), pra quem importou o card
+    // decidir o que fazer (ex: avançar pra etapa de pré-cadastro).
+    modo?: "whatsapp" | "selecionar";
 }
 
 const {
@@ -28,6 +35,7 @@ const {
     recursos = [],
     adicionais = [],
     isFeatured = false,
+    modo = "whatsapp",
 } = Astro.props;
 
 // Formata preço inicial
@@ -38,6 +46,8 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     class={`card-plano-dinamico ${isFeatured ? "card-plano--featured" : ""}`}
     data-preco-base={precoBase}
     data-nome-plano={nome}
+    data-velocidade={velocidade}
+    data-modo={modo}
 >
     {badge && <div class="card-badge">{badge}</div>}
 
@@ -116,8 +126,18 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         )
     }
 
-    <!-- BOTÃO DE AÇÃO DA ZAP -->
-    <a href="#" class="btn btn-primary btn-whatsapp"> Adquirir Plano </a>
+    <!-- BOTÃO DE AÇÃO -->
+    {
+        modo === "whatsapp" ? (
+            <a href="#" class="btn btn-primary btn-whatsapp">
+                Adquirir Plano
+            </a>
+        ) : (
+            <button type="button" class="btn btn-primary btn-selecionar-plano">
+                Escolher este plano
+            </button>
+        )
+    }
 </article>
 
 <script>
@@ -131,15 +151,23 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
             );
             const planName =
                 card.getAttribute("data-nome-plano") || "Plano Zamtech";
+            const velocidade = card.getAttribute("data-velocidade") || "";
+            const modo = card.getAttribute("data-modo") || "whatsapp";
 
             const valInteiro = card.querySelector(".val-inteiro");
             const valCentavos = card.querySelector(".val-centavos");
             const btnZap = card.querySelector(
                 ".btn-whatsapp",
-            ) as HTMLAnchorElement;
+            ) as HTMLAnchorElement | null;
+            const btnSelecionar = card.querySelector(
+                ".btn-selecionar-plano",
+            ) as HTMLButtonElement | null;
             const checkboxes = card.querySelectorAll(
                 ".chk-adicional",
             ) as NodeListOf<HTMLInputElement>;
+
+            let precoFinalAtual = basePrice;
+            let selecionadosAtual: string[] = [];
 
             function calcular() {
                 let precoAtual = basePrice;
@@ -161,13 +189,15 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
                 if (valInteiro) valInteiro.textContent = inteiro;
                 if (valCentavos) valCentavos.textContent = `,${centavos}`;
 
-                // Monta mensagem do WhatsApp
-                let msg = `Olá! Quero contratar o plano ${planName} (R$ ${inteiro},${centavos}/mês)`;
-                if (selecionados.length > 0) {
-                    msg += ` incluindo os adicionais: ${selecionados.join(", ")}`;
-                }
+                precoFinalAtual = precoAtual;
+                selecionadosAtual = selecionados;
 
-                if (btnZap) {
+                if (modo === "whatsapp" && btnZap) {
+                    // Monta mensagem do WhatsApp
+                    let msg = `Olá! Quero contratar o plano ${planName} (R$ ${inteiro},${centavos}/mês)`;
+                    if (selecionados.length > 0) {
+                        msg += ` incluindo os adicionais: ${selecionados.join(", ")}`;
+                    }
                     btnZap.href = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(msg)}`;
                     btnZap.target = "_blank";
                     btnZap.rel = "noopener noreferrer";
@@ -178,6 +208,24 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
                 chk.addEventListener("change", calcular),
             );
             calcular(); // Executa inicial
+
+            // modo="selecionar" (usado em /contratar): não manda pra lugar
+            // nenhum sozinho, quem escuta o evento decide (ex: avança pra
+            // etapa de dados do pré-cadastro, já com o plano escolhido).
+            if (modo === "selecionar" && btnSelecionar) {
+                btnSelecionar.addEventListener("click", () => {
+                    window.dispatchEvent(
+                        new CustomEvent("zamtech:plano-selecionado", {
+                            detail: {
+                                nome: planName,
+                                velocidade,
+                                precoFinal: precoFinalAtual,
+                                adicionais: selecionadosAtual,
+                            },
+                        }),
+                    );
+                });
+            }
         });
     }
 
@@ -448,7 +496,8 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         cursor: not-allowed;
     }
 
-    .btn-whatsapp {
+    .btn-whatsapp,
+    .btn-selecionar-plano {
         width: 100%;
     }
 </style>

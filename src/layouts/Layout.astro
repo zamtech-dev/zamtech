@@ -47,10 +47,420 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     <Footer />
     <ConsentimentoLGPD />
     <BotaoWhatsApp />
+
+    <!-- BARRA FLUTUANTE DE CEP — aparece em qualquer página do site depois
+         que a pessoa rola a tela (igual grandes provedores tipo Nio fazem),
+         pra ela não precisar voltar lá em cima pra checar viabilidade. Na
+         home ela some enquanto o formulário grande do topo ainda está
+         visível (senão fica CTA duplicado na tela) e aparece assim que ele
+         sai da vista; nas outras páginas aparece depois de um scroll curto.
+         Clicar abre um painel lateral com a mesma lógica de consulta usada
+         na home (src/scripts/viabilidade.ts). -->
+    <div class="cep-float-bar" id="cepFloatBar">
+        <div class="container cep-float-bar-inner">
+            <p>Será que a Zamtech já chegou aí?</p>
+            <button type="button" class="btn btn-primary cep-float-bar-btn" id="cepFloatBarBtn">
+                Informe seu CEP e confira
+            </button>
+        </div>
+    </div>
+
+    <div class="cep-panel-overlay" id="cepPanelOverlay"></div>
+    <aside class="cep-panel" id="cepPanel" aria-hidden="true" aria-label="Verificar cobertura Zamtech">
+        <button type="button" class="cep-panel-close" id="cepPanelClose" aria-label="Fechar">✕</button>
+        <h3>Antes de continuar, vamos verificar se a Zamtech chegou até você?</h3>
+
+        <div class="cep-panel-form">
+            <label for="cepPanelCep">CEP</label>
+            <input id="cepPanelCep" type="text" inputmode="numeric" maxlength="9" placeholder="Digite seu CEP" autocomplete="off" />
+
+            <label for="cepPanelNumero">Número</label>
+            <input id="cepPanelNumero" type="text" maxlength="7" placeholder="Nº casa/prédio" autocomplete="off" />
+
+            <p id="cepPanelCepStatus" class="cep-panel-status" hidden></p>
+
+            <button type="button" class="btn btn-primary cep-panel-submit" id="cepPanelSubmit">
+                <span id="cepPanelSubmitTexto">Verificar endereço</span>
+            </button>
+
+            <p id="cepPanelResultado" class="cep-panel-resultado" hidden></p>
+        </div>
+    </aside>
 </body>
 <style>
     .margin-compensa {
         padding-top: 60px;
     }
+
+    /* ===================== BARRA FLUTUANTE DE CEP ===================== */
+    .cep-float-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        /* 96px = espaço suficiente pra não brigar com o botão flutuante de
+           WhatsApp (BotaoWhatsApp.astro), que também fica fixo no rodapé. */
+        bottom: 96px;
+        z-index: 60;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.35s var(--ease-brand), transform 0.35s var(--ease-brand);
+    }
+
+    .cep-float-bar.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .cep-float-bar-inner {
+        display: flex;
+        align-items: center;
+        gap: var(--space-16);
+        max-width: 560px;
+        width: calc(100% - var(--space-32));
+        background-color: var(--color-white);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-full);
+        padding: var(--space-8) var(--space-8) var(--space-8) var(--space-24);
+        box-shadow: var(--elevation-3);
+    }
+
+    .cep-float-bar-inner p {
+        flex: 1;
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--fs-sm);
+        color: var(--color-dark-blue);
+    }
+
+    .cep-float-bar-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+        .cep-float-bar-inner {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: var(--space-16);
+            border-radius: var(--radius-lg);
+        }
+
+        .cep-float-bar-btn {
+            width: 100%;
+        }
+    }
+
+    /* ===================== PAINEL LATERAL DE CEP ===================== */
+    .cep-panel-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 4, 30, 0.45);
+        /* Precisa ficar ACIMA do botão flutuante de WhatsApp (z-index 99998
+           em BotaoWhatsApp.astro), senão ele fica boiando por cima do painel
+           enquanto a pessoa preenche o CEP. */
+        z-index: 99999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s var(--ease-brand);
+    }
+
+    .cep-panel-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .cep-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100000;
+        width: min(400px, 100%);
+        background: var(--color-white);
+        box-shadow: -8px 0 32px rgba(3, 15, 60, 0.18);
+        padding: var(--space-64) var(--space-24) var(--space-24);
+        transform: translateX(100%);
+        transition: transform 0.4s var(--ease-brand);
+        overflow-y: auto;
+    }
+
+    .cep-panel.is-open {
+        transform: translateX(0);
+    }
+
+    .cep-panel h3 {
+        font-size: var(--fs-h4);
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-24);
+    }
+
+    .cep-panel-close {
+        position: absolute;
+        top: var(--space-16);
+        right: var(--space-16);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-full);
+        border: 1px solid var(--color-border);
+        color: var(--color-gray-dark);
+        font-size: var(--fs-body);
+        transition: var(--transition-default);
+    }
+
+    .cep-panel-close:hover {
+        background-color: var(--color-gray-light);
+    }
+
+    .cep-panel-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+    }
+
+    .cep-panel-form label {
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        color: var(--color-gray-medium);
+        margin-top: var(--space-8);
+    }
+
+    .cep-panel-form input {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: var(--space-12) var(--space-16);
+        font-family: var(--font-text);
+        font-size: var(--fs-body);
+        color: var(--color-gray-dark);
+    }
+
+    .cep-panel-form input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .cep-panel-submit {
+        margin-top: var(--space-16);
+        width: 100%;
+    }
+
+    .cep-panel-status {
+        font-size: var(--fs-caption);
+        margin: 0;
+    }
+
+    .cep-panel-status--ok {
+        color: var(--color-primary);
+    }
+
+    .cep-panel-status--erro {
+        color: var(--color-danger);
+    }
+
+    .cep-panel-resultado {
+        margin-top: var(--space-16);
+        padding: var(--space-16);
+        border-radius: var(--radius-sm);
+        font-size: var(--fs-sm);
+        line-height: 1.6;
+    }
+
+    .cep-panel-resultado--sucesso {
+        background-color: rgba(3, 37, 208, 0.06);
+        border: 1px solid var(--color-primary);
+        color: var(--color-dark-blue);
+    }
+
+    .cep-panel-resultado--aviso {
+        background-color: var(--color-gray-light);
+        border: 1px solid var(--color-border);
+    }
+
+    .cep-panel-resultado--erro {
+        background-color: var(--color-danger-bg);
+        border: 1px solid var(--color-danger-border);
+        color: var(--color-danger);
+    }
+
+    .cep-panel-resultado :global(a) {
+        display: inline-block;
+        margin-top: var(--space-12);
+    }
 </style>
+<script>
+    // Observer global de "aparecer suave no scroll" (data-reveal) — funciona
+    // em qualquer página do site sem precisar repetir esse script em cada
+    // uma. Ver a classe [data-reveal] em global.css.
+    const prefereReduzirMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const elementosRevelar = document.querySelectorAll<HTMLElement>("[data-reveal]");
+
+    if (prefereReduzirMovimento) {
+        elementosRevelar.forEach((el) => el.classList.add("is-visible"));
+    } else if (elementosRevelar.length > 0) {
+        const observerRevelar = new IntersectionObserver(
+            (entradas) => {
+                entradas.forEach((entrada) => {
+                    if (entrada.isIntersecting) {
+                        entrada.target.classList.add("is-visible");
+                        observerRevelar.unobserve(entrada.target);
+                    }
+                });
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+        );
+        elementosRevelar.forEach((el) => observerRevelar.observe(el));
+    }
+</script>
+<script>
+    // BARRA FLUTUANTE + PAINEL DE CEP — disponível em qualquer página. Reusa
+    // a mesma lógica de consulta da busca da home (src/scripts/viabilidade.ts).
+    import { mascaraCep, consultarViaCep, consultarViabilidade, irParaContratar, WHATSAPP_COMERCIAL } from "../scripts/viabilidade";
+
+    const barra = document.getElementById("cepFloatBar") as HTMLDivElement;
+    const btnAbrir = document.getElementById("cepFloatBarBtn") as HTMLButtonElement;
+    const overlay = document.getElementById("cepPanelOverlay") as HTMLDivElement;
+    const painel = document.getElementById("cepPanel") as HTMLElement;
+    const btnFechar = document.getElementById("cepPanelClose") as HTMLButtonElement;
+    const inputCep = document.getElementById("cepPanelCep") as HTMLInputElement;
+    const inputNumero = document.getElementById("cepPanelNumero") as HTMLInputElement;
+    const statusCep = document.getElementById("cepPanelCepStatus") as HTMLParagraphElement;
+    const btnVerificar = document.getElementById("cepPanelSubmit") as HTMLButtonElement;
+    const textoVerificar = document.getElementById("cepPanelSubmitTexto") as HTMLSpanElement;
+    const resultado = document.getElementById("cepPanelResultado") as HTMLParagraphElement;
+
+    // Na home, a barra só aparece depois que o formulário grande do topo sair
+    // da tela (senão fica CTA repetido). Nas outras páginas, aparece depois
+    // de um scroll curto.
+    const formHero = document.getElementById("viabilidade-form");
+
+    function atualizarVisibilidadeBarra() {
+        if (painel.classList.contains("is-open")) {
+            barra.classList.remove("is-visible");
+            return;
+        }
+        if (formHero) {
+            const retangulo = formHero.getBoundingClientRect();
+            barra.classList.toggle("is-visible", retangulo.bottom < 0);
+        } else {
+            barra.classList.toggle("is-visible", window.scrollY > 400);
+        }
+    }
+
+    window.addEventListener("scroll", atualizarVisibilidadeBarra, { passive: true });
+    atualizarVisibilidadeBarra();
+
+    function abrirPainel() {
+        painel.classList.add("is-open");
+        overlay.classList.add("is-open");
+        painel.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        barra.classList.remove("is-visible");
+        window.setTimeout(() => inputCep.focus(), 300);
+    }
+
+    function fecharPainel() {
+        painel.classList.remove("is-open");
+        overlay.classList.remove("is-open");
+        painel.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        atualizarVisibilidadeBarra();
+    }
+
+    btnAbrir.addEventListener("click", abrirPainel);
+    btnFechar.addEventListener("click", fecharPainel);
+    overlay.addEventListener("click", fecharPainel);
+    document.addEventListener("keydown", (ev) => {
+        if (ev.key === "Escape" && painel.classList.contains("is-open")) fecharPainel();
+    });
+
+    function mostrarStatusCep(texto: string, tipo: "ok" | "erro") {
+        statusCep.textContent = texto;
+        statusCep.className = `cep-panel-status cep-panel-status--${tipo}`;
+        statusCep.hidden = false;
+    }
+
+    inputCep.addEventListener("input", () => {
+        inputCep.value = mascaraCep(inputCep.value);
+        const digitos = inputCep.value.replace(/\D/g, "");
+
+        if (digitos.length < 8) {
+            statusCep.hidden = true;
+            return;
+        }
+
+        mostrarStatusCep("Procurando seu endereço...", "ok");
+
+        consultarViaCep(digitos)
+            .then((data) => {
+                if (data.erro) {
+                    mostrarStatusCep("Não achei esse CEP. Confere se digitou certinho.", "erro");
+                    return;
+                }
+                const partes = [data.logradouro, data.bairro, `${data.localidade}/${data.uf}`].filter(Boolean);
+                mostrarStatusCep(`✓ ${partes.join(", ")}`, "ok");
+            })
+            .catch(() => {
+                mostrarStatusCep("Não consegui confirmar o CEP agora, mas pode tentar Verificar mesmo assim.", "erro");
+            });
+    });
+
+    function mostrarResultado(html: string, tipo: "sucesso" | "erro" | "aviso") {
+        resultado.innerHTML = html;
+        resultado.className = `cep-panel-resultado cep-panel-resultado--${tipo}`;
+        resultado.hidden = false;
+    }
+
+    btnVerificar.addEventListener("click", async () => {
+        const cep = inputCep.value.replace(/\D/g, "");
+        const numero = inputNumero.value.trim();
+
+        if (cep.length !== 8) {
+            mostrarStatusCep("Digite um CEP válido (8 números).", "erro");
+            return;
+        }
+        if (numero === "") {
+            mostrarResultado("<p>Digite o número da casa ou prédio.</p>", "erro");
+            return;
+        }
+
+        btnVerificar.disabled = true;
+        textoVerificar.textContent = "Buscando...";
+        resultado.hidden = true;
+
+        try {
+            const data = await consultarViabilidade(cep, numero);
+
+            if (!data.sucesso) {
+                mostrarResultado(`<p>${data.mensagem}</p>`, "erro");
+            } else if (data.atende) {
+                textoVerificar.textContent = "Encontramos! Redirecionando...";
+                mostrarResultado(`<p>${data.mensagem}</p>`, "sucesso");
+                irParaContratar(cep, numero);
+                return;
+            } else {
+                mostrarResultado(`
+                    <p>${data.mensagem}</p>
+                    ${data.endereco_encontrado ? `<p>${data.endereco_encontrado}</p>` : ""}
+                    <a href="${WHATSAPP_COMERCIAL}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+                `, "aviso");
+            }
+        } catch (error) {
+            mostrarResultado(`
+                <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
+                <a href="${WHATSAPP_COMERCIAL}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+            `, "erro");
+        } finally {
+            btnVerificar.disabled = false;
+            textoVerificar.textContent = "Verificar endereço";
+        }
+    });
+</script>
 </html>

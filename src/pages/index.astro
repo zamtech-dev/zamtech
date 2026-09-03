@@ -130,10 +130,10 @@ import Layout from "../layouts/Layout.astro";
         </section>
 
         <!-- FEATURES BÁSICAS -->
-        <section class="section features-section">
+        <section class="section section-tint features-section">
             <div class="container">
                 <div class="grid-3-cols">
-                    <article class="feature-card">
+                    <article class="feature-card" data-reveal>
                         <div class="feature-icon-wrapper">
                             <img
                                 src="/assets/icons/ultra-velocidade.svg"
@@ -149,7 +149,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="feature-card feature-card--dark">
+                    <article class="feature-card feature-card--dark" data-reveal data-reveal-atraso="1">
                         <div class="feature-icon-wrapper">
                             <img
                                 src="/assets/icons/estabilidade.svg"
@@ -165,7 +165,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="feature-card">
+                    <article class="feature-card" data-reveal data-reveal-atraso="2">
                         <div class="feature-icon-wrapper">
                             <img
                                 src="/assets/icons/suporte.svg"
@@ -196,7 +196,7 @@ import Layout from "../layouts/Layout.astro";
                 </header>
 
                 <div class="grid-3-cols">
-                    <article class="benefit-card">
+                    <article class="benefit-card" data-reveal>
                         <img
                             src="/assets/icons/fibra-icon.svg"
                             alt=""
@@ -206,7 +206,7 @@ import Layout from "../layouts/Layout.astro";
                         <p>Levamos a fibra óptica até a sua casa por meio da nossa rede FTTH, proporcionando uma conexão estável, rápida e com excelente desempenho para o seu dia a dia.</p>
                     </article>
 
-                    <article class="benefit-card">
+                    <article class="benefit-card" data-reveal data-reveal-atraso="2">
                         <img
                             src="/assets/icons/tech-icon.svg"
                             alt=""
@@ -220,7 +220,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="benefit-card">
+                    <article class="benefit-card" data-reveal data-reveal-atraso="3">
                         <img
                             src="/assets/icons/suporte-24h.svg"
                             alt=""
@@ -234,7 +234,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="benefit-card">
+                    <article class="benefit-card" data-reveal data-reveal-atraso="4">
                         <img
                             src="/assets/icons/suporte_-02.svg"
                             alt=""
@@ -248,7 +248,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="benefit-card">
+                    <article class="benefit-card" data-reveal>
                         <img
                             src="/assets/icons/latencia-icon.svg"
                             alt=""
@@ -262,7 +262,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="benefit-card">
+                    <article class="benefit-card" data-reveal data-reveal-atraso="2">
                         <img
                             src="/assets/icons/velocidade-icon.svg"
                             alt=""
@@ -308,7 +308,7 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <div class="grid-3-cols">
-                    <article class="info-card info-card--mesh">
+                    <article class="info-card info-card--mesh" data-reveal>
                         <h3>Cobertura uniforme e sem pontos cegos</h3>
                         <p>
                             Ao contrário dos repetidores tradicionais, os
@@ -317,7 +317,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="info-card info-card--mesh">
+                    <article class="info-card info-card--mesh" data-reveal data-reveal-atraso="2">
                         <h3>Transição fluida (Roaming Wi-Fi)</h3>
                         <p>
                             Você pode andar pela casa mudando de cômodo sem que
@@ -326,7 +326,7 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                     </article>
 
-                    <article class="info-card info-card--mesh">
+                    <article class="info-card info-card--mesh" data-reveal data-reveal-atraso="3">
                         <h3>Fácil gerenciamento e expansão</h3>
                         <p>
                             Controlado por aplicativo simples no celular. Se
@@ -586,7 +586,7 @@ import Layout from "../layouts/Layout.astro";
         </section>
 
         <!-- PROVA SOCIAL -->
-        <section class="section social-proof-section">
+        <section class="section section-tint social-proof-section">
             <div class="container">
                 <header class="container-narrow section-header">
                     <h2 class="section-title section-title--blue">
@@ -598,7 +598,7 @@ import Layout from "../layouts/Layout.astro";
                 </header>
 
                 <div class="testimonials-grid">
-                    <article class="testimonial-card">
+                    <article class="testimonial-card" data-reveal>
                         <div class="profile-avatar">
                             <img
                                 src="/assets/img/profile/micheli-dos-santos.png"
@@ -621,7 +621,7 @@ import Layout from "../layouts/Layout.astro";
                         <cite>Micheli Dos Santos</cite>
                     </article>
 
-                    <article class="testimonial-card">
+                    <article class="testimonial-card" data-reveal data-reveal-atraso="2">
                         <div class="profile-avatar">
                             <img
                                 src="/assets/img/profile/taylon.png"
@@ -644,7 +644,7 @@ import Layout from "../layouts/Layout.astro";
                         <cite>Thayllon Quaresma</cite>
                     </article>
 
-                    <article class="testimonial-card">
+                    <article class="testimonial-card" data-reveal data-reveal-atraso="3">
                         <div class="profile-avatar">
                             <img
                                 src="/assets/img/profile/eli.png"
@@ -746,6 +746,12 @@ import Layout from "../layouts/Layout.astro";
     // mais preciso que a pessoa digitar o endereço na mão: sem risco de
     // confundir rua com nome repetido em outra cidade. Ver
     // /api/viabilidade/consultar.php pra entender a lógica do lado do servidor.
+    // A lógica de consulta em si (mascarar CEP, chamar ViaCEP, chamar nosso
+    // backend, redirecionar) mora em src/scripts/viabilidade.ts — mesmo
+    // arquivo usado pela barra flutuante em Layout.astro, pra nunca ficarem
+    // dessincronizadas.
+    import { mascaraCep, consultarViaCep, consultarViabilidade, irParaContratar, WHATSAPP_COMERCIAL } from "../scripts/viabilidade";
+
     const form = document.getElementById("viabilidade-form") as HTMLFormElement;
     const inputCep = document.getElementById("viabilidade-cep") as HTMLInputElement;
     const inputNumero = document.getElementById("viabilidade-numero") as HTMLInputElement;
@@ -765,8 +771,8 @@ import Layout from "../layouts/Layout.astro";
     // de graça, direto do navegador) — assim ela vê "achamos sua rua" antes
     // de nem clicar em Verificar, igual o padrão que grandes provedores usam.
     inputCep.addEventListener("input", () => {
-        const digitos = inputCep.value.replace(/\D/g, "").slice(0, 8);
-        inputCep.value = digitos.length > 5 ? `${digitos.slice(0, 5)}-${digitos.slice(5)}` : digitos;
+        inputCep.value = mascaraCep(inputCep.value);
+        const digitos = inputCep.value.replace(/\D/g, "");
 
         if (digitos.length < 8) {
             statusCep.hidden = true;
@@ -775,8 +781,7 @@ import Layout from "../layouts/Layout.astro";
 
         mostrarStatusCep("Procurando seu endereço...", "ok");
 
-        fetch(`https://viacep.com.br/ws/${digitos}/json/`)
-            .then((r) => r.json())
+        consultarViaCep(digitos)
             .then((data) => {
                 if (data.erro) {
                     mostrarStatusCep("Não achei esse CEP. Confere se digitou certinho.", "erro");
@@ -874,26 +879,23 @@ import Layout from "../layouts/Layout.astro";
         const enderecoParaLead = `CEP ${inputCep.value}, nº ${numero}`;
 
         try {
-            const response = await fetch("/api/viabilidade/consultar.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cep, numero }),
-            });
-            const data = await response.json();
+            const data = await consultarViabilidade(cep, numero);
             const enderecoEncontrado = data.endereco_encontrado || enderecoParaLead;
 
             if (!data.sucesso) {
                 mostrarResultado(`<p>${data.mensagem}</p>`, "erro");
             } else if (data.atende) {
-                mostrarResultado(`
-                    <p>${data.mensagem}</p>
-                    ${data.endereco_encontrado ? `<p class="viabilidade-endereco-confirmado">${data.endereco_encontrado}</p>` : ""}
-                    <a href="/contratar?cep=${encodeURIComponent(cep)}&numero=${encodeURIComponent(numero)}" class="btn btn-primary">Ver planos e contratar</a>
-                `, "sucesso");
+                // Atende -> já manda direto pra página de planos/contratação,
+                // sem precisar de mais um clique. O CEP/número resolvidos vão
+                // na URL pra /contratar não precisar perguntar de novo.
+                textoBtn.textContent = "Encontramos! Redirecionando...";
+                mostrarResultado(`<p>${data.mensagem}</p>`, "sucesso");
+                irParaContratar(cep, numero);
+                return;
             } else if (data.motivo === "endereco_nao_encontrado" || data.motivo === "cep_nao_encontrado") {
                 mostrarResultado(`
                     <p>${data.mensagem}</p>
-                    <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+                    <a href="${WHATSAPP_COMERCIAL}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
                 `, "aviso");
             } else {
                 // sem_cobertura ou sem_vaga -> mostra a mensagem e já oferece
@@ -901,14 +903,14 @@ import Layout from "../layouts/Layout.astro";
                 mostrarResultado(`
                     <p>${data.mensagem}</p>
                     ${data.endereco_encontrado ? `<p class="viabilidade-endereco-confirmado">${data.endereco_encontrado}</p>` : ""}
-                    ${montarFormularioLead(enderecoEncontrado, data.motivo)}
+                    ${montarFormularioLead(enderecoEncontrado, data.motivo || "sem_cobertura")}
                 `, "aviso");
                 ativarFormularioLead(enderecoEncontrado);
             }
         } catch (error) {
             mostrarResultado(`
                 <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
-                <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+                <a href="${WHATSAPP_COMERCIAL}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
             `, "erro");
         } finally {
             btnPesquisar.disabled = false;
@@ -1179,7 +1181,7 @@ import Layout from "../layouts/Layout.astro";
         max-width: 560px;
         margin: 0 auto;
         background-color: var(--color-white);
-        border: 1px solid var(--color-gray-light);
+        border: 1px solid var(--color-border);
         border-radius: var(--radius-full);
         padding: var(--space-8);
         box-shadow: 0 2px 12px rgba(3, 37, 208, 0.08);
@@ -1194,7 +1196,7 @@ import Layout from "../layouts/Layout.astro";
     .viabilidade-search-input {
         min-width: 0;
         border: none;
-        border-left: 1px solid var(--color-gray-light);
+        border-left: 1px solid var(--color-border);
         outline: none;
         padding: 0 var(--space-8) 0 var(--space-16);
         font-family: var(--font-text);
@@ -1294,7 +1296,7 @@ import Layout from "../layouts/Layout.astro";
 
     .viabilidade-resultado--aviso {
         background-color: var(--color-gray-light);
-        border: 1px solid var(--color-gray-light);
+        border: 1px solid var(--color-border);
     }
 
     .viabilidade-resultado--erro {
@@ -1311,7 +1313,7 @@ import Layout from "../layouts/Layout.astro";
     :global(.viabilidade-lead-form input) {
         flex: 1;
         min-width: 160px;
-        border: 1px solid var(--color-gray-light);
+        border: 1px solid var(--color-border);
         border-radius: var(--radius-sm);
         padding: var(--space-12);
         font-family: var(--font-text);
