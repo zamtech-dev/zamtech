@@ -1,0 +1,620 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+---
+
+<Layout title="Pré-Cadastro Zamtech - Comece sua contratação">
+    <section class="section-dark section precadastro-hero">
+        <div class="container precadastro-hero-content">
+            <span class="chip-brand">Novo cliente</span>
+            <h1>Faça seu <span class="text-gradient">pré-cadastro</span> em poucos minutos</h1>
+            <p class="precadastro-hero-subtitle">
+                Preencha seus dados abaixo. Nosso time comercial entra em contato pra apresentar o plano ideal pra você e agendar a instalação.
+            </p>
+        </div>
+    </section>
+
+    <section class="section form-section">
+        <div class="container">
+            <div class="form-wrapper card-padrao">
+                <div class="tipo-pessoa-toggle" role="tablist">
+                    <button type="button" class="tipo-pessoa-btn is-active" id="btnPessoaFisica" data-tipo="F">Pessoa Física</button>
+                    <button type="button" class="tipo-pessoa-btn" id="btnPessoaJuridica" data-tipo="J">Pessoa Jurídica</button>
+                </div>
+
+                <form id="formPreCadastro" class="precadastro-form">
+                    <div class="input-group" id="grupoNome">
+                        <label for="nome" id="labelNome">Nome completo</label>
+                        <input type="text" id="nome" required placeholder="Digite seu nome completo" autocomplete="name" />
+                    </div>
+
+                    <div class="input-group" id="grupoNomeFantasia" hidden>
+                        <label for="nomeFantasia">Nome fantasia (opcional)</label>
+                        <input type="text" id="nomeFantasia" placeholder="Nome fantasia da empresa" autocomplete="off" />
+                    </div>
+
+                    <div class="input-row" id="grupoResponsavel" hidden>
+                        <div class="input-group">
+                            <label for="respNome">Nome do responsável</label>
+                            <input type="text" id="respNome" placeholder="Quem responde pela empresa" autocomplete="off" />
+                        </div>
+                        <div class="input-group">
+                            <label for="respCpf">CPF do responsável</label>
+                            <input type="text" id="respCpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="cpfCnpj" id="labelCpfCnpj">CPF</label>
+                            <input type="text" id="cpfCnpj" required placeholder="000.000.000-00" inputmode="numeric" maxlength="18" autocomplete="off" />
+                            <span class="input-erro" id="cpfCnpjErro" hidden>Documento inválido. Confira os números digitados.</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="dataNascimento" id="labelDataNascimento">Data de nascimento</label>
+                            <input type="date" id="dataNascimento" required />
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="telefone1">Celular (WhatsApp)</label>
+                            <input type="text" id="telefone1" required placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15" autocomplete="tel" />
+                        </div>
+                        <div class="input-group">
+                            <label for="telefone2">2º telefone (opcional)</label>
+                            <input type="text" id="telefone2" placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15" autocomplete="tel" />
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required placeholder="seuemail@exemplo.com" autocomplete="email" />
+                    </div>
+
+                    <p class="secao-titulo">Endereço de instalação</p>
+
+                    <div class="input-row">
+                        <div class="input-group input-group--cep">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" required placeholder="00000-000" inputmode="numeric" maxlength="9" autocomplete="off" />
+                            <span class="input-dica" id="cepStatus" hidden></span>
+                        </div>
+                        <div class="input-group input-group--uf">
+                            <label for="uf">UF</label>
+                            <input type="text" id="uf" required placeholder="ES" maxlength="2" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="logradouro">Endereço (rua/avenida)</label>
+                        <input type="text" id="logradouro" required placeholder="Rua, avenida..." autocomplete="off" />
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="numero">Número</label>
+                            <input type="text" id="numero" required placeholder="Nº" autocomplete="off" />
+                        </div>
+                        <div class="input-group">
+                            <label for="complemento">Complemento</label>
+                            <input type="text" id="complemento" placeholder="Apto, bloco... (opcional)" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" required placeholder="Bairro" autocomplete="off" />
+                        </div>
+                        <div class="input-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" required placeholder="Cidade" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="pontoReferencia">Ponto de referência (opcional)</label>
+                        <input type="text" id="pontoReferencia" placeholder="Ex: ao lado do mercado tal" autocomplete="off" />
+                    </div>
+
+                    <div class="input-group">
+                        <label for="diaVencimento">Dia de vencimento da fatura</label>
+                        <select id="diaVencimento" required>
+                            <option value="" selected disabled>Escolha um dia entre 1 e 25</option>
+                        </select>
+                    </div>
+
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="aceite" required />
+                        <span>Li e concordo com a <a href="/politica-de-privacidade" target="_blank">Política de Privacidade</a> da Zamtech e entendo que a contratação com fidelidade é mediante aprovação.</span>
+                    </label>
+
+                    <button type="submit" class="btn btn-primary btn-lg" id="btnEnviar">Enviar pré-cadastro</button>
+                </form>
+
+                <div id="mensagemPreCadastro" class="mensagem-retorno-precadastro hidden"></div>
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<script>
+    function validarCPF(valor: string): boolean {
+        const cpf = valor.replace(/[^\d]/g, "");
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+
+        let soma = 0;
+        for (let i = 0; i < 9; i++) soma += parseInt(cpf[i]) * (10 - i);
+        let resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf[9])) return false;
+
+        soma = 0;
+        for (let i = 0; i < 10; i++) soma += parseInt(cpf[i]) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf[10])) return false;
+
+        return true;
+    }
+
+    function validarCNPJ(valor: string): boolean {
+        const cnpj = valor.replace(/[^\d]/g, "");
+        if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+
+        const calcularDigito = (base: string, pesos: number[]): number => {
+            let soma = 0;
+            for (let i = 0; i < pesos.length; i++) soma += parseInt(base[i]) * pesos[i];
+            const resto = soma % 11;
+            return resto < 2 ? 0 : 11 - resto;
+        };
+
+        const pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        if (calcularDigito(cnpj.slice(0, 12), pesos1) !== parseInt(cnpj[12])) return false;
+
+        const pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        if (calcularDigito(cnpj.slice(0, 13), pesos2) !== parseInt(cnpj[13])) return false;
+
+        return true;
+    }
+
+    function mascararCPF(valor: string): string {
+        return valor.replace(/[^\d]/g, "").slice(0, 11)
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    }
+
+    function mascararCNPJ(valor: string): string {
+        return valor.replace(/[^\d]/g, "").slice(0, 14)
+            .replace(/(\d{2})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1/$2")
+            .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+    }
+
+    function mascararTelefone(valor: string): string {
+        return valor.replace(/[^\d]/g, "").slice(0, 11)
+            .replace(/(\d{2})(\d)/, "($1) $2")
+            .replace(/(\d{5})(\d{1,4})$/, "$1-$2");
+    }
+
+    function mascararCEP(valor: string): string {
+        return valor.replace(/[^\d]/g, "").slice(0, 8)
+            .replace(/(\d{5})(\d{1,3})$/, "$1-$2");
+    }
+
+    // --- Alterna entre Pessoa Física e Pessoa Jurídica: troca labels,
+    // mostra/esconde os campos exclusivos de empresa e ajusta a máscara e
+    // o maxlength do campo de documento. ---
+    const btnPessoaFisica = document.getElementById("btnPessoaFisica") as HTMLButtonElement;
+    const btnPessoaJuridica = document.getElementById("btnPessoaJuridica") as HTMLButtonElement;
+    const labelNome = document.getElementById("labelNome") as HTMLElement;
+    const labelCpfCnpj = document.getElementById("labelCpfCnpj") as HTMLElement;
+    const labelDataNascimento = document.getElementById("labelDataNascimento") as HTMLElement;
+    const grupoNomeFantasia = document.getElementById("grupoNomeFantasia") as HTMLElement;
+    const grupoResponsavel = document.getElementById("grupoResponsavel") as HTMLElement;
+    const nomeInput = document.getElementById("nome") as HTMLInputElement;
+    const cpfCnpjInput = document.getElementById("cpfCnpj") as HTMLInputElement;
+    const cpfCnpjErro = document.getElementById("cpfCnpjErro") as HTMLElement;
+    const respNomeInput = document.getElementById("respNome") as HTMLInputElement;
+
+    let tipoPessoa: "F" | "J" = "F";
+
+    function definirTipoPessoa(tipo: "F" | "J") {
+        tipoPessoa = tipo;
+        btnPessoaFisica.classList.toggle("is-active", tipo === "F");
+        btnPessoaJuridica.classList.toggle("is-active", tipo === "J");
+
+        if (tipo === "F") {
+            labelNome.textContent = "Nome completo";
+            nomeInput.placeholder = "Digite seu nome completo";
+            labelCpfCnpj.textContent = "CPF";
+            labelDataNascimento.textContent = "Data de nascimento";
+            cpfCnpjInput.maxLength = 14;
+            grupoNomeFantasia.hidden = true;
+            grupoResponsavel.hidden = true;
+            respNomeInput.required = false;
+        } else {
+            labelNome.textContent = "Razão social";
+            nomeInput.placeholder = "Razão social da empresa";
+            labelCpfCnpj.textContent = "CNPJ";
+            labelDataNascimento.textContent = "Data de fundação";
+            cpfCnpjInput.maxLength = 18;
+            grupoNomeFantasia.hidden = false;
+            grupoResponsavel.hidden = false;
+            respNomeInput.required = true;
+        }
+
+        cpfCnpjInput.value = "";
+        cpfCnpjErro.hidden = true;
+    }
+
+    btnPessoaFisica.addEventListener("click", () => definirTipoPessoa("F"));
+    btnPessoaJuridica.addEventListener("click", () => definirTipoPessoa("J"));
+
+    cpfCnpjInput.addEventListener("input", () => {
+        cpfCnpjInput.value = tipoPessoa === "F" ? mascararCPF(cpfCnpjInput.value) : mascararCNPJ(cpfCnpjInput.value);
+        cpfCnpjErro.hidden = true;
+    });
+
+    (document.getElementById("respCpf") as HTMLInputElement)?.addEventListener("input", (e) => {
+        const alvo = e.target as HTMLInputElement;
+        alvo.value = mascararCPF(alvo.value);
+    });
+
+    const telefone1Input = document.getElementById("telefone1") as HTMLInputElement;
+    const telefone2Input = document.getElementById("telefone2") as HTMLInputElement;
+    telefone1Input?.addEventListener("input", () => { telefone1Input.value = mascararTelefone(telefone1Input.value); });
+    telefone2Input?.addEventListener("input", () => { telefone2Input.value = mascararTelefone(telefone2Input.value); });
+
+    const ufInput = document.getElementById("uf") as HTMLInputElement;
+    ufInput?.addEventListener("input", () => { ufInput.value = ufInput.value.toUpperCase().slice(0, 2); });
+
+    // --- Dia de vencimento: 1 a 25, exatamente como no template de
+    // WhatsApp que os clientes já preenchem hoje. ---
+    const diaVencimentoSelect = document.getElementById("diaVencimento") as HTMLSelectElement;
+    for (let dia = 1; dia <= 25; dia++) {
+        const opcao = document.createElement("option");
+        opcao.value = String(dia);
+        opcao.textContent = String(dia);
+        diaVencimentoSelect.appendChild(opcao);
+    }
+
+    const cepInput = document.getElementById("cep") as HTMLInputElement;
+    const cepStatus = document.getElementById("cepStatus") as HTMLElement;
+    const logradouroInput = document.getElementById("logradouro") as HTMLInputElement;
+    const bairroInput = document.getElementById("bairro") as HTMLInputElement;
+    const cidadeInput = document.getElementById("cidade") as HTMLInputElement;
+    const numeroInput = document.getElementById("numero") as HTMLInputElement;
+
+    function mostrarDicaCep(texto: string, negativo = false) {
+        cepStatus.textContent = texto;
+        cepStatus.hidden = texto === "";
+        cepStatus.classList.toggle("input-dica--erro", negativo);
+    }
+
+    // Mesma ideia da página /assinar: busca o endereço assim que o CEP fica
+    // completo, via ViaCEP (API pública dos Correios, grátis e sem chave),
+    // pra pessoa não precisar digitar rua/bairro/cidade na mão.
+    async function buscarEnderecoPorCep(cep: string) {
+        mostrarDicaCep("Buscando endereço...");
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+
+            if (data.erro) {
+                mostrarDicaCep("CEP não encontrado. Preencha o endereço manualmente.", true);
+                return;
+            }
+
+            if (logradouroInput && data.logradouro) logradouroInput.value = data.logradouro;
+            if (bairroInput && data.bairro) bairroInput.value = data.bairro;
+            if (cidadeInput && data.localidade) cidadeInput.value = data.localidade;
+            if (ufInput && data.uf) ufInput.value = data.uf;
+
+            mostrarDicaCep("Endereço encontrado! Confira e complete o número.");
+            numeroInput?.focus();
+        } catch (error) {
+            mostrarDicaCep("Não consegui buscar o endereço agora. Preencha manualmente.", true);
+        }
+    }
+
+    cepInput?.addEventListener("input", () => {
+        cepInput.value = mascararCEP(cepInput.value);
+        const cepLimpo = cepInput.value.replace(/\D/g, "");
+        if (cepLimpo.length === 8) {
+            buscarEnderecoPorCep(cepLimpo);
+        } else {
+            mostrarDicaCep("");
+        }
+    });
+
+    const form = document.getElementById("formPreCadastro") as HTMLFormElement;
+    const mensagemPreCadastro = document.getElementById("mensagemPreCadastro") as HTMLElement;
+    const btnEnviar = document.getElementById("btnEnviar") as HTMLButtonElement;
+
+    function mostrarMensagem(html: string, negativo = false) {
+        mensagemPreCadastro.innerHTML = html;
+        mensagemPreCadastro.classList.remove("hidden");
+        mensagemPreCadastro.classList.toggle("negativa", negativo);
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const cpfCnpj = cpfCnpjInput.value.trim();
+        const documentoValido = tipoPessoa === "F" ? validarCPF(cpfCnpj) : validarCNPJ(cpfCnpj);
+        if (!documentoValido) {
+            cpfCnpjErro.hidden = false;
+            cpfCnpjInput.focus();
+            return;
+        }
+        cpfCnpjErro.hidden = true;
+
+        const dados = {
+            tipoPessoa,
+            nome: nomeInput.value.trim(),
+            nomeFantasia: (document.getElementById("nomeFantasia") as HTMLInputElement).value.trim(),
+            respNome: respNomeInput.value.trim(),
+            respCpf: (document.getElementById("respCpf") as HTMLInputElement).value.trim(),
+            cpfCnpj,
+            dataNascimento: (document.getElementById("dataNascimento") as HTMLInputElement).value,
+            telefone1: telefone1Input.value.trim(),
+            telefone2: telefone2Input.value.trim(),
+            email: (document.getElementById("email") as HTMLInputElement).value.trim(),
+            cep: cepInput.value.trim(),
+            logradouro: logradouroInput.value.trim(),
+            numero: numeroInput.value.trim(),
+            complemento: (document.getElementById("complemento") as HTMLInputElement).value.trim(),
+            bairro: bairroInput.value.trim(),
+            cidade: cidadeInput.value.trim(),
+            uf: ufInput.value.trim(),
+            pontoReferencia: (document.getElementById("pontoReferencia") as HTMLInputElement).value.trim(),
+            diaVencimento: diaVencimentoSelect.value,
+            aceite: (document.getElementById("aceite") as HTMLInputElement).checked,
+        };
+
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = "Enviando seus dados...";
+        mensagemPreCadastro.classList.add("hidden");
+
+        try {
+            const response = await fetch("/api/pre-cadastro/cadastrar.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados),
+            });
+            const data = await response.json();
+
+            if (data.sucesso) {
+                mostrarMensagem(`<p>${data.mensagem}</p>`, false);
+                form.hidden = true;
+            } else {
+                const ehErroDeSistema = data.tipo === "erro";
+                let html = `<p>${data.mensagem || "Não consegui enviar seu cadastro agora."}</p>`;
+                if (ehErroDeSistema) {
+                    html += `<a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>`;
+                }
+                mostrarMensagem(html, !ehErroDeSistema);
+            }
+        } catch (error) {
+            mostrarMensagem(`
+                <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
+                <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+            `, false);
+        } finally {
+            btnEnviar.disabled = false;
+            btnEnviar.textContent = "Enviar pré-cadastro";
+        }
+    });
+</script>
+
+<style>
+    .precadastro-hero {
+        text-align: center;
+    }
+
+    .precadastro-hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-16);
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .precadastro-hero h1 {
+        font-size: clamp(2rem, 4vw, var(--fs-h1));
+        line-height: 1.2;
+    }
+
+    .precadastro-hero-subtitle {
+        font-size: var(--fs-body);
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+        max-width: 600px;
+    }
+
+    .form-section {
+        background-color: var(--color-gray-light);
+    }
+
+    .form-wrapper {
+        max-width: 560px;
+        margin: 0 auto;
+        background-color: var(--color-white);
+        border: 1px solid var(--color-gray-light);
+        color: var(--color-gray-dark);
+    }
+
+    .tipo-pessoa-toggle {
+        display: flex;
+        gap: var(--space-8);
+        margin-bottom: var(--space-24);
+        background-color: var(--color-gray-light);
+        border-radius: var(--radius-sm);
+        padding: var(--space-4);
+    }
+
+    .tipo-pessoa-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: var(--space-12) var(--space-16);
+        border-radius: var(--radius-sm);
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        color: var(--color-gray-medium);
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .tipo-pessoa-btn.is-active {
+        background: var(--gradient-brand);
+        color: var(--color-white);
+    }
+
+    .precadastro-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-24);
+    }
+
+    .secao-titulo {
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        color: var(--color-dark-blue);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-top: var(--space-8);
+    }
+
+    .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-16);
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+    }
+
+    .input-group[hidden] {
+        display: none;
+    }
+
+    .input-group label {
+        font-size: var(--fs-sm);
+        font-weight: 600;
+        color: var(--color-gray-dark);
+    }
+
+    .input-group input,
+    .input-group select {
+        width: 100%;
+        padding: var(--space-12) var(--space-16);
+        border: 1px solid var(--color-gray-low);
+        border-radius: var(--radius-sm);
+        font-size: var(--fs-body);
+        font-family: inherit;
+        background-color: var(--color-white);
+        transition: border-color 0.2s ease;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(3, 37, 208, 0.12);
+    }
+
+    .input-erro {
+        display: block;
+        margin-top: var(--space-4);
+        font-size: var(--fs-caption);
+        line-height: 1.5;
+        color: #dc2626;
+    }
+
+    .input-erro[hidden] {
+        display: none;
+    }
+
+    .input-dica {
+        display: block;
+        margin-top: var(--space-4);
+        font-size: var(--fs-caption);
+        line-height: 1.5;
+        color: var(--color-gray-medium);
+    }
+
+    .input-dica[hidden] {
+        display: none;
+    }
+
+    .input-dica--erro {
+        color: #dc2626;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-8);
+        line-height: 1.5;
+        font-size: var(--fs-caption);
+        color: var(--color-gray-medium);
+        cursor: pointer;
+    }
+
+    .checkbox-group input {
+        margin-top: 3px;
+        flex-shrink: 0;
+        accent-color: var(--color-primary);
+    }
+
+    .checkbox-group a {
+        color: var(--color-primary);
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .btn-lg {
+        min-height: 52px;
+        padding: 0 var(--space-32);
+    }
+
+    .mensagem-retorno-precadastro {
+        max-width: 560px;
+        margin: var(--space-24) auto 0;
+        padding: var(--space-16);
+        border-radius: var(--radius-sm);
+        background: var(--color-success-bg);
+        border: 1px solid var(--color-success-border);
+        color: var(--color-success);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-12);
+        align-items: center;
+    }
+
+    .mensagem-retorno-precadastro.negativa {
+        background: var(--color-danger-bg);
+        border-color: var(--color-danger-border);
+        color: var(--color-danger);
+    }
+
+    .mensagem-retorno-precadastro.hidden {
+        display: none;
+    }
+
+    @media (max-width: 600px) {
+        .input-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
