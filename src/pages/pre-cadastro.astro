@@ -562,7 +562,13 @@ import "../styles/global.css";
 
     .input-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        /* minmax(0, 1fr) em vez de só "1fr": "1fr" sozinho equivale a
+           minmax(auto, 1fr), e o "auto" deixa a coluna crescer pra caber o
+           conteúdo "natural" de um filho (o input type="date" no Safari do
+           iPhone, por causa do texto da data por extenso) — é isso que
+           empurrava a caixa pra fora da tela. Com minmax(0, 1fr) a coluna
+           nunca cresce além do espaço disponível. */
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: var(--space-16);
     }
 
@@ -574,6 +580,13 @@ import "../styles/global.css";
         display: flex;
         flex-direction: column;
         gap: var(--space-8);
+        /* O min-width:0 no input (mais abaixo) não bastava — o Safari do
+           iPhone usa o tamanho "natural" do input type="date" (que é grande,
+           por causa do texto da data por extenso) pra decidir o tamanho
+           MÍNIMO desse item dentro do grid do .input-row, ignorando o
+           width:100% do input lá dentro. Precisa zerar o mínimo aqui, no
+           item do grid, não só no input. */
+        min-width: 0;
     }
 
     .input-group[hidden] {
@@ -694,7 +707,7 @@ import "../styles/global.css";
 
     @media (max-width: 600px) {
         .input-row {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr);
         }
     }
 </style>
