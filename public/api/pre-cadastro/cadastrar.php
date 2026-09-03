@@ -128,11 +128,14 @@ try {
 
     // Cada informação numa linha separada — antes ia tudo espremido numa
     // linha só e ficava difícil de ler na caixa de Observação do SGP.
+    // Só o essencial aqui: a API de pré-cadastro do SGP não tem campo pra
+    // "Telefone Extra" (isso só existe no cadastro do cliente já criado),
+    // então o 2º telefone continua indo por aqui mesmo, só que enxuto —
+    // é a Carol quem copia pra lá na hora que revisa o pré-cadastro.
     $observacaoPartes = ['Pré-cadastro via site (zamtech.com.br/pre-cadastro).'];
-    $observacaoPartes[] = 'Telefone secundário: ' . $telefone2 . '.';
-    $observacaoPartes[] = 'Velocidade desejada informada pelo cliente: ' . $velocidadeDesejada . ' Mega (não é o plano final — só referência pro comercial).';
+    $observacaoPartes[] = 'Telefone 2: ' . $telefone2 . '.';
+    $observacaoPartes[] = 'Velocidade desejada: ' . $velocidadeDesejada . ' Mega.';
     $observacaoPartes[] = 'Dia de vencimento desejado: ' . $diaVencimento . ($vencimentoId === null ? ' (não encontrado na lista do SGP — ajustar manualmente).' : '.');
-    $observacaoPartes[] = 'Aceite de fidelidade (mediante aprovação): sim.';
     if ($tipoPessoa === 'J') {
         $observacaoPartes[] = 'Responsável: ' . $respNome . ($respCpf !== '' ? " (CPF {$respCpf})" : '') . '.';
     }

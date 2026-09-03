@@ -589,6 +589,13 @@ import "../styles/global.css";
     .input-group input,
     .input-group select {
         width: 100%;
+        /* min-width: 0 é o que resolve — input dentro de flex column tem um
+           "min-width: auto" implícito, e o input type="date" no celular
+           calcula esse mínimo pelo tamanho do texto da data por extenso
+           ("3 de set. de 2026"), que é maior que a tela. Sem isso ele
+           empurra a caixa pra fora da tela em vez de encolher. */
+        min-width: 0;
+        max-width: 100%;
         padding: var(--space-12) var(--space-16);
         border: 1px solid var(--color-gray-low);
         border-radius: var(--radius-sm);
