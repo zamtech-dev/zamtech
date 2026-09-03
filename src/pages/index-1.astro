@@ -1,0 +1,1892 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Zamtech - Fibra Óptica">
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">Internet rápida, segura e acessível</h1>
+
+                <div class="plans-showcase">
+                    <!-- Card 500 Mega -->
+                    <article class="plan-card">
+                        <div class="plan-header">
+                            <span class="plan-brand">ZAMTECH</span>
+                            <h2 class="plan-title">500MEGA</h2>
+                        </div>
+                        <div class="plan-price">
+                            <span class="price-currency">R$</span>
+                            <span class="price-integer">89</span>
+                            <div class="price-fraction-period">
+                                <span class="price-fraction">,90</span>
+                                <span class="price-period">/mês</span>
+                            </div>
+                        </div>
+                        <p class="plan-description">
+                            Internet estável para todos os momentos
+                        </p>
+                        <a href="https://wa.me/5527995057736?text=Ol%C3%A1%21%20Gostaria%20de%20adquirir%20o%20plano%20ZAMTECH%20500MEGA%20por%20R%24%2089%2C90%2Fm%C3%AAs." target="_blank" class="btn btn-primary btn-full"
+                            >Adquirir Plano</a>
+                    </article>
+
+                    <!-- Card Destaque (800 Mega Mesh) -->
+                    <article class="plan-card plan-card--featured">
+                        <div class="plan-badge">RECOMENDADO</div>
+                        <div class="plan-header">
+                            <span class="plan-brand">ZAMTECH</span>
+                            <h2 class="plan-title">
+                                800MEGA <span class="title-accent">+MESH</span>
+                            </h2>
+                        </div>
+                        <div class="plan-price">
+                            <span class="price-currency">R$</span>
+                            <span class="price-integer">129</span>
+                            <div class="price-fraction-period">
+                                <span class="price-fraction">,90</span>
+                                <span class="price-period">/mês</span>
+                            </div>
+                        </div>
+                        <p class="plan-description">
+                            Wi-Fi potente em todos os ambientes, sem pontos
+                            fracos
+                        </p>
+                        <a href="https://wa.me/5527995057736?text=Ol%C3%A1%21%20Gostaria%20de%20adquirir%20o%20Combo%20Mesh%3A%20ZAMTECH%20800MEGA%20%2B%20MESH%20por%20R%24%20129%2C90%2Fm%C3%AAs" target="_blank" class="btn btn-primary btn-full"
+                            >Adquirir Combo Mesh</a>
+                    </article>
+
+                    <!-- Card 800 Mega -->
+                    <article class="plan-card">
+                        <div class="plan-header">
+                            <span class="plan-brand">ZAMTECH</span>
+                            <h2 class="plan-title">800MEGA</h2>
+                        </div>
+                        <div class="plan-price">
+                            <span class="price-currency">R$</span>
+                            <span class="price-integer">99</span>
+                            <div class="price-fraction-period">
+                                <span class="price-fraction">,90</span>
+                                <span class="price-period">/mês</span>
+                            </div>
+                        </div>
+                        <p class="plan-description">
+                            Mais velocidade para uma casa conectada
+                        </p>
+                        <a href="https://wa.me/5527995057736?text=Ol%C3%A1%21%20Gostaria%20de%20adquirir%20o%20plano%20ZAMTECH%20800MEGA%20por%20R%24%2099%2C90%2Fm%C3%AAs." target="_blank" class="btn btn-primary btn-full"
+                            >Adquirir Plano</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONSULTA DE VIABILIDADE -->
+        <!-- Busca estilo Google: a pessoa digita o endereço e a gente checa a
+             CTO (caixinha de fibra) mais próxima cadastrada no SGP, com
+             latitude/longitude e portas livres. É uma estimativa por
+             distância, nunca uma confirmação 100% técnica — por isso o texto
+             sempre fala "provavelmente" e sempre existe um caminho pro
+             WhatsApp/comercial confirmar de verdade. -->
+        <section class="section viabilidade-section">
+            <div class="container-narrow">
+                <h2 class="viabilidade-title">Já chegamos na sua rua?</h2>
+                <p class="viabilidade-subtitle">
+                    Digite seu endereço e veja se a Zamtech já atende sua região
+                </p>
+
+                <form id="viabilidade-form" class="viabilidade-search" autocomplete="off">
+                    <svg
+                        class="viabilidade-search-icon"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                    </svg>
+                    <input
+                        type="text"
+                        id="viabilidade-endereco"
+                        name="endereco"
+                        class="viabilidade-search-input"
+                        placeholder="Rua, número, bairro e cidade"
+                        required
+                    />
+                    <button type="submit" class="viabilidade-search-btn">
+                        <span class="viabilidade-search-btn-texto">Pesquisar</span>
+                    </button>
+                </form>
+
+                <div id="viabilidade-resultado" class="viabilidade-resultado" hidden></div>
+            </div>
+        </section>
+
+        <!-- FEATURES BÁSICAS -->
+        <section class="section features-section">
+            <div class="container">
+                <div class="grid-3-cols">
+                    <article class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <img
+                                src="/assets/icons/ultra-velocidade.svg"
+                                alt="Ultra Velocidade"
+                                class="feature-icon"
+                            />
+                        </div>
+                        <h3 class="feature-title">Ultra Velocidade</h3>
+                        <p class="feature-description">
+                            Faça downloads pesados, envie arquivos grandes e
+                            assista a vídeos em 4K ou 8K ao mesmo tempo, sem
+                            lentidão.
+                        </p>
+                    </article>
+
+                    <article class="feature-card feature-card--dark">
+                        <div class="feature-icon-wrapper">
+                            <img
+                                src="/assets/icons/estabilidade.svg"
+                                alt="Estabilidade Garantida"
+                                class="feature-icon"
+                            />
+                        </div>
+                        <h3 class="feature-title">Estabilidade Garantida</h3>
+                        <p class="feature-description">
+                            Conexão 100% em fibra óptica de ponta a ponta,
+                            garantindo que a sua internet não caia quando você
+                            mais precisa.
+                        </p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <img
+                                src="/assets/icons/suporte.svg"
+                                alt="Suporte Eficiente"
+                                class="feature-icon"
+                            />
+                        </div>
+                        <h3 class="feature-title">Suporte Eficiente</h3>
+                        <p class="feature-description">
+                            Equipe técnica qualificada e pronta para atender e
+                            resolver qualquer solicitação com o máximo de
+                            agilidade.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- POR QUE ESCOLHER A ZAMTECH -->
+        <section class="section why-choose-section">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">Por que escolher a Zamtech?</h2>
+                    <p class="section-subtitle">
+                        A melhor experiência em conexão para você trabalhar,
+                        estudar e se divertir.
+                    </p>
+                </header>
+
+                <div class="grid-3-cols">
+                    <article class="benefit-card">
+                        <img
+                            src="/assets/icons/fibra-icon.svg"
+                            alt=""
+                            class="benefit-icon"
+                        />
+                        <h4>Internet 100% Fibra Óptica</h4>
+                        <p>Levamos a fibra óptica até a sua casa por meio da nossa rede FTTH, proporcionando uma conexão estável, rápida e com excelente desempenho para o seu dia a dia.</p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <img
+                            src="/assets/icons/tech-icon.svg"
+                            alt=""
+                            class="benefit-icon"
+                        />
+                        <h4>Tecnologia de ponta</h4>
+                        <p>
+                            Navegue, jogue e assista a vídeos em 4K sem
+                            travamentos com a estabilidade que só a Zamtech
+                            oferece.
+                        </p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <img
+                            src="/assets/icons/suporte-24h.svg"
+                            alt=""
+                            class="benefit-icon"
+                        />
+                        <h4>Suporte 24h</h4>
+                        <p>
+                            Atendimento humanizado e rápido sempre que você
+                            precisar, garantindo que você nunca fique
+                            desconectado.
+                        </p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <img
+                            src="/assets/icons/suporte_-02.svg"
+                            alt=""
+                            class="benefit-icon"
+                        />
+                        <h4>Suporte Humanizado e Rápido</h4>
+                        <p>
+                            Sem robôs ou respostas automáticas demoradas. Nosso
+                            time técnico atende você com agilidade e respeito
+                            sempre que precisar.
+                        </p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <img
+                            src="/assets/icons/latencia-icon.svg"
+                            alt=""
+                            class="benefit-icon"
+                        />
+                        <h4>Latência Mínima (Ping Baixo)</h4>
+                        <p>
+                            A estabilidade que os gamers e profissionais
+                            precisam. Jogue online sem lag e participe de
+                            videoconferências em tempo real.
+                        </p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <img
+                            src="/assets/icons/velocidade-icon.svg"
+                            alt=""
+                            class="benefit-icon"
+                        />
+                        <h4>Ultra Velocidade</h4>
+                        <p>
+                            Faça downloads pesados, envie arquivos grandes e
+                            assista a vídeos em 4K ou 8K ao mesmo tempo, sem
+                            lentidão.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO MESH -->
+        <section class="section dark-section">
+            <div class="container">
+                <div class="badge-group">
+                    <span>Tecnologia</span>
+                    <span class="badge-tag">Mesh</span>
+                </div>
+
+                <header class="container-narrow section-header">
+                    <h2 class="section-title">Wi-Fi na casa inteira, sem pontos cegos</h2>
+                    <p class="section-description">Sabe aquele quarto onde o sinal não pega de jeito nenhum? Esquece! O Wi-Fi Mesh espalha internet boa por toda a casa porque os aparelhinhos trabalham em equipe.</p>
+                </header>
+
+                <div class="mesh-image">
+                    <img
+                        src="/assets/equipamentos/roteador-wifi-mesh.webp"
+                        alt="Roteador Wifi Mesh"
+                    />
+                </div>
+
+                <div class="mesh-highlights">
+                    <p>O sinal contorna paredes e obstáculos automaticamente</p>
+                    <p>
+                        Mova-se pela casa jogando ou em chamada de vídeo sem
+                        nenhuma interrupção
+                    </p>
+                </div>
+
+                <div class="grid-3-cols">
+                    <article class="info-card info-card--mesh">
+                        <h3>Cobertura uniforme e sem pontos cegos</h3>
+                        <p>
+                            Ao contrário dos repetidores tradicionais, os
+                            módulos Mesh se comunicam entre si para formar uma
+                            única rede. Isso elimina as "zonas mortas" de sinal.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--mesh">
+                        <h3>Transição fluida (Roaming Wi-Fi)</h3>
+                        <p>
+                            Você pode andar pela casa mudando de cômodo sem que
+                            a sua conexão caia ou trave, mantendo um único nome
+                            de rede e senha.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--mesh">
+                        <h3>Fácil gerenciamento e expansão</h3>
+                        <p>
+                            Controlado por aplicativo simples no celular. Se
+                            precisar de mais cobertura, basta adicionar um novo
+                            módulo à rede existente.
+                        </p>
+                    </article>
+                </div>
+            </div>
+
+            <!-- SEÇÃO MONITORAMENTO -->
+
+            <div class="container">
+                <div class="badge-group space-top-padding">
+                    <span>Monitoramento</span>
+                    <span class="badge-tag">Inteligente</span>
+                </div>
+
+                <header class="container-narrow section-header">
+                    <h2 class="section-title">Sua vida mais segura com câmera inteligente</h2>
+                    <p class="section-description">Você pode ver o que está acontecendo na sua casa direto no celular, tudo guardado de forma mágica na internet, sem precisar gastar com caixas de gravação!</p>
+                </header>
+
+                <div class="cards-horizontal-grid">
+                    <article class="card-horizontal card-horizontal--nuvem">
+                        <h3>Armazenamento 100% em Nuvem</h3>
+                        <p>
+                            Todas as imagens são gravadas digitalmente com
+                            segurança, eliminando DVR ou HD na parede.
+                        </p>
+                    </article>
+
+                    <article
+                        class="card-horizontal card-horizontal--monitoramento"
+                    >
+                        <h3>Monitoramento em Tempo Real</h3>
+                        <p>
+                            Acompanhe a movimentação do lar ou negócio de
+                            qualquer lugar.
+                        </p>
+                    </article>
+
+                    <article class="card-horizontal card-horizontal--app">
+                        <h3>Aplicativo Exclusivo Zamtech</h3>
+                        <p>
+                            Acesse o sinal ao vivo e o histórico de gravações a
+                            qualquer momento pelo celular.
+                        </p>
+                    </article>
+                </div>
+            </div>
+
+            <!-- BANNER CÂMERA -->
+            <div class="camera-banner-card">
+                <div class="camera-banner-content">
+                    <h3 class="camera-banner-title">Câmera de monitoramento</h3>
+                    <p class="camera-banner-text">
+                        A ZAMTECH disponibiliza a câmera inteligente para
+                        utilização na sua casa ou empresa sem que precise de
+                        comprar o equipamento. A câmera é cedida como um
+                        empréstimo gratuito enquanto o seu plano ou serviço
+                        adicional de monitoramento estiver ativo.
+                    </p>
+                </div>
+
+                <div class="camera-banner-media">
+                    <img
+                        src="/assets/equipamentos/camera-monitoramento.webp"
+                        alt="Câmera de Monitoramento Zamtech"
+                        class="camera-banner-img"
+                    />
+                </div>
+            </div>
+        </section>
+        <!-- VÍDEO MONITORAMENTO -->
+        <section class="vid-bg-camera">
+            <video
+                autoplay
+                loop
+                muted
+                playsinline
+                src="/assets/vid/camera-de-monitoramento-zamtech.webm"></video>
+
+            <div class="container vid-bg-camera-copy">
+                <img
+                    src="/assets/img/cards-imgs/aplicativo-zamtech-img-no-bg.webp"
+                    alt="Celular Aplicativo Monitoramento da Zamtech"
+                    class="main-cam cam-app-phone"
+                />
+
+                <div class="copy-wrapper">
+                    <span class="badge-tag monitoramento-nvm"
+                        >Monitoramento na Nuvem</span
+                    >
+                    <h2 class="section-title">
+                        Sua casa ao vivo, na palma da sua mão
+                    </h2>
+                    <p class="section-description">
+                        Sem DVR e sem HD. Acompanhe em tempo real e acesse suas
+                        gravações salvas em nuvem direto pelo app exclusivo
+                        Zamtech.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO PABX -->
+        <section class="section dark-section">
+            <div class="container">
+                <div class="badge-group badge-pabx">
+                    <span class="badge-tag">PABX</span>
+                </div>
+
+                <header class="container-narrow section-header">
+                    <h2 class="section-title">
+                        Comunicação inteligente para empresas de todas as
+                        dimensões
+                    </h2>
+                    <p class="section-description">
+                        Modernize o atendimento do seu negócio com o PABX em
+                        Nuvem da ZAMTECH. Elimine centrais físicas, reduza
+                        custos de infraestrutura e aceda ao seu sistema a partir
+                        de qualquer lugar.
+                    </p>
+                </header>
+
+                <div class="grid-2-cols">
+                    <article class="info-card info-card--light">
+                        <h3>Sua Empresa Nunca Fica Fora do Ar</h3>
+                        <p>
+                            Infraestrutura em nuvem de alta disponibilidade.
+                            Proteção total de dados e operação 100% contínua,
+                            sem interrupções.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--purple">
+                        <h3>Controle e Auditoria em Tempo Real</h3>
+                        <p>
+                            Acompanhe chamadas, acesse histórico completo e ouça
+                            gravações para garantir o padrão de qualidade da sua
+                            equipe.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--light">
+                        <h3>Atendimento Rápido e Zero Fila</h3>
+                        <p>
+                            Roteamento inteligente de chamadas, menus
+                            personalizados (URA) e distribuição automática para
+                            eliminar o tempo de espera.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--purple">
+                        <h3>Escritório em Qualquer Lugar</h3>
+                        <p>
+                            Atenda e faça ligações com o número da sua empresa
+                            direto pelo celular ou computador, de onde estiver.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--light">
+                        <h3>Crescimento sem Limites Técnicos</h3>
+                        <p>
+                            Adicione novos ramais, equipes e atendentes em
+                            poucos cliques, acompanhando a expansão do seu
+                            negócio sem complicação.
+                        </p>
+                    </article>
+
+                    <article class="info-card info-card--purple">
+                        <h3>Corte de Custos Operacionais</h3>
+                        <p>
+                            Elimine equipamentos físicos caros, manutenção
+                            presencial e reduza drasticamente a conta de
+                            telefonia da sua empresa.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="pabx-media-container">
+                    <div class="pabx-img-wrapper">
+                        <img
+                            src="/assets/equipamentos/pabx-zamtech.webp"
+                            alt="Equipamento PABX Zamtech"
+                        />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO B2B / NEGÓCIOS -->
+        <section class="section dark-section b2b-section">
+            <div class="container">
+                <header class="container-narrow section-header">
+                    <h2 class="section-title section-title--blue">
+                        Zamtech Negócios (B2B)
+                    </h2>
+                    <h3 class="section-subtitle">
+                        Conexão robusta para fazer<br />sua empresa voar
+                    </h3>
+                </header>
+
+                <div class="b2b-features-card">
+                    <div class="b2b-feature-item">
+                        <h4 class="feature-title">Infraestrutura de ponta</h4>
+                        <p>
+                            A empresa passa a contar com uma internet estável
+                            100% em Fibra Óptica, além de ter o acompanhamento
+                            de um suporte especializado da ZAMTECH.
+                        </p>
+                    </div>
+                    <img
+                        src="/assets/icons/line-div.svg"
+                        alt=""
+                        class="line-div"
+                    />
+                    <div class="b2b-feature-item">
+                        <h4 class="feature-title">Atendimento profissional</h4>
+                        <p>
+                            Garante uma estrutura de comunicação muito mais
+                            eficiente e profissional para o contato com os seus
+                            clientes.
+                        </p>
+                    </div>
+                    <img
+                        src="/assets/icons/line-div.svg"
+                        alt=""
+                        class="line-div"
+                    />
+                    <div class="b2b-feature-item">
+                        <h4 class="feature-title">
+                            Trabalho remoto facilitado
+                        </h4>
+                        <p>
+                            Sua equipe ganha muito mais mobilidade, já que o
+                            sistema permite a integração completa com telefones
+                            IP, computadores e smartphones.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="b2b-description-wrapper">
+                    <p class="b2b-description">
+                        No mundo dos negócios, cada segundo offline é um
+                        prejuízo. A Zamtech oferece soluções corporativas com
+                        internet de ultra performance, link dedicado e
+                        atendimento prioritário para garantir a produtividade da
+                        sua equipe.
+                    </p>
+                    <a href="https://wa.me/5527995057736?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20com%20um%20consultor%20corporativo" target="_blank" class="btn btn-outlined"
+                        >Falar com um consultor corporativo</a
+                    >
+                </div>
+            </div>
+        </section>
+
+        <!-- PROVA SOCIAL -->
+        <section class="section social-proof-section">
+            <div class="container">
+                <header class="container-narrow section-header">
+                    <h2 class="section-title section-title--blue">
+                        O que dizem nossos clientes
+                    </h2>
+                    <h3 class="section-subtitle section-subtitle--black">
+                        Quem usa, recomenda.
+                    </h3>
+                </header>
+
+                <div class="testimonials-grid">
+                    <article class="testimonial-card">
+                        <div class="profile-avatar">
+                            <img
+                                src="/assets/img/profile/micheli-dos-santos.png"
+                                alt="Micheli Dos Santos"
+                            />
+                        </div>
+                        <div class="rating-stars">
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                        </div>
+                        <blockquote>
+                            "A melhor Internet da região, excelente atendimento
+                            e prestação de serviços. Velocidade super rápida. E
+                            o melhor de tudo é o preço.. que cabe no bolso de
+                            qualquer um. Zamtech é top"
+                        </blockquote>
+                        <cite>Micheli Dos Santos</cite>
+                    </article>
+
+                    <article class="testimonial-card">
+                        <div class="profile-avatar">
+                            <img
+                                src="/assets/img/profile/taylon.png"
+                                alt="Thayllon Quaresma"
+                            />
+                        </div>
+                        <div class="rating-stars">
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                        </div>
+                        <blockquote>
+                            "Excelente experiência com a Zamtech! Serviço de
+                            internet rápido, estável e sem dores de cabeça. O
+                            atendimento é impecável. Dá gosto contratar uma
+                            empresa assim. Super recomendo!"
+                        </blockquote>
+                        <cite>Thayllon Quaresma</cite>
+                    </article>
+
+                    <article class="testimonial-card">
+                        <div class="profile-avatar">
+                            <img
+                                src="/assets/img/profile/eli.png"
+                                alt="Elis Mercon"
+                            />
+                        </div>
+                        <div class="rating-stars">
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                            <img src="/assets/icons/star.svg" alt="Estrela" />
+                        </div>
+                        <blockquote>
+                            "Empresa muito boa! Precisei de um suporte técnico e
+                            eles já estavam prontos para me atender. Foram com
+                            agilidade e confiança, resolvendo minha situação.
+                            Parabéns a Zamtech!"
+                        </blockquote>
+                        <cite>Elis Mercon</cite>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ (PERGUNTAS FREQUENTES) -->
+        <section class="section dark-section faq-section">
+            <div class="container">
+                <header class="section-header">
+                    <h2 class="section-title">Perguntas Frequentes (FAQ)</h2>
+                    <h3 class="section-subtitle">Dúvidas Frequentes</h3>
+                </header>
+
+                <div class="faq-list">
+                    <article class="faq-item">
+                        <div class="faq-icon-wrapper">
+                            <img
+                                src="/assets/icons/fidelidade-icon.svg"
+                                alt="Ícone de Fidelidade"
+                                class="faq-icon"
+                            />
+                        </div>
+                        <div class="faq-content">
+                            <h4 class="faq-question">
+                                Existe fidelidade nos planos residenciais?
+                            </h4>
+                            <p class="faq-answer">
+                                Nossos planos padrão possuem fidelidade de 12
+                                meses, o que nos garante oferecer a instalação
+                                gratuita e os melhores valores de mensalidade.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="faq-item">
+                        <div class="faq-icon-wrapper">
+                            <img
+                                src="/assets/icons/roteador-icon.svg"
+                                alt="Ícone de Roteador Wi-Fi"
+                                class="faq-icon"
+                            />
+                        </div>
+                        <div class="faq-content">
+                            <h4 class="faq-question">
+                                Preciso ter o roteador para contratar?
+                            </h4>
+                            <p class="faq-answer">Não precisa se preocupar com isso! Na instalação, fornecemos o roteador principal em comodato. Se, no futuro, você precisar ampliar a cobertura do Wi-Fi, é possível adicionar o Wi-Fi Mesh. Os equipamentos também são disponibilizados em comodato, mediante a contratação do serviço adicional</p>
+                        </div>
+                    </article>
+
+                    <article class="faq-item">
+                        <div class="faq-icon-wrapper">
+                            <img
+                                src="/assets/icons/instalacao-icon.svg"
+                                alt="Ícone de Instalação"
+                                class="faq-icon"
+                            />
+                        </div>
+                        <div class="faq-content">
+                            <h4 class="faq-question">
+                                Quanto tempo demora a instalação?
+                            </h4>
+                            <p class="faq-answer">
+                                Nosso prazo médio de instalação é de até 48
+                                horas úteis após a confirmação do cadastro,
+                                dependendo da disponibilidade da sua região.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<script>
+    // CONSULTA DE VIABILIDADE — busca estilo Google que checa a CTO mais
+    // próxima cadastrada no SGP. Ver /api/viabilidade/consultar.php pra
+    // entender a lógica do lado do servidor.
+    const form = document.getElementById("viabilidade-form") as HTMLFormElement;
+    const inputEndereco = document.getElementById("viabilidade-endereco") as HTMLInputElement;
+    const resultado = document.getElementById("viabilidade-resultado") as HTMLDivElement;
+    const btnPesquisar = form.querySelector(".viabilidade-search-btn") as HTMLButtonElement;
+    const textoBtn = form.querySelector(".viabilidade-search-btn-texto") as HTMLSpanElement;
+
+    function mostrarResultado(html: string, tipo: "sucesso" | "erro" | "aviso") {
+        resultado.innerHTML = html;
+        resultado.className = `viabilidade-resultado viabilidade-resultado--${tipo}`;
+        resultado.hidden = false;
+    }
+
+    function montarFormularioLead(endereco: string, motivo: string): string {
+        return `
+            <form class="viabilidade-lead-form" data-endereco="${encodeURIComponent(endereco)}" data-motivo="${motivo}">
+                <input type="text" name="nome" placeholder="Seu nome" required />
+                <input type="text" name="contato" placeholder="WhatsApp ou email" required />
+                <button type="submit" class="btn btn-primary">Quero ser avisado</button>
+                <p class="viabilidade-lead-erro" hidden></p>
+            </form>
+            <p class="viabilidade-lead-confirmacao" hidden>Prontinho! Anotamos seu contato e te avisamos assim que tiver novidade.</p>
+        `;
+    }
+
+    function ativarFormularioLead(enderecoPesquisado: string) {
+        const leadForm = resultado.querySelector(".viabilidade-lead-form") as HTMLFormElement | null;
+        if (!leadForm) return;
+
+        leadForm.addEventListener("submit", async (ev) => {
+            ev.preventDefault();
+            const nome = (leadForm.querySelector('[name="nome"]') as HTMLInputElement).value.trim();
+            const contato = (leadForm.querySelector('[name="contato"]') as HTMLInputElement).value.trim();
+            const motivo = leadForm.dataset.motivo || "sem_cobertura";
+            const enderecoLead = leadForm.dataset.endereco ? decodeURIComponent(leadForm.dataset.endereco) : enderecoPesquisado;
+            const btnLead = leadForm.querySelector("button") as HTMLButtonElement;
+            const erroLead = leadForm.querySelector(".viabilidade-lead-erro") as HTMLParagraphElement;
+
+            btnLead.disabled = true;
+            btnLead.textContent = "Enviando...";
+            erroLead.hidden = true;
+
+            try {
+                const respLead = await fetch("/api/viabilidade/lead.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, contato, endereco: enderecoLead, motivo }),
+                });
+                const dataLead = await respLead.json();
+                const confirmacao = resultado.querySelector(".viabilidade-lead-confirmacao") as HTMLParagraphElement;
+
+                if (dataLead.sucesso) {
+                    leadForm.hidden = true;
+                    confirmacao.hidden = false;
+                } else {
+                    btnLead.disabled = false;
+                    btnLead.textContent = "Quero ser avisado";
+                    erroLead.textContent = dataLead.mensagem || "Não consegui enviar seu contato agora. Tenta de novo.";
+                    erroLead.hidden = false;
+                }
+            } catch (error) {
+                btnLead.disabled = false;
+                btnLead.textContent = "Quero ser avisado";
+                erroLead.textContent = "Não consegui falar com o servidor agora. Tenta de novo em instantes.";
+                erroLead.hidden = false;
+            }
+        });
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const endereco = inputEndereco.value.trim();
+        if (endereco.length < 6) {
+            mostrarResultado("<p>Digite um endereço completo (rua, número, bairro e cidade).</p>", "erro");
+            return;
+        }
+
+        btnPesquisar.disabled = true;
+        textoBtn.textContent = "Buscando...";
+        resultado.hidden = true;
+
+        try {
+            const response = await fetch("/api/viabilidade/consultar.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ endereco }),
+            });
+            const data = await response.json();
+
+            if (!data.sucesso) {
+                mostrarResultado(`<p>${data.mensagem}</p>`, "erro");
+            } else if (data.atende) {
+                mostrarResultado(`
+                    <p>${data.mensagem}</p>
+                    <a href="/pre-cadastro" class="btn btn-primary">Fazer meu pré-cadastro</a>
+                `, "sucesso");
+            } else if (data.motivo === "endereco_nao_encontrado") {
+                mostrarResultado(`
+                    <p>${data.mensagem}</p>
+                    <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+                `, "aviso");
+            } else {
+                // sem_cobertura ou sem_vaga -> mostra a mensagem e já oferece
+                // captura de contato, pra Carol saber da demanda na região.
+                mostrarResultado(`
+                    <p>${data.mensagem}</p>
+                    ${montarFormularioLead(endereco, data.motivo)}
+                `, "aviso");
+                ativarFormularioLead(endereco);
+            }
+        } catch (error) {
+            mostrarResultado(`
+                <p>Não consegui falar com o servidor agora. Tenta de novo em instantes ou fala com a gente:</p>
+                <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
+            `, "erro");
+        } finally {
+            btnPesquisar.disabled = false;
+            textoBtn.textContent = "Pesquisar";
+        }
+    });
+</script>
+
+<style>
+    /* ==========================================================================
+       ESTILOS EXCLUSIVOS DA HOME (UTILIZANDO TOKEN DO GLOBAL.CSS)
+       ========================================================================== */
+
+    /* UTILITIES E LAYOUT */
+    .container-narrow {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .grid-2-cols {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-24);
+        width: 100%;
+    }
+
+    .grid-3-cols {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-24);
+        width: 100%;
+    }
+
+    .btn-full {
+        width: 100%;
+        border: 1px solid var(--color-white);
+    }
+
+    /* CABEÇALHOS DE SEÇÃO */
+    .section-header {
+        position: relative;
+        text-align: center;
+        margin-bottom: var(--space-48);
+    }
+
+    .section-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h2);
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: var(--space-8);
+        color: var(--color-white);
+    }
+
+    .section-title--blue {
+        color: var(--color-secondary);
+    }
+
+    .section-subtitle {
+        font-size: var(--fs-h5);
+        color: var(--color-white);
+        line-height: 1.5;
+    }
+
+    .section-subtitle--black {
+        color: var(--color-black);
+    }
+
+    .section-description {
+        color: rgba(255, 255, 255, 0.85);
+        margin-top: var(--space-16);
+        line-height: 1.6;
+    }
+
+    /* BADGES */
+    .badge-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-16);
+        border: 1px solid var(--color-white);
+        border-radius: var(--radius-full);
+        padding: var(--space-8) var(--space-8) var(--space-8) var(--space-24);
+        width: fit-content;
+        margin: var(--space-24) auto var(--space-24) auto;
+    }
+
+    .badge-group.badge-pabx {
+        padding: var(--space-8);
+    }
+
+    .badge-tag {
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-full);
+        font-size: var(--fs-sm);
+        font-weight: 600;
+    }
+
+    /* 1. HERO SECTION */
+    .hero-section {
+        width: 100%;
+        background: url("/assets/img/backgrounds/background-image-website-top-02.webp")
+            center/cover no-repeat;
+        padding-top: var(--space-64);
+        padding-bottom: var(--space-64);
+    }
+
+    .hero-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h1);
+        font-weight: 700;
+        color: var(--color-white);
+        text-align: center;
+        margin: 0 auto var(--space-48) auto;
+        max-width: 720px;
+        line-height: 1.25;
+    }
+
+    .plans-showcase {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-24);
+        width: 100%;
+        align-items: center;
+    }
+
+.badge-group.space-top-padding {
+    margin-top: 120px;
+}
+
+    /* PLAN CARDS */
+    .plan-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: var(--color-gray-light);
+        border-radius: var(--radius-signature-sm);
+        padding: var(--space-32) var(--space-24);
+        color: var(--color-gray-dark);
+        box-shadow: var(--elevation-1);
+        transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
+    }
+
+    .plan-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--elevation-2);
+    }
+
+    .plan-card--featured {
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        border: 2px solid var(--color-secondary);
+        padding-top: var(--space-48);
+        padding-bottom: var(--space-64);
+    }
+
+    .plan-card--featured:hover {
+        box-shadow: var(--elevation-3);
+    }
+
+    .plan-badge {
+        position: absolute;
+        top: -14px;
+        right: var(--space-24);
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        font-family: var(--font-display);
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        padding: var(--space-8) var(--space-16);
+        border-radius: var(--radius-full);
+        border: 2px solid var(--color-white);
+    }
+
+    .plan-header {
+        text-align: left;
+    }
+
+    .plan-brand {
+        font-size: var(--fs-caption);
+        color: var(--color-secondary);
+        letter-spacing: 0.1em;
+        font-weight: 700;
+    }
+
+    .plan-card--featured .plan-brand {
+        color: var(--color-white);
+    }
+
+    .plan-title {
+        font-size: var(--fs-h3);
+        margin: var(--space-4) 0;
+    }
+
+    .title-accent {
+        color: var(--color-yellow);
+    }
+
+    .plan-price {
+        display: flex;
+        align-items: center;
+        margin: var(--space-16) 0;
+    }
+
+    .price-currency {
+        font-size: var(--fs-h5);
+        font-weight: 600;
+        margin-right: var(--space-4);
+    }
+
+    .price-integer {
+        font-size: var(--fs-h1);
+        font-weight: 900;
+        font-family: var(--font-display);
+        line-height: 1;
+    }
+
+    .price-fraction-period {
+        display: flex;
+        flex-direction: column;
+        margin-left: var(--space-4);
+    }
+
+    .price-fraction {
+        font-size: var(--fs-sm);
+        font-weight: 700;
+    }
+
+    .price-period {
+        font-size: var(--fs-caption);
+        opacity: 0.8;
+    }
+
+    .plan-description {
+        font-size: var(--fs-sm);
+        margin-bottom: var(--space-24);
+    }
+
+    /* 1.5 CONSULTA DE VIABILIDADE */
+    .viabilidade-section {
+        background-color: var(--color-white);
+        text-align: center;
+    }
+
+    .viabilidade-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h3);
+        font-weight: 700;
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-8);
+    }
+
+    .viabilidade-subtitle {
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
+        margin-bottom: var(--space-24);
+    }
+
+    .viabilidade-search {
+        display: flex;
+        align-items: center;
+        gap: var(--space-8);
+        width: 100%;
+        max-width: 560px;
+        margin: 0 auto;
+        background-color: var(--color-white);
+        border: 1px solid var(--color-gray-light);
+        border-radius: var(--radius-full);
+        padding: var(--space-8) var(--space-8) var(--space-8) var(--space-24);
+        box-shadow: 0 2px 12px rgba(3, 37, 208, 0.08);
+        transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
+    }
+
+    .viabilidade-search:focus-within {
+        border-color: var(--color-primary);
+        box-shadow: 0 4px 18px rgba(3, 37, 208, 0.16);
+    }
+
+    .viabilidade-search-icon {
+        flex-shrink: 0;
+        color: var(--color-gray-low);
+    }
+
+    .viabilidade-search-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        font-family: var(--font-text);
+        font-size: var(--fs-body);
+        color: var(--color-gray-dark);
+        background: transparent;
+    }
+
+    .viabilidade-search-input::placeholder {
+        color: var(--color-gray-low);
+    }
+
+    .viabilidade-search-btn {
+        flex-shrink: 0;
+        border: none;
+        border-radius: var(--radius-full);
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: var(--fs-sm);
+        padding: var(--space-12) var(--space-24);
+        cursor: pointer;
+        transition: var(--transition-default);
+    }
+
+    .viabilidade-search-btn:hover {
+        opacity: 0.9;
+    }
+
+    .viabilidade-search-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    .viabilidade-resultado {
+        max-width: 560px;
+        margin: var(--space-24) auto 0;
+        padding: var(--space-24);
+        border-radius: var(--radius-lg);
+        text-align: left;
+    }
+
+    .viabilidade-resultado p {
+        font-size: var(--fs-sm);
+        line-height: 1.6;
+        margin-bottom: var(--space-16);
+    }
+
+    .viabilidade-resultado--sucesso {
+        background-color: rgba(3, 37, 208, 0.06);
+        border: 1px solid var(--color-primary);
+    }
+
+    .viabilidade-resultado--aviso {
+        background-color: var(--color-gray-light);
+        border: 1px solid var(--color-gray-light);
+    }
+
+    .viabilidade-resultado--erro {
+        background-color: #fdecea;
+        border: 1px solid #f5c6c2;
+    }
+
+    .viabilidade-lead-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-8);
+    }
+
+    .viabilidade-lead-form input {
+        flex: 1;
+        min-width: 160px;
+        border: 1px solid var(--color-gray-light);
+        border-radius: var(--radius-sm);
+        padding: var(--space-12);
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+    }
+
+    .viabilidade-lead-form input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .viabilidade-lead-erro {
+        width: 100%;
+        color: #b3261e;
+        font-size: var(--fs-caption);
+        margin-bottom: 0;
+    }
+
+    .viabilidade-lead-confirmacao {
+        color: var(--color-primary);
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 600px) {
+        .viabilidade-search {
+            flex-wrap: wrap;
+            border-radius: var(--radius-lg);
+        }
+
+        .viabilidade-search-input {
+            width: 100%;
+            order: 1;
+        }
+
+        .viabilidade-search-icon {
+            order: 0;
+        }
+
+        .viabilidade-search-btn {
+            order: 2;
+            width: 100%;
+        }
+    }
+
+    /* 2. FEATURES BÁSICAS */
+    .features-section {
+        background-color: var(--color-white);
+    }
+
+    .feature-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: var(--color-white);
+        border-radius: var(--radius-sm);
+        padding: var(--space-32) var(--space-24);
+        border: 1px solid var(--color-primary);
+        transition: var(--transition-default);
+    }
+
+    .feature-card--dark {
+        background-color: var(--color-dark-blue);
+        border-color: var(--color-dark-blue);
+        color: var(--color-white);
+    }
+
+    .feature-icon-wrapper {
+        background: var(--gradient-brand-soft);
+        padding: var(--space-16);
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--space-16);
+    }
+
+    .feature-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .feature-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h4);
+        font-weight: 700;
+        color: var(--color-dark-blue);
+        margin-bottom: var(--space-8);
+    }
+
+    .feature-card--dark .feature-title {
+        color: var(--color-white);
+    }
+
+    .feature-description {
+        font-size: var(--fs-sm);
+        line-height: 1.6;
+    }
+
+    /* 3. POR QUE ESCOLHER A ZAMTECH */
+    .why-choose-section {
+        background:
+            linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+            url("/assets/img/backgrounds/background-secao-02.webp") center/cover
+                no-repeat;
+        color: var(--color-white);
+    }
+
+    .benefit-card {
+        background: var(--color-dark-blue);
+        border-radius: var(--radius-sm);
+        padding: var(--space-32) var(--space-24);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(60px);
+    }
+
+    .benefit-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: var(--space-24);
+    }
+
+    .benefit-card h4 {
+        font-family: var(--font-display);
+        font-size: var(--fs-h4);
+        font-weight: 700;
+        margin-bottom: var(--space-8);
+    }
+
+    .benefit-card p {
+        font-size: var(--fs-sm);
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.5;
+    }
+
+    /* SEÇÕES ESCURAS GLOBAIS */
+    /* Mesmo tratamento do .section-dark global (global.css): degradê de sempre
+       por cima da textura "background-abstract-dark.webp", só pra essa página
+       ficar visualmente igual ao /assinar e /indique em vez de um azul chapado
+       sem nenhuma textura. */
+    .dark-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #000217;
+        background-image:
+            radial-gradient(
+                circle,
+                rgba(1, 7, 46, 0.55) 0%,
+                rgba(0, 2, 18, 0.85) 51%,
+                rgba(0, 8, 32, 0.95) 100%
+            ),
+            url("/assets/img/backgrounds/background-abstract-dark.webp");
+        background-size: cover, cover;
+        background-position: center, center;
+        background-repeat: no-repeat, no-repeat;
+        color: var(--color-white);
+    }
+
+    /* 4. SEÇÃO MESH */
+    .mesh-image {
+        margin: 0 auto var(--space-32) auto;
+        max-width: 280px;
+    }
+
+    .mesh-highlights {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-32);
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: var(--space-48);
+        text-align: center;
+    }
+
+
+    .info-card {
+        padding: var(--space-32);
+        border-radius: var(--radius-sm);
+        transition: var(--transition-default);
+    }
+
+    .info-card--mesh {
+        background-color: var(--color-primary);
+    }
+
+    .info-card--mesh h3 {
+        font-family: var(--font-display);
+        font-size: var(--fs-h4);
+        margin-bottom: var(--space-16);
+    }
+
+    .info-card--mesh p {
+        font-size: var(--fs-sm);
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .info-card--light {
+        background-color: var(--color-white);
+        color: var(--color-black);
+    }
+
+    .info-card--light h3 {
+        font-family: var(--font-display);
+        font-size: var(--fs-h4);
+        margin-bottom: var(--space-16);
+        color: var(--color-dark-blue);
+    }
+
+    .info-card--light p {
+        font-size: var(--fs-sm);
+        line-height: 1.5;
+        color: var(--color-gray-dark);
+    }
+
+    .info-card--purple {
+        background-color: var(--color-dark-blue);
+        color: var(--color-white);
+    }
+
+    .info-card--purple h3 {
+        font-family: var(--font-display);
+        font-size: var(--fs-h4);
+        margin-bottom: var(--space-16);
+    }
+
+    .info-card--purple p {
+        font-size: var(--fs-sm);
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* 5. SEÇÃO MONITORAMENTO */
+    .cards-horizontal-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-32);
+        margin-bottom: var(--space-48);
+    }
+
+    .card-horizontal {
+        padding: var(--space-32);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 350px;
+        min-height: 240px;
+        background-size: cover;
+        background-position: center;
+        color: var(--color-white);
+    }
+
+    .card-horizontal--nuvem {
+        background-image:
+            linear-gradient(rgba(1, 17, 65, 0.85), rgba(0, 0, 0, 0.7)),
+            url("/assets/img/cards-imgs/nuvem-img.webp");
+    }
+
+    .card-horizontal--monitoramento {
+        background-image:
+            linear-gradient(rgba(1, 17, 65, 0.85), rgba(0, 0, 0, 0.7)),
+            url("/assets/img/cards-imgs/monitoramento-zamtech-img.webp");
+    }
+
+    .card-horizontal--app {
+        background-image:
+            linear-gradient(rgba(1, 17, 65, 0.85), rgba(0, 0, 0, 0.7)),
+            url("/assets/img/cards-imgs/aplicativo-zamtech-img.webp");
+    }
+
+    /* BANNER CÂMERA */
+    .camera-feature-card {
+        background-color: var(--color-white);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-24);
+        padding: var(--space-48) var(--space-16);
+        color: var(--color-black);
+    }
+
+    .camera-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-16);
+        text-align: center;
+        max-width: 500px;
+    }
+
+    .camera-feature-card h3 {
+        color: var(--color-secondary);
+        font-family: var(--font-display);
+        font-size: var(--fs-h3);
+    }
+
+    .camera-feature-card .main-cam {
+        width: 260px;
+    }
+
+    .icon-check {
+        width: 32px;
+    }
+
+    /* VÍDEO MONITORAMENTO */
+    .vid-bg-camera {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .vid-bg-camera video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+    }
+
+    .container.vid-bg-camera-copy {
+        display: flex;
+        align-items: center;
+        padding: var(--space-64) var(--space-16);
+        gap: var(--space-32);
+    }
+
+    .cam-app-phone {
+        width: 260px;
+        height: auto;
+    }
+
+    .copy-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-16);
+    }
+
+    .monitoramento-nvm {
+        width: fit-content;
+    }
+
+    /* 6. SEÇÃO PABX */
+    .pabx-media-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: var(--space-48);
+    }
+
+    .pabx-img-wrapper {
+        max-width: 360px;
+    }
+
+    /* 7. SEÇÃO B2B (NEGÓCIOS) */
+    .dark-section.b2b-section {
+        background-color: var(--color-gray-dark);
+    }
+
+    .b2b-features-card {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--color-white);
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        border-radius: var(--radius-sm);
+        padding: var(--space-32);
+        color: var(--color-black);
+    }
+
+    .b2b-feature-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--space-8);
+        padding: var(--space-8);
+    }
+
+    .line-div {
+        padding: 0 var(--space-16);
+    }
+
+    .b2b-description-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-top: var(--space-48);
+        gap: var(--space-24);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .b2b-description {
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+        text-align: center;
+    }
+
+    /* 8. PROVA SOCIAL */
+    .social-proof-section {
+        background-image: url("/assets/img/backgrounds/background-abstract-white.webp");
+        background-position: center;
+        background-size: cover;
+    }
+
+
+    .testimonials-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-32);
+        margin-top: var(--space-48);
+    }
+
+    .testimonial-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 320px;
+        gap: var(--space-16);
+        border: 2px solid var(--color-primary);
+        padding: var(--space-32);
+        border-radius: var(--radius-lg);
+        background-color: rgba(240, 248, 255, 0.15);
+        backdrop-filter: blur(15px);
+        text-align: center;
+        color: var(--color-black);
+        overflow: hidden;
+    }
+
+    .testimonial-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-brand);
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid var(--color-primary);
+        overflow: hidden;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: var(--space-4);
+    }
+
+    .rating-stars img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .testimonial-card blockquote {
+        font-size: var(--fs-sm);
+        line-height: 1.5;
+        font-style: italic;
+    }
+
+    .testimonial-card cite {
+        font-weight: 700;
+        font-style: normal;
+        color: var(--color-dark-blue);
+    }
+
+    /* 9. FAQ */
+    .faq-section {
+        background-color: var(--color-black);
+    }
+
+    .faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-32);
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-24);
+        padding-bottom: var(--space-24);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .faq-icon-wrapper {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+
+    .faq-icon {
+        width: 100%;
+        height: auto;
+    }
+
+    .faq-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .faq-question {
+        font-family: var(--font-display);
+        font-size: var(--fs-h4);
+        font-weight: 700;
+        color: var(--color-white);
+        margin-bottom: var(--space-8);
+    }
+
+    .faq-answer {
+        font-size: var(--fs-sm);
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+    }
+
+    .camera-banner-card {
+        position: relative;
+        width: 70%;
+        background: linear-gradient(
+            19deg,
+            rgba(7, 86, 255, 0.68) 0%,
+            rgba(0, 15, 118, 0.73) 33%,
+            rgba(0, 1, 8, 0.52) 80%
+        );
+        border-radius: var(--radius-signature); /* corte assinatura Zamtech */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-32);
+        padding: var(--space-48) var(--space-64);
+        color: var(--color-white);
+        margin: var(--space-48) 0;
+    }
+
+    .camera-banner-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-16);
+        max-width: 580px;
+        z-index: 2;
+    }
+
+    .camera-banner-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h1);
+        font-weight: 900;
+        color: var(--color-white);
+        line-height: 1.1;
+    }
+
+    .camera-banner-text {
+        font-family: var(--font-text);
+        font-size: var(--fs-h5);
+        font-weight: 400;
+        color: var(--color-white);
+        line-height: 1.5;
+        opacity: 0.95;
+    }
+
+    .camera-banner-media {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+    }
+
+    .camera-banner-img {
+        width: 320px;
+        height: auto;
+        object-fit: contain;
+        /* Efeito visual: A imagem "salta" levemente para fora do topo/base do card */
+        margin-top: -72px;
+        margin-bottom: -72px;
+    }
+
+    /* RESPONSIVIDADE (MOBILE / TABLET) */
+    @media (max-width: 900px) {
+        .camera-banner-card {
+            flex-direction: column-reverse;
+            padding: var(--space-32) var(--space-24);
+            text-align: center;
+            border-radius: var(--radius-lg);
+        }
+
+        .camera-banner-content {
+            max-width: 100%;
+            align-items: center;
+        }
+
+        .camera-banner-title {
+            font-size: var(--fs-h2);
+        }
+
+        .camera-banner-text {
+            font-size: var(--fs-body);
+        }
+
+        .camera-banner-img {
+            width: 220px;
+            margin-top: -64;
+            margin-bottom: -25;
+        }
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+        .hero-section {
+            background-image: url("/assets/img/backgrounds/background-image-website-top-02-mobile.webp");
+        }
+
+        .why-choose-section {
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url("/assets/img/backgrounds/background-secao-02-v-mobile.webp");
+        }
+
+        .camera-feature-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .cam-app-phone {
+            display: none;
+        }
+
+        .container.vid-bg-camera-copy {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .copy-wrapper {
+            align-items: center;
+        }
+
+        .b2b-features-card {
+            flex-direction: column;
+            gap: var(--space-24);
+        }
+
+        .line-div {
+            display: none;
+        }
+
+        .faq-item {
+            flex-direction: column;
+            gap: var(--space-12);
+        }
+    }
+</style>
