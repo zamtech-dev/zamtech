@@ -107,35 +107,22 @@ if ($diaVencimento < 1 || $diaVencimento > 25) {
 }
 
 try {
-    // --- Resolve o dia de vencimento (1 a 25) pro vencimento_id interno do
-    // SGP. Se por algum motivo a lista não vier ou não tiver esse dia
-    // cadastrado, segue sem vencimento_id (não trava o cadastro por causa
-    // disso) e deixa registrado na observação pra Carol ajustar na mão. ---
-    $vencimentoId = null;
-    $listaVencimentos = chamarSGP('/api/precadastro/vencimento/list', []);
-    if (is_array($listaVencimentos)) {
-        foreach ($listaVencimentos as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-            $dia = pegarCampo($item, ['dia']);
-            if ($dia !== null && (int) $dia === $diaVencimento) {
-                $vencimentoId = (int) pegarCampo($item, ['id']);
-                break;
-            }
-        }
-    }
-
     // Cada informação numa linha separada — antes ia tudo espremido numa
     // linha só e ficava difícil de ler na caixa de Observação do SGP.
     // Só o essencial aqui: a API de pré-cadastro do SGP não tem campo pra
     // "Telefone Extra" (isso só existe no cadastro do cliente já criado),
     // então o 2º telefone continua indo por aqui mesmo, só que enxuto —
     // é a Carol quem copia pra lá na hora que revisa o pré-cadastro.
+    //
+    // O dia de vencimento também NÃO é mais mandado como vencimento_id pro
+    // SGP — mandar esse campo direto tava dando erro 500 na hora de aprovar
+    // o pré-cadastro lá no admin do SGP. Agora fica só registrado aqui na
+    // observação, e é a Carol quem preenche esse campo na hora que cria o
+    // contrato de verdade.
     $observacaoPartes = ['Pré-cadastro via site (zamtech.com.br/pre-cadastro).'];
     $observacaoPartes[] = 'Telefone 2: ' . $telefone2 . '.';
     $observacaoPartes[] = 'Velocidade desejada: ' . $velocidadeDesejada . ' Mega.';
-    $observacaoPartes[] = 'Dia de vencimento desejado: ' . $diaVencimento . ($vencimentoId === null ? ' (não encontrado na lista do SGP — ajustar manualmente).' : '.');
+    $observacaoPartes[] = 'Dia de vencimento desejado: ' . $diaVencimento . '.';
     if ($tipoPessoa === 'J') {
         $observacaoPartes[] = 'Responsável: ' . $respNome . ($respCpf !== '' ? " (CPF {$respCpf})" : '') . '.';
     }
@@ -156,16 +143,13 @@ try {
         'pais' => 'BR',
         'pontoreferencia' => $pontoReferencia,
         'observacao' => $observacao,
-        // Login sempre é o email de quem preencheu. Senha e senha da
-        // central são fixas (padrão combinado com a Operação) — nunca
-        // aparecem na página, só entram aqui no backend.
-        'login' => $email,
-        'senha' => PRECADASTRO_SENHA_PADRAO,
-        'central_senha' => PRECADASTRO_CENTRAL_SENHA_PADRAO,
+        // TESTE: tirei login/senha/central_senha daqui pra ver se é isso
+        // que faz o SGP quebrar (erro 500) depois de criar o cliente. O
+        // cliente já é criado certinho mesmo com o erro na tela — a
+        // suspeita agora é que o passo de criar o login do cliente (ou
+        // mandar o email de boas-vindas com a senha) é o que trava lá
+        // dentro do SGP.
     ];
-    if ($vencimentoId !== null) {
-        $camposComuns['vencimento_id'] = $vencimentoId;
-    }
     if ($tipoPessoa === 'F') {
         $camposComuns['estadocivil'] = $estadoCivil;
         $camposComuns['sexo'] = $sexo;
