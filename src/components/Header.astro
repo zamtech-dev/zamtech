@@ -16,7 +16,6 @@
             <ul class="nav-menu-top">
                 <li><a href="/planos-residenciais">Planos Residenciais</a></li>
                 <li><a href="/planos-empresariais">Planos Empresariais</a></li>
-                <li><a href="/indique">Indique e Ganhe</a></li>
             </ul>
             <button type="button" class="btn-menu-toggle" id="open-menu">
                 <img src="/assets/icons/listras-menu.svg" alt="Ícone de Menu" />
@@ -77,6 +76,11 @@
                 <span>Ajuda</span>
             </a>
         </div>
+
+        <a href="/pre-cadastro" class="menu-section-card precadastro-card">
+            <h3 class="section-card-title">📝 Pré-Cadastro</h3>
+            <p class="precadastro-card-text">Comece sua contratação agora, sem precisar esperar no WhatsApp</p>
+        </a>
 
         <a href="/indique" class="menu-section-card indique-card">
             <h3 class="section-card-title">🎁 Indique e Ganhe</h3>
@@ -433,12 +437,13 @@
     .main-header.scrolled {
         top: 2px;
         /* Largura fixa em % ficava espremendo "Planos Residenciais / Planos
-           Empresariais / Indique e Ganhe" em telas de notebook (era mais
-           apertado em telas GRANDES do que no breakpoint de tablet logo
-           abaixo — o oposto do esperado). Com clamp() a pílula nunca fica
-           menor que 700px enquanto tiver espaço, mas também não estica além
-           da conta em telas muito largas. */
-        width: clamp(700px, 46vw, 860px);
+           Empresariais" em telas de notebook (era mais apertado em telas
+           GRANDES do que no breakpoint de tablet logo abaixo — o oposto do
+           esperado). Com clamp() a pílula nunca fica menor que 560px
+           enquanto tiver espaço, mas também não estica além da conta em
+           telas muito largas. (Reduzido de 700px pra 560px depois que
+           "Indique e Ganhe" saiu do menu superior — só sobraram 2 links.) */
+        width: clamp(560px, 40vw, 780px);
         max-width: 94vw;
         border-radius: var(--radius-full);
         /* Voltou a ser fundo sólido (sem blur/vidro), só que agora
@@ -655,12 +660,14 @@
         color: var(--color-primary);
     }
 
-    .indique-card {
+    .indique-card,
+    .precadastro-card {
         text-decoration: none;
         transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
     }
 
-    .indique-card:hover {
+    .indique-card:hover,
+    .precadastro-card:hover {
         /* Mesma cor de borda que os bloquinhos (2ª via, Login, Ajuda) usam no
            hover deles — antes ficava azul aqui e cinza nos outros. */
         border-color: var(--color-gray-low);
@@ -668,7 +675,8 @@
         transform: translateY(-2px);
     }
 
-    .indique-card-text {
+    .indique-card-text,
+    .precadastro-card-text {
         font-family: var(--font-text);
         font-size: var(--fs-sm);
         color: var(--color-gray-medium);
