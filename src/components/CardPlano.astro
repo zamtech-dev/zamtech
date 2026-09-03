@@ -10,7 +10,12 @@ interface Props {
     nome: string;
     velocidade?: string;
     precoBase: number;
-    descricao: string;
+    // Opcional de propósito: texto de descrição solto tende a virar
+    // "linguiça" (frase genérica só pra preencher espaço). O card já mostra
+    // o que importa via badge + recursos (lista real de itens) + adicionais
+    // — descricao só deve ser usada quando tem informação de verdade que
+    // não cabe em nenhum outro lugar do card.
+    descricao?: string;
     badge?: string;
     economia?: string;
     recursos?: string[];
@@ -66,7 +71,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     </div>
 
     {economia && <p class="saving-tag">{economia}</p>}
-    <p class="plan-description">{descricao}</p>
+    {descricao && <p class="plan-description">{descricao}</p>}
 
     <!-- RECURSOS DO PLANO -->
     {
@@ -96,19 +101,12 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
                 <span class="adicionais-title">Turbine seu plano:</span>
                 {adicionais.map((item) => (
                     <div class="adicional-item">
-                        <span class="adicional-label">
-                            {item.nome}
-                            {item.incluso ? (
-                                <strong class="tag-incluso">
-                                    (Incluso no Combo)
-                                </strong>
-                            ) : (
-                                <small>
-                                    (+ R${" "}
-                                    {item.preco.toFixed(2).replace(".", ",")})
-                                </small>
-                            )}
-                        </span>
+                        {/* Sem repetir o preço aqui: o switch já mostra o
+                            que está ligado/desligado, e o preço lá em cima
+                            do card já atualiza sozinho ao marcar/desmarcar —
+                            escrever "+ R$ X" de novo em cada linha só
+                            duplicava informação que o próprio card já dá. */}
+                        <span class="adicional-label">{item.nome}</span>
                         <label class="switch">
                             <input
                                 type="checkbox"
@@ -435,16 +433,6 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         margin: var(--space-4);
     }
 
-    .tag-incluso {
-        color: var(--color-secondary);
-        font-weight: 500;
-    }
-
-    .card-plano--featured .tag-incluso {
-        color: var(--color-yellow);
-        font-weight: 600;
-    }
-
     /* TOGGLE SWITCH CSS */
     .switch {
         position: relative;
@@ -499,5 +487,21 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     .btn-whatsapp,
     .btn-selecionar-plano {
         width: 100%;
+    }
+
+    /* No card destaque (fundo em degradê azul) o botão .btn-primary usa o
+       MESMO degradê de fundo do card — some, sem contraste nenhum. Nos
+       cards destaque o botão vira branco sólido com texto azul, garantindo
+       contraste em qualquer um dos dois fundos. */
+    .card-plano--featured .btn-whatsapp,
+    .card-plano--featured .btn-selecionar-plano {
+        background: var(--color-white);
+        color: var(--color-primary);
+    }
+
+    .card-plano--featured .btn-whatsapp:hover,
+    .card-plano--featured .btn-selecionar-plano:hover {
+        background: var(--color-gray-light);
+        filter: none;
     }
 </style>
