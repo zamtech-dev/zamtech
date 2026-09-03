@@ -47,14 +47,27 @@ $uf = isset($input['uf']) ? strtoupper(trim($input['uf'])) : '';
 $pontoReferencia = isset($input['pontoReferencia']) ? trim($input['pontoReferencia']) : '';
 $diaVencimento = isset($input['diaVencimento']) ? (int) $input['diaVencimento'] : 0;
 $aceite = !empty($input['aceite']);
+// Estado civil e sexo só existem no cadastro de Pessoa Física no SGP —
+// pra Pessoa Jurídica esses campos simplesmente não são usados.
+$estadoCivil = isset($input['estadoCivil']) ? strtoupper(trim($input['estadoCivil'])) : '';
+$sexo = isset($input['sexo']) ? strtoupper(trim($input['sexo'])) : '';
+// Velocidade é só informativa — vai na observação, NUNCA vira plano_id.
+// Quem decide o plano de verdade (e tenta vender Mesh, câmera etc) é a
+// Carol, na ligação dela.
+$velocidadeDesejada = isset($input['velocidadeDesejada']) ? trim($input['velocidadeDesejada']) : '';
 
 // --- Validações básicas de preenchimento ---
-$camposObrigatorios = [$nome, $cpfCnpj, $dataNascimento, $telefone1, $email, $cep, $logradouro, $numero, $bairro, $cidade, $uf];
+$camposObrigatorios = [$nome, $cpfCnpj, $dataNascimento, $telefone1, $telefone2, $email, $cep, $logradouro, $numero, $bairro, $cidade, $uf, $velocidadeDesejada];
 foreach ($camposObrigatorios as $campo) {
     if ($campo === '') {
         echo json_encode(['sucesso' => false, 'tipo' => 'bloqueio', 'mensagem' => 'Preencha todos os campos obrigatórios.']);
         exit;
     }
+}
+
+if ($tipoPessoa === 'F' && (!in_array($estadoCivil, ['S', 'C', 'D', 'V'], true) || !in_array($sexo, ['M', 'F'], true))) {
+    echo json_encode(['sucesso' => false, 'tipo' => 'bloqueio', 'mensagem' => 'Preencha o estado civil e o sexo.']);
+    exit;
 }
 
 if (!$aceite) {
@@ -113,14 +126,17 @@ try {
         }
     }
 
+    // Cada informação numa linha separada — antes ia tudo espremido numa
+    // linha só e ficava difícil de ler na caixa de Observação do SGP.
     $observacaoPartes = ['Pré-cadastro via site (zamtech.com.br/pre-cadastro).'];
-    $observacaoPartes[] = 'Telefone secundário: ' . ($telefone2 !== '' ? $telefone2 : 'não informado') . '.';
+    $observacaoPartes[] = 'Telefone secundário: ' . $telefone2 . '.';
+    $observacaoPartes[] = 'Velocidade desejada informada pelo cliente: ' . $velocidadeDesejada . ' Mega (não é o plano final — só referência pro comercial).';
     $observacaoPartes[] = 'Dia de vencimento desejado: ' . $diaVencimento . ($vencimentoId === null ? ' (não encontrado na lista do SGP — ajustar manualmente).' : '.');
     $observacaoPartes[] = 'Aceite de fidelidade (mediante aprovação): sim.';
     if ($tipoPessoa === 'J') {
         $observacaoPartes[] = 'Responsável: ' . $respNome . ($respCpf !== '' ? " (CPF {$respCpf})" : '') . '.';
     }
-    $observacao = implode(' ', $observacaoPartes);
+    $observacao = implode("\n", $observacaoPartes);
 
     $camposComuns = [
         'cpfcnpj' => $cpfCnpj,
@@ -137,9 +153,19 @@ try {
         'pais' => 'BR',
         'pontoreferencia' => $pontoReferencia,
         'observacao' => $observacao,
+        // Login sempre é o email de quem preencheu. Senha e senha da
+        // central são fixas (padrão combinado com a Operação) — nunca
+        // aparecem na página, só entram aqui no backend.
+        'login' => $email,
+        'senha' => PRECADASTRO_SENHA_PADRAO,
+        'central_senha' => PRECADASTRO_CENTRAL_SENHA_PADRAO,
     ];
     if ($vencimentoId !== null) {
         $camposComuns['vencimento_id'] = $vencimentoId;
+    }
+    if ($tipoPessoa === 'F') {
+        $camposComuns['estadocivil'] = $estadoCivil;
+        $camposComuns['sexo'] = $sexo;
     }
 
     if ($tipoPessoa === 'F') {

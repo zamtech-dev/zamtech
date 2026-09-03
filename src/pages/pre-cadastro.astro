@@ -62,8 +62,29 @@ import "../styles/global.css";
                             <input type="text" id="telefone1" required placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15" autocomplete="tel" />
                         </div>
                         <div class="input-group">
-                            <label for="telefone2">2º telefone (opcional)</label>
-                            <input type="text" id="telefone2" placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15" autocomplete="tel" />
+                            <label for="telefone2">2º telefone</label>
+                            <input type="text" id="telefone2" required placeholder="(00) 00000-0000" inputmode="numeric" maxlength="15" autocomplete="tel" />
+                        </div>
+                    </div>
+
+                    <div class="input-row" id="grupoEstadoCivilSexo">
+                        <div class="input-group">
+                            <label for="estadoCivil">Estado civil</label>
+                            <select id="estadoCivil" required>
+                                <option value="" selected disabled>Selecione</option>
+                                <option value="S">Solteiro(a)</option>
+                                <option value="C">Casado(a)</option>
+                                <option value="D">Divorciado(a)</option>
+                                <option value="V">Viúvo(a)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="sexo">Sexo</label>
+                            <select id="sexo" required>
+                                <option value="" selected disabled>Selecione</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
+                            </select>
                         </div>
                     </div>
 
@@ -116,6 +137,12 @@ import "../styles/global.css";
                     <div class="input-group">
                         <label for="pontoReferencia">Ponto de referência (opcional)</label>
                         <input type="text" id="pontoReferencia" placeholder="Ex: ao lado do mercado tal" autocomplete="off" />
+                    </div>
+
+                    <div class="input-group">
+                        <label for="velocidadeDesejada">Velocidade desejada (Mega)</label>
+                        <input type="text" id="velocidadeDesejada" required placeholder="Ex: 300" inputmode="numeric" autocomplete="off" />
+                        <span class="input-dica">É só uma referência pra nossa equipe comercial — não define o plano final.</span>
                     </div>
 
                     <div class="input-group">
@@ -226,6 +253,9 @@ import "../styles/global.css";
     const labelDataNascimento = document.getElementById("labelDataNascimento") as HTMLElement;
     const grupoNomeFantasia = document.getElementById("grupoNomeFantasia") as HTMLElement;
     const grupoResponsavel = document.getElementById("grupoResponsavel") as HTMLElement;
+    const grupoEstadoCivilSexo = document.getElementById("grupoEstadoCivilSexo") as HTMLElement;
+    const estadoCivilSelect = document.getElementById("estadoCivil") as HTMLSelectElement;
+    const sexoSelect = document.getElementById("sexo") as HTMLSelectElement;
     const nomeInput = document.getElementById("nome") as HTMLInputElement;
     const cpfCnpjInput = document.getElementById("cpfCnpj") as HTMLInputElement;
     const cpfCnpjErro = document.getElementById("cpfCnpjErro") as HTMLElement;
@@ -250,6 +280,11 @@ import "../styles/global.css";
             grupoNomeFantasia.hidden = true;
             grupoResponsavel.hidden = true;
             respNomeInput.required = false;
+            // Estado civil e sexo só existem no cadastro de Pessoa Física
+            // no SGP — pra Pessoa Jurídica esses campos nem fazem sentido.
+            grupoEstadoCivilSexo.hidden = false;
+            estadoCivilSelect.required = true;
+            sexoSelect.required = true;
         } else {
             labelNome.textContent = "Razão social";
             nomeInput.placeholder = "Razão social da empresa";
@@ -259,6 +294,9 @@ import "../styles/global.css";
             grupoNomeFantasia.hidden = false;
             grupoResponsavel.hidden = false;
             respNomeInput.required = true;
+            grupoEstadoCivilSexo.hidden = true;
+            estadoCivilSelect.required = false;
+            sexoSelect.required = false;
         }
 
         cpfCnpjInput.value = "";
@@ -377,6 +415,8 @@ import "../styles/global.css";
             dataNascimento: (document.getElementById("dataNascimento") as HTMLInputElement).value,
             telefone1: telefone1Input.value.trim(),
             telefone2: telefone2Input.value.trim(),
+            estadoCivil: estadoCivilSelect.value,
+            sexo: sexoSelect.value,
             email: (document.getElementById("email") as HTMLInputElement).value.trim(),
             cep: cepInput.value.trim(),
             logradouro: logradouroInput.value.trim(),
@@ -386,6 +426,7 @@ import "../styles/global.css";
             cidade: cidadeInput.value.trim(),
             uf: ufInput.value.trim(),
             pontoReferencia: (document.getElementById("pontoReferencia") as HTMLInputElement).value.trim(),
+            velocidadeDesejada: (document.getElementById("velocidadeDesejada") as HTMLInputElement).value.trim(),
             diaVencimento: diaVencimentoSelect.value,
             aceite: (document.getElementById("aceite") as HTMLInputElement).checked,
         };
@@ -403,7 +444,17 @@ import "../styles/global.css";
             const data = await response.json();
 
             if (data.sucesso) {
-                mostrarMensagem(`<p>${data.mensagem}</p>`, false);
+                // Carol acompanha os pré-cadastros pelo SGP (sem robô nenhum
+                // de olho), então quanto mais rápido ela souber que chegou um
+                // novo, mais rápido consegue ligar e fechar o plano. Por isso
+                // o botão: a pessoa avisa direto no WhatsApp, do jeito que já
+                // funciona no /assinar do Indique e Ganhe.
+                const rotuloDocumento = tipoPessoa === "J" ? "CNPJ" : "CPF";
+                const mensagemZap = `Oi! Acabei de fazer meu pré-cadastro no site. Meu nome é ${dados.nome}, ${rotuloDocumento} ${dados.cpfCnpj}. Pode conferir e agilizar minha instalação?`;
+                mostrarMensagem(`
+                    <p>${data.mensagem}</p>
+                    <a href="https://wa.me/5527995057736?text=${encodeURIComponent(mensagemZap)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">Avisar no WhatsApp que já me cadastrei</a>
+                `, false);
                 form.hidden = true;
             } else {
                 const ehErroDeSistema = data.tipo === "erro";

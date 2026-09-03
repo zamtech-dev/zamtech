@@ -20,6 +20,14 @@ define('SGP_TOKEN', '4ab8d0da-ed7d-4e91-b717-9d4a98625458');
 // cliente: "1. Mesmo email".
 define('EMAIL_FINANCEIRO', 'zamtechcomercial@gmail.com');
 
+// --- Login e senha padrão do pré-cadastro criado no SGP ---
+// O "login" do cliente no SGP sempre usa o email que a pessoa preencheu no
+// formulário (resolvido direto no cadastrar.php). Senha e senha da central
+// são fixas — padrão combinado com a Operação — e nunca aparecem na
+// página, só são preenchidas aqui no backend.
+define('PRECADASTRO_SENHA_PADRAO', '12345678');
+define('PRECADASTRO_CENTRAL_SENHA_PADRAO', '1234');
+
 // --- Envio de email via SMTP autenticado ---
 // Mesmo esquema (e mesmo motivo) do /api/indique/_config.php: o mail()
 // nativo da Hostgator não passa no SPF do domínio, então manda-se
