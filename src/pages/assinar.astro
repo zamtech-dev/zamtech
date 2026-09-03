@@ -139,6 +139,17 @@ import "../styles/global.css";
             .replace(/(\d{5})(\d{1,3})$/, "$1-$2");
     }
 
+    // Operação pediu nome sempre em caixa alta (facilita conferir no SGP).
+    // Preserva a posição do cursor, senão ele pula pro final a cada letra
+    // digitada no meio do nome — bem irritante de usar.
+    function forcarMaiusculo(input: HTMLInputElement) {
+        const posicaoCursor = input.selectionStart;
+        input.value = input.value.toUpperCase();
+        if (posicaoCursor !== null) {
+            input.setSelectionRange(posicaoCursor, posicaoCursor);
+        }
+    }
+
     const statusLink = document.getElementById("statusLink") as HTMLElement;
     const nomeIndicador = document.getElementById("nomeIndicador") as HTMLElement;
     const form = document.getElementById("formAssinar") as HTMLFormElement;
@@ -155,6 +166,9 @@ import "../styles/global.css";
     const bairroInput = document.getElementById("bairroIndicado") as HTMLInputElement;
     const cidadeInput = document.getElementById("cidadeIndicado") as HTMLInputElement;
     const numeroInput = document.getElementById("numeroIndicado") as HTMLInputElement;
+    const nomeIndicadoInput = document.getElementById("nomeIndicado") as HTMLInputElement;
+
+    nomeIndicadoInput?.addEventListener("input", () => forcarMaiusculo(nomeIndicadoInput));
 
     cpfInput?.addEventListener("input", () => {
         cpfInput.value = mascararCPF(cpfInput.value);

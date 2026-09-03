@@ -24,9 +24,13 @@ if (!is_array($input)) {
 
 $tipoPessoa = isset($input['tipoPessoa']) && $input['tipoPessoa'] === 'J' ? 'J' : 'F';
 
-$nome = isset($input['nome']) ? trim($input['nome']) : '';
+// Operação pediu nome (e nome do responsável, na Pessoa Jurídica) sempre em
+// caixa alta — fica mais fácil de conferir no SGP. O front-end já manda
+// maiúsculo, mas força de novo aqui, assim funciona mesmo se alguém chamar
+// essa API direto, sem passar pelo site.
+$nome = isset($input['nome']) ? mb_strtoupper(trim($input['nome']), 'UTF-8') : '';
 $nomeFantasia = isset($input['nomeFantasia']) ? trim($input['nomeFantasia']) : '';
-$respNome = isset($input['respNome']) ? trim($input['respNome']) : '';
+$respNome = isset($input['respNome']) ? mb_strtoupper(trim($input['respNome']), 'UTF-8') : '';
 $respCpf = isset($input['respCpf']) ? preg_replace('/\D/', '', $input['respCpf']) : '';
 $cpfCnpj = isset($input['cpfCnpj']) ? preg_replace('/\D/', '', $input['cpfCnpj']) : '';
 $dataNascimento = isset($input['dataNascimento']) ? trim($input['dataNascimento']) : '';

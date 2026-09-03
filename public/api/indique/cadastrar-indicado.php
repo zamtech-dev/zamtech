@@ -20,7 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 
 $ref = isset($input['ref']) ? trim($input['ref']) : '';
-$nome = isset($input['nome']) ? trim($input['nome']) : '';
+// Operação pediu nome sempre em caixa alta (fica mais fácil de conferir no
+// SGP). O front-end já manda maiúsculo, mas força de novo aqui — assim
+// funciona mesmo se alguém chamar essa API direto, sem passar pelo site.
+$nome = isset($input['nome']) ? mb_strtoupper(trim($input['nome']), 'UTF-8') : '';
 $cpf = isset($input['cpf']) ? preg_replace('/\D/', '', $input['cpf']) : '';
 $telefone = isset($input['telefone']) ? preg_replace('/\D/', '', $input['telefone']) : '';
 $logradouro = isset($input['logradouro']) ? trim($input['logradouro']) : '';
