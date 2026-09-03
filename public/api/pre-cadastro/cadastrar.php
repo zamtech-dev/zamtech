@@ -143,12 +143,12 @@ try {
         'pais' => 'BR',
         'pontoreferencia' => $pontoReferencia,
         'observacao' => $observacao,
-        // TESTE: tirei login/senha/central_senha daqui pra ver se é isso
-        // que faz o SGP quebrar (erro 500) depois de criar o cliente. O
-        // cliente já é criado certinho mesmo com o erro na tela — a
-        // suspeita agora é que o passo de criar o login do cliente (ou
-        // mandar o email de boas-vindas com a senha) é o que trava lá
-        // dentro do SGP.
+        // De propósito NÃO mandamos login/senha/central_senha pro SGP.
+        // Mandar isso era o que fazia o SGP quebrar (erro 500) depois de
+        // criar o cliente — o cliente já era criado certinho mesmo com o
+        // erro na tela, só o passo de criar o login/acesso dele é que
+        // travava lá dentro do SGP. Testado e confirmado em 03/09/2026.
+        // Se precisar de login pro cliente, é a Carol quem cria na mão.
     ];
     if ($tipoPessoa === 'F') {
         $camposComuns['estadocivil'] = $estadoCivil;
