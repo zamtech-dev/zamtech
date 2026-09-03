@@ -182,6 +182,51 @@ function geocodificarEndereco(string $endereco): ?array
 }
 
 /**
+ * Consulta um CEP no ViaCEP (de graça, sem chave, mantido pelos Correios
+ * junto com a comunidade) e devolve o endereço já separado em
+ * rua/bairro/cidade/uf. É bem mais preciso que a pessoa digitar o endereço
+ * na mão — evita o problema de rua com nome repetido em várias cidades, e
+ * ninguém erra a grafia do próprio CEP.
+ * Retorna null se o CEP não existe ou o serviço falhou.
+ */
+function consultarCep(string $cep): ?array
+{
+    $cepLimpo = preg_replace('/\D/', '', $cep);
+    if (strlen($cepLimpo) !== 8) {
+        return null;
+    }
+
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => "https://viacep.com.br/ws/{$cepLimpo}/json/",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10,
+    ]);
+
+    $response = curl_exec($curl);
+    $erroCurl = curl_error($curl);
+    curl_close($curl);
+
+    if ($erroCurl) {
+        error_log('Viabilidade - erro ao consultar CEP: ' . $erroCurl);
+        return null;
+    }
+
+    $data = json_decode($response, true);
+    if (!is_array($data) || !empty($data['erro'])) {
+        return null;
+    }
+
+    return [
+        'cep' => $data['cep'] ?? $cepLimpo,
+        'logradouro' => $data['logradouro'] ?? '',
+        'bairro' => $data['bairro'] ?? '',
+        'cidade' => $data['localidade'] ?? '',
+        'uf' => $data['uf'] ?? '',
+    ];
+}
+
+/**
  * Distância em metros entre dois pontos de latitude/longitude (fórmula de
  * Haversine — "linha reta" na superfície da Terra, não é o caminho real do
  * cabo de fibra).
