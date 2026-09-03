@@ -58,7 +58,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
          na home (src/scripts/viabilidade.ts). -->
     <div class="cep-float-bar" id="cepFloatBar">
         <div class="container cep-float-bar-inner">
-            <p>Veja se a Zamtech já está por aí</p><!--Não quero os textos iguais aos do site da NIO -->
+            <p>Será que a Zamtech já chegou aí?</p>
             <button type="button" class="btn btn-primary cep-float-bar-btn" id="cepFloatBarBtn">
                 Informe seu CEP e confira
             </button>
@@ -338,10 +338,17 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
 
     // Na home, a barra só aparece depois que o formulário grande do topo sair
     // da tela (senão fica CTA repetido). Nas outras páginas, aparece depois
-    // de um scroll curto.
+    // de um scroll curto. Em /contratar não faz sentido nenhuma das duas —
+    // a pessoa já está preenchendo CEP/número ali mesmo, então a barra nunca
+    // aparece nessa página.
     const formHero = document.getElementById("viabilidade-form");
+    const paginaSemBarraFlutuante = window.location.pathname.startsWith("/contratar");
 
     function atualizarVisibilidadeBarra() {
+        if (paginaSemBarraFlutuante) {
+            barra.classList.remove("is-visible");
+            return;
+        }
         if (painel.classList.contains("is-open")) {
             barra.classList.remove("is-visible");
             return;

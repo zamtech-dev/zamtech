@@ -13,15 +13,6 @@ const adicionaisResidencial = [
     { nome: "Câmera Inteligente", preco: 39.90 },
     { nome: "Linha Telefônica Fixa", preco: 29.90 }
 ];
-
-// Mesma lógica pros planos empresariais (dados copiados de
-// /planos-empresariais — mesmo aviso do bloco acima: mudou preço lá, muda aqui).
-const adicionaisEmpresarialPadrao = [
-    { nome: "Linha Telefônica (Voz)", preco: 29.90 },
-    { nome: "Câmera Inteligente Nuvem", preco: 39.90 },
-    { nome: "Ponto Wi-Fi Mesh B2B", preco: 39.90 },
-    { nome: "PABX em Nuvem Essential", preco: 49.90 }
-];
 ---
 
 <!-- CONTRATAR EM ETAPAS — inspirado no fluxo da Nio (CEP -> escolhe o plano
@@ -102,22 +93,12 @@ const adicionaisEmpresarialPadrao = [
                     <h2>Qual combina com você?</h2>
                     <p class="wizard-panel-subtitulo">Isso é só uma referência pra gente — nosso time confirma tudo certinho na ligação.</p>
 
-                    <!-- Categoria principal: Residencial ou Empresarial. Cada uma tem seu
-                         próprio sub-filtro (igual /planos-residenciais e /planos-empresariais
-                         já fazem cada um no seu canto). -->
-                    <div class="planos-toggle planos-toggle-categoria">
-                        <button type="button" class="planos-toggle-btn is-active" id="btnCategoriaResidencial">Residencial</button>
-                        <button type="button" class="planos-toggle-btn" id="btnCategoriaEmpresarial">Empresarial</button>
-                    </div>
-
+                    <!-- Só planos residenciais aqui — o filtro Residencial/Empresarial
+                         que existia poluía demais essa etapa do wizard. Empresas
+                         continuam com /planos-empresariais só pra elas. -->
                     <div class="planos-toggle" id="subtoggleResidencial">
                         <button type="button" class="planos-toggle-btn is-active" id="btnPlanosCombos">Melhores Planos (Combos)</button>
                         <button type="button" class="planos-toggle-btn" id="btnPlanosEntrada">Planos de Entrada</button>
-                    </div>
-
-                    <div class="planos-toggle hidden" id="subtoggleEmpresarial">
-                        <button type="button" class="planos-toggle-btn is-active" id="btnPlanosEmpresaConectividade">Internet & Combos</button>
-                        <button type="button" class="planos-toggle-btn" id="btnPlanosEmpresaPabx">PABX & Telefonia</button>
                     </div>
 
                     <div class="planos-grid" id="planosGridCombos">
@@ -211,210 +192,6 @@ const adicionaisEmpresarialPadrao = [
                                 "Download ultrarrápido de arquivos pesados"
                             ]}
                             adicionais={adicionaisResidencial}
-                        />
-                    </div>
-
-                    <div class="planos-grid hidden" id="planosGridEmpresaConectividade">
-                        <CardPlano
-                            nome="Empresarial 600 - Start"
-                            velocidade="600 Mega 100% Fibra"
-                            precoBase={119.90}
-                            modo="selecionar"
-                            recursos={[
-                                "Garantia de banda para sistemas em nuvem",
-                                "Suporte Técnico prioritário B2B",
-                                "Instalação e configuração grátis"
-                            ]}
-                            adicionais={adicionaisEmpresarialPadrao}
-                        />
-                        <CardPlano
-                            nome="Empresarial 600 - Start Secure"
-                            velocidade="600 Mega + Voz + Câmera"
-                            precoBase={189.90}
-                            modo="selecionar"
-                            recursos={[
-                                "1 Linha Telefônica + 1 Câmera em Nuvem",
-                                "Zero custo com DVRs ou equipamentos caros",
-                                "Monitoramento 24h via aplicativo"
-                            ]}
-                            adicionais={[
-                                { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
-                                { nome: "Câmera Inteligente Nuvem", preco: 0, incluso: true },
-                                { nome: "Ponto Wi-Fi Mesh B2B", preco: 39.90 },
-                                { nome: "PABX em Nuvem Essential", preco: 49.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="Empresarial 850 - Escala"
-                            velocidade="850 Mega 100% Fibra"
-                            precoBase={159.90}
-                            modo="selecionar"
-                            recursos={[
-                                "Estabilidade reforçada para chamadas de vídeo",
-                                "Upload de alta velocidade para backup",
-                                "Atendimento corporativo ágil"
-                            ]}
-                            adicionais={adicionaisEmpresarialPadrao}
-                        />
-                        <CardPlano
-                            nome="Empresarial 850 - Escala Voice"
-                            velocidade="850 Mega + 1 Linha Fixa"
-                            precoBase={189.90}
-                            badge="MAIS VENDIDO PARA EMPRESAS"
-                            isFeatured={true}
-                            modo="selecionar"
-                            recursos={[
-                                "1 Linha Telefônica Fixa inclusa",
-                                "Suporte Especializado B2B",
-                                "Atendimento ao cliente com qualidade HD"
-                            ]}
-                            adicionais={[
-                                { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
-                                { nome: "Câmera Inteligente Nuvem", preco: 39.90 },
-                                { nome: "Ponto Wi-Fi Mesh B2B", preco: 39.90 },
-                                { nome: "PABX em Nuvem Essential", preco: 49.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="Empresarial 1G - Prime"
-                            velocidade="1 Giga 100% Fibra"
-                            precoBase={169.90}
-                            modo="selecionar"
-                            recursos={[
-                                "Prioridade em tráfego de dados corporativo",
-                                "Suporte corporativo direto",
-                                "Infraestrutura preparada para redes mesh"
-                            ]}
-                            adicionais={adicionaisEmpresarialPadrao}
-                        />
-                        <CardPlano
-                            nome="Empresarial 1G - Prime Secure"
-                            velocidade="1 Giga + Voz + Câmera Nuvem"
-                            precoBase={239.90}
-                            badge="SOLUÇÃO COMPLETA B2B"
-                            isFeatured={true}
-                            modo="selecionar"
-                            recursos={[
-                                "1 Linha Telefônica Fixa B2B",
-                                "1 Câmera de Monitoramento em Nuvem",
-                                "Acesso ao vivo e gravações pelo App Zamtech"
-                            ]}
-                            adicionais={[
-                                { nome: "Linha Telefônica (Voz)", preco: 0, incluso: true },
-                                { nome: "Câmera Inteligente Nuvem", preco: 0, incluso: true },
-                                { nome: "Ponto Wi-Fi Mesh B2B", preco: 39.90 },
-                                { nome: "PABX em Nuvem Essential", preco: 49.90 }
-                            ]}
-                        />
-                    </div>
-
-                    <div class="planos-grid hidden" id="planosGridEmpresaPabx">
-                        <CardPlano
-                            nome="Empresarial 600 - PABX Connect"
-                            velocidade="600 Mega + PABX em Nuvem"
-                            precoBase={189.90}
-                            badge="COMBO PABX ENTRADA"
-                            modo="selecionar"
-                            recursos={[
-                                "PABX em Nuvem com ramais inclusos",
-                                "Atendimento no celular, PC ou telefone IP",
-                                "Elimina custos com manutenção de PABX físico"
-                            ]}
-                            adicionais={[
-                                { nome: "PABX em Nuvem Essential", preco: 0, incluso: true },
-                                { nome: "Ramal Adicional", preco: 7.90 },
-                                { nome: "Número Telefônico (DID)", preco: 29.90 },
-                                { nome: "Gravação Estendida", preco: 19.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="Empresarial 850 - PABX Scale"
-                            velocidade="850 Mega + PABX Pro"
-                            precoBase={269.90}
-                            badge="RECOMENDADO PARA VENDAS"
-                            isFeatured={true}
-                            modo="selecionar"
-                            recursos={[
-                                "PABX em Nuvem Pro com URA e Filas",
-                                "Gravação de ligações corporativas",
-                                "Configuração inicial e treinamento grátis"
-                            ]}
-                            adicionais={[
-                                { nome: "PABX em Nuvem Pro", preco: 0, incluso: true },
-                                { nome: "Ramal Adicional", preco: 7.90 },
-                                { nome: "Número Telefônico (DID)", preco: 29.90 },
-                                { nome: "Gravação Estendida", preco: 19.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="Empresarial 1G - PABX Elite"
-                            velocidade="1 Giga + PABX Enterprise"
-                            precoBase={349.90}
-                            badge="PERFORMANCE CORPORATIVA"
-                            isFeatured={true}
-                            modo="selecionar"
-                            recursos={[
-                                "PABX Enterprise com URA avançada",
-                                "Relatórios completos de desempenho",
-                                "Suporte corporativo prioritário 24/7"
-                            ]}
-                            adicionais={[
-                                { nome: "PABX em Nuvem Enterprise", preco: 0, incluso: true },
-                                { nome: "Ramal Adicional", preco: 7.90 },
-                                { nome: "Número Telefônico (DID)", preco: 29.90 },
-                                { nome: "Gravação Estendida", preco: 19.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="PABX START - Essential"
-                            velocidade="Telefonia Cloud Avulsa"
-                            precoBase={49.90}
-                            modo="selecionar"
-                            recursos={[
-                                "Até 5 Ramais internos/externos",
-                                "Softphone para PC e Celular",
-                                "URA Básica de Atendimento",
-                                "Transferência e histórico de chamadas"
-                            ]}
-                            adicionais={[
-                                { nome: "Ramal Adicional", preco: 7.90 },
-                                { nome: "Número Telefônico (DID)", preco: 29.90 },
-                                { nome: "Gravação Estendida", preco: 19.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="PABX BUSINESS - Pro"
-                            velocidade="Telefonia Cloud Avulsa"
-                            precoBase={79.90}
-                            modo="selecionar"
-                            recursos={[
-                                "Até 10 Ramais inclusos",
-                                "URA Personalizada + Filas de espera",
-                                "Gravação de ligações inclusa",
-                                "Painel Administrativo Web completo"
-                            ]}
-                            adicionais={[
-                                { nome: "Ramal Adicional", preco: 7.90 },
-                                { nome: "Número Telefônico (DID)", preco: 29.90 },
-                                { nome: "Gravação Estendida", preco: 19.90 }
-                            ]}
-                        />
-                        <CardPlano
-                            nome="PABX ENTERPRISE - Infinity"
-                            velocidade="Telefonia Cloud Avulsa"
-                            precoBase={129.90}
-                            modo="selecionar"
-                            recursos={[
-                                "Ramais sob demanda para grandes operações",
-                                "URA Avançada com horários flexíveis",
-                                "Filas inteligentes de atendimento",
-                                "API para integração com CRMs e sistemas"
-                            ]}
-                            adicionais={[
-                                { nome: "Ramal Adicional", preco: 7.90 },
-                                { nome: "Número Telefônico (DID)", preco: 29.90 },
-                                { nome: "Gravação Estendida", preco: 19.90 }
-                            ]}
                         />
                     </div>
 
@@ -706,66 +483,24 @@ const adicionaisEmpresarialPadrao = [
         irParaEtapa(3);
     }) as EventListener);
 
-    // ---------- ETAPA 2: filtros de plano ----------
-    // 4 grades de cards no total (Residencial: Combos/Entrada — Empresarial:
-    // Internet/PABX), mas só uma fica visível por vez. mostrarGrid() cuida
-    // de esconder as outras 3 sempre que uma nova é escolhida.
-    const todasAsGrades = ["planosGridCombos", "planosGridEntrada", "planosGridEmpresaConectividade", "planosGridEmpresaPabx"];
-
-    function mostrarGrid(idGridAtiva: string) {
-        todasAsGrades.forEach((id) => {
-            document.getElementById(id)?.classList.toggle("hidden", id !== idGridAtiva);
-        });
-    }
-
-    function alternarToggle(botaoAtivo: HTMLButtonElement, botaoInativo: HTMLButtonElement) {
-        botaoAtivo.classList.add("is-active");
-        botaoInativo.classList.remove("is-active");
-    }
-
-    // Categoria principal: Residencial x Empresarial
-    const btnCategoriaResidencial = document.getElementById("btnCategoriaResidencial") as HTMLButtonElement;
-    const btnCategoriaEmpresarial = document.getElementById("btnCategoriaEmpresarial") as HTMLButtonElement;
-    const subtoggleResidencial = document.getElementById("subtoggleResidencial") as HTMLDivElement;
-    const subtoggleEmpresarial = document.getElementById("subtoggleEmpresarial") as HTMLDivElement;
-
-    btnCategoriaResidencial.addEventListener("click", () => {
-        alternarToggle(btnCategoriaResidencial, btnCategoriaEmpresarial);
-        subtoggleResidencial.classList.remove("hidden");
-        subtoggleEmpresarial.classList.add("hidden");
-        mostrarGrid("planosGridCombos");
-        alternarToggle(btnPlanosCombos, btnPlanosEntrada);
-    });
-    btnCategoriaEmpresarial.addEventListener("click", () => {
-        alternarToggle(btnCategoriaEmpresarial, btnCategoriaResidencial);
-        subtoggleEmpresarial.classList.remove("hidden");
-        subtoggleResidencial.classList.add("hidden");
-        mostrarGrid("planosGridEmpresaConectividade");
-        alternarToggle(btnPlanosEmpresaConectividade, btnPlanosEmpresaPabx);
-    });
-
-    // Sub-filtro Residencial: Combos x Entrada
+    // ---------- ETAPA 2: filtro de plano (só residencial — o toggle
+    // Residencial/Empresarial que existia aqui foi removido por deixar a
+    // etapa poluída; planos empresariais continuam em /planos-empresariais) ----------
+    const planosGridCombos = document.getElementById("planosGridCombos") as HTMLDivElement;
+    const planosGridEntrada = document.getElementById("planosGridEntrada") as HTMLDivElement;
     const btnPlanosCombos = document.getElementById("btnPlanosCombos") as HTMLButtonElement;
     const btnPlanosEntrada = document.getElementById("btnPlanosEntrada") as HTMLButtonElement;
     btnPlanosCombos.addEventListener("click", () => {
-        alternarToggle(btnPlanosCombos, btnPlanosEntrada);
-        mostrarGrid("planosGridCombos");
+        btnPlanosCombos.classList.add("is-active");
+        btnPlanosEntrada.classList.remove("is-active");
+        planosGridCombos.classList.remove("hidden");
+        planosGridEntrada.classList.add("hidden");
     });
     btnPlanosEntrada.addEventListener("click", () => {
-        alternarToggle(btnPlanosEntrada, btnPlanosCombos);
-        mostrarGrid("planosGridEntrada");
-    });
-
-    // Sub-filtro Empresarial: Internet & Combos x PABX & Telefonia
-    const btnPlanosEmpresaConectividade = document.getElementById("btnPlanosEmpresaConectividade") as HTMLButtonElement;
-    const btnPlanosEmpresaPabx = document.getElementById("btnPlanosEmpresaPabx") as HTMLButtonElement;
-    btnPlanosEmpresaConectividade.addEventListener("click", () => {
-        alternarToggle(btnPlanosEmpresaConectividade, btnPlanosEmpresaPabx);
-        mostrarGrid("planosGridEmpresaConectividade");
-    });
-    btnPlanosEmpresaPabx.addEventListener("click", () => {
-        alternarToggle(btnPlanosEmpresaPabx, btnPlanosEmpresaConectividade);
-        mostrarGrid("planosGridEmpresaPabx");
+        btnPlanosEntrada.classList.add("is-active");
+        btnPlanosCombos.classList.remove("is-active");
+        planosGridEntrada.classList.remove("hidden");
+        planosGridCombos.classList.add("hidden");
     });
 
     document.getElementById("btnEtapa2Voltar")?.addEventListener("click", () => irParaEtapa(1));
@@ -1031,10 +766,12 @@ const adicionaisEmpresarialPadrao = [
     }
 
     /* Etapa 2 (escolha de plano) precisa de mais espaço horizontal do que um
-       formulário — senão os cards do CardPlano ficam espremidos numa coluna
-       estreita de 720px. Alternado via JS só quando a etapa 2 está ativa. */
+       formulário — senão os cards do CardPlano ficam espremidos. Alternado
+       via JS só quando a etapa 2 está ativa; mesma largura máxima do
+       .container do resto do site (global.css), pra aproveitar o espaço
+       lateral que sobrava na tela sem ficar largo demais. */
     .form-wrapper--largo {
-        max-width: 1040px;
+        max-width: 1200px;
     }
 
     .wizard-panel h2 {
@@ -1171,7 +908,8 @@ const adicionaisEmpresarialPadrao = [
     .planos-toggle {
         display: flex;
         gap: var(--space-8);
-        margin-bottom: var(--space-24);
+        max-width: 480px;
+        margin: 0 auto var(--space-24);
         background-color: var(--color-gray-light);
         border-radius: var(--radius-sm);
         padding: var(--space-4);
@@ -1195,22 +933,10 @@ const adicionaisEmpresarialPadrao = [
         color: var(--color-white);
     }
 
-    /* Toggle de categoria (Residencial/Empresarial) fica um nível acima do
-       sub-filtro — visual mais leve (contornado) pra não competir com ele. */
-    .planos-toggle-categoria {
-        background-color: transparent;
-        border: 1px solid var(--color-border);
-        margin-bottom: var(--space-12);
-    }
-
-    .planos-toggle-categoria .planos-toggle-btn {
-        color: var(--color-dark-blue);
-    }
-
     .planos-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: var(--space-16) var(--space-24);
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--space-24) var(--space-32);
         margin-bottom: var(--space-24);
         align-items: stretch;
     }
