@@ -1,0 +1,939 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+	title="Sorteador Zamtech"
+	description="Ferramenta interna da Zamtech para realizar sorteios entre clientes de forma transparente."
+>
+	<main class="sorteio-page">
+		<section class="hero-section">
+			<div class="container">
+				<div class="badge">🎉 Sorteio Zamtech</div>
+				<h1>Sorteador Zamtech</h1>
+				<p>Carregue a planilha de participantes e realize o sorteio com total transparência.</p>
+			</div>
+		</section>
+
+		<section class="sorteio-section">
+			<div class="container">
+				<!-- PASSO 1: Upload da lista -->
+				<div class="panel" id="painelUpload">
+					<div class="panel-header">
+						<span class="passo-numero">1</span>
+						<div>
+							<h2>Carregar participantes</h2>
+							<p>Envie a planilha (.xlsx/.xls) com o número e o nome de cada participante, uma linha por pessoa.</p>
+						</div>
+					</div>
+
+					<label for="arquivoPlanilha" class="dropzone" id="dropzone">
+						<img src="/assets/icons/website-global-icons/icon-zamtech.svg" alt="" width="36" height="36" class="dropzone-icon" />
+						<strong>Clique para escolher a planilha</strong>
+						<span>.xlsx ou .xls — 1ª coluna = número, 2ª coluna = nome</span>
+					</label>
+					<input type="file" id="arquivoPlanilha" accept=".xlsx,.xls" hidden />
+
+					<div class="status-carga hidden" id="statusCarga"></div>
+					<div class="avisos hidden" id="avisosCarga"></div>
+
+					<button type="button" class="toggle-manual" id="btnMostrarManual">Prefiro colar a lista manualmente</button>
+
+					<div class="manual-wrapper hidden" id="manualWrapper">
+						<label for="listaManual">Cole uma linha por participante (funciona com "-", tabulação ou vírgula separando número e nome)</label>
+						<textarea id="listaManual" rows="6" placeholder="1533 - Vladmyr Miroslav Porto Lobianco&#10;5931 - Talybi Abreu Potratz"></textarea>
+						<button type="button" class="btn-secundario" id="btnUsarManual">Usar esta lista</button>
+					</div>
+
+					<button type="button" class="btn-principal hidden" id="btnContinuarConfig">Continuar →</button>
+				</div>
+
+				<!-- PASSO 2: Configuração do sorteio -->
+				<div class="panel hidden" id="painelConfig">
+					<div class="panel-header">
+						<span class="passo-numero">2</span>
+						<div>
+							<h2>Configurar o sorteio</h2>
+							<p><strong id="totalParticipantesTexto">0</strong> participantes prontos para o sorteio.</p>
+						</div>
+					</div>
+
+					<div class="campo-config">
+						<label for="quantidade">Quantos ganhadores sortear?</label>
+						<input type="number" id="quantidade" value="1" min="1" />
+					</div>
+
+					<div class="opcoes-config">
+						<label class="opcao-check">
+							<input type="checkbox" id="ordenar" />
+							Ordenar resultado final pelo número
+						</label>
+						<label class="opcao-check">
+							<input type="checkbox" id="repeticao" />
+							Permitir que o mesmo número seja sorteado mais de uma vez
+						</label>
+						<label class="opcao-check">
+							<input type="checkbox" id="umPorPessoa" checked />
+							Impedir que a mesma pessoa ganhe mais de um prêmio
+						</label>
+					</div>
+
+					<div class="acoes-config">
+						<button type="button" class="btn-secundario" id="btnVoltarUpload">← Trocar lista</button>
+						<button type="button" class="btn-principal btn-sortear" id="btnSortear">🎲 Sortear agora!</button>
+					</div>
+				</div>
+
+				<!-- PASSO 3: Suspense / animação -->
+				<div class="panel painel-suspense hidden" id="painelSuspense">
+					<div class="suspense-conteudo">
+						<div class="suspense-contagem" id="suspenseContagem"></div>
+						<div class="suspense-spinner hidden" id="suspenseSpinner">
+							<p class="suspense-label">Sorteando...</p>
+							<div class="suspense-nome" id="suspenseNome">—</div>
+							<div class="suspense-numero" id="suspenseNumero">000</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- PASSO 4: Resultado -->
+				<div class="panel hidden" id="painelResultado">
+					<div class="panel-header resultado-header">
+						<span class="passo-numero">🏆</span>
+						<div>
+							<h2>Resultado do sorteio</h2>
+							<p id="infoResultado"></p>
+						</div>
+					</div>
+
+					<div class="lista-ganhadores" id="listaGanhadores"></div>
+
+					<div class="acoes-config">
+						<button type="button" class="btn-secundario" id="btnSalvar">💾 Salvar resultado</button>
+						<button type="button" class="btn-secundario" id="btnSortearNovamente">🔄 Sortear novamente (mesma lista)</button>
+						<button type="button" class="btn-secundario" id="btnNovaLista">📂 Carregar nova lista</button>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<canvas id="confettiCanvas"></canvas>
+</Layout>
+
+<script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+	// Tipagem mínima para as libs carregadas via <script src> (não são módulos npm).
+	declare const XLSX: any;
+	declare const ConfettiGenerator: any;
+
+	interface Participante {
+		numero: number;
+		nome: string;
+	}
+
+	let participantes: Participante[] = [];
+	let confetti: any = null;
+
+	// --- elementos ---
+	const painelUpload = document.getElementById('painelUpload') as HTMLDivElement;
+	const painelConfig = document.getElementById('painelConfig') as HTMLDivElement;
+	const painelSuspense = document.getElementById('painelSuspense') as HTMLDivElement;
+	const painelResultado = document.getElementById('painelResultado') as HTMLDivElement;
+
+	const inputArquivo = document.getElementById('arquivoPlanilha') as HTMLInputElement;
+	const dropzone = document.getElementById('dropzone') as HTMLLabelElement;
+	const statusCarga = document.getElementById('statusCarga') as HTMLDivElement;
+	const avisosCarga = document.getElementById('avisosCarga') as HTMLDivElement;
+	const btnContinuarConfig = document.getElementById('btnContinuarConfig') as HTMLButtonElement;
+
+	const btnMostrarManual = document.getElementById('btnMostrarManual') as HTMLButtonElement;
+	const manualWrapper = document.getElementById('manualWrapper') as HTMLDivElement;
+	const listaManual = document.getElementById('listaManual') as HTMLTextAreaElement;
+	const btnUsarManual = document.getElementById('btnUsarManual') as HTMLButtonElement;
+
+	const totalParticipantesTexto = document.getElementById('totalParticipantesTexto') as HTMLElement;
+	const inputQuantidade = document.getElementById('quantidade') as HTMLInputElement;
+	const checkOrdenar = document.getElementById('ordenar') as HTMLInputElement;
+	const checkRepeticao = document.getElementById('repeticao') as HTMLInputElement;
+	const checkUmPorPessoa = document.getElementById('umPorPessoa') as HTMLInputElement;
+	const btnVoltarUpload = document.getElementById('btnVoltarUpload') as HTMLButtonElement;
+	const btnSortear = document.getElementById('btnSortear') as HTMLButtonElement;
+
+	const suspenseContagem = document.getElementById('suspenseContagem') as HTMLDivElement;
+	const suspenseSpinner = document.getElementById('suspenseSpinner') as HTMLDivElement;
+	const suspenseNome = document.getElementById('suspenseNome') as HTMLDivElement;
+	const suspenseNumero = document.getElementById('suspenseNumero') as HTMLDivElement;
+
+	const infoResultado = document.getElementById('infoResultado') as HTMLParagraphElement;
+	const listaGanhadores = document.getElementById('listaGanhadores') as HTMLDivElement;
+	const btnSalvar = document.getElementById('btnSalvar') as HTMLButtonElement;
+	const btnSortearNovamente = document.getElementById('btnSortearNovamente') as HTMLButtonElement;
+	const btnNovaLista = document.getElementById('btnNovaLista') as HTMLButtonElement;
+
+	let ultimoResultado: Participante[] = [];
+
+	function mostrarPainel(painel: HTMLDivElement) {
+		[painelUpload, painelConfig, painelSuspense, painelResultado].forEach((p) => p.classList.add('hidden'));
+		painel.classList.remove('hidden');
+	}
+
+	// --- Passo 1: carregar participantes ---
+
+	// Normaliza uma "linha" de texto colado manualmente pra [numero, nome],
+	// aceitando "-", tabulação (colado do Excel) ou vírgula como separador —
+	// era exatamente essa rigidez (só aceitava "-") que fazia a lista inteira
+	// ser rejeitada quando alguém colava direto de uma planilha.
+	function separarLinha(linha: string): [string, string] | null {
+		const separadores = ['\t', ' - ', '-', ';', ','];
+		for (const sep of separadores) {
+			const idx = linha.indexOf(sep);
+			if (idx > -1) {
+				const numero = linha.slice(0, idx).trim();
+				const nome = linha.slice(idx + sep.length).trim();
+				if (numero && nome) return [numero, nome];
+			}
+		}
+		return null;
+	}
+
+	function normalizarLista(bruta: { numero: string; nome: string }[]): { lista: Participante[]; avisos: string[]; linhasIgnoradas: number } {
+		const avisos: string[] = [];
+		const porNumero = new Map<number, string>();
+		const vistos = new Set<string>();
+		const lista: Participante[] = [];
+		let linhasDuplicadasExatas = 0;
+
+		for (const item of bruta) {
+			const numeroLimpo = parseInt(String(item.numero).replace(/\D/g, ''), 10);
+			const nome = String(item.nome).trim();
+			if (isNaN(numeroLimpo) || !nome) continue;
+
+			const chave = `${numeroLimpo}|${nome.toUpperCase()}`;
+			if (vistos.has(chave)) {
+				linhasDuplicadasExatas++; // linha idêntica repetida na planilha (mesmo número + mesmo nome)
+				continue;
+			}
+			vistos.add(chave);
+
+			if (porNumero.has(numeroLimpo) && porNumero.get(numeroLimpo) !== nome) {
+				avisos.push(`Número ${numeroLimpo} aparece pra "${porNumero.get(numeroLimpo)}" e também pra "${nome}" — removido do sorteio, corrija a planilha.`);
+				continue;
+			}
+			porNumero.set(numeroLimpo, nome);
+			lista.push({ numero: numeroLimpo, nome });
+		}
+
+		// remove qualquer participante cujo número tenha entrado na lista de avisos
+		const numerosConflitantes = new Set(
+			avisos.map((a) => parseInt(a.match(/Número (\d+)/)?.[1] ?? '', 10)).filter((n) => !isNaN(n))
+		);
+		const listaFinal = lista.filter((p) => !numerosConflitantes.has(p.numero));
+
+		if (linhasDuplicadasExatas > 0) {
+			avisos.unshift(
+				`${linhasDuplicadasExatas} linha(s) vinham repetidas na planilha (mesmo número e mesmo nome) — contadas só uma vez.`
+			);
+		}
+
+		return { lista: listaFinal, avisos, linhasIgnoradas: linhasDuplicadasExatas };
+	}
+
+	function aplicarListaCarregada(lista: Participante[], avisos: string[], totalNaPlanilha: number) {
+		participantes = lista;
+
+		statusCarga.classList.remove('hidden');
+		if (lista.length > 0) {
+			statusCarga.className = 'status-carga status-ok';
+			const resumoDiferenca = totalNaPlanilha > lista.length
+				? ` (a planilha tinha ${totalNaPlanilha} linhas — ${totalNaPlanilha - lista.length} foram unificadas/removidas, veja abaixo por quê)`
+				: '';
+			statusCarga.textContent = `✅ ${lista.length} participante(s) carregado(s) com sucesso.${resumoDiferenca}`;
+			btnContinuarConfig.classList.remove('hidden');
+		} else {
+			statusCarga.className = 'status-carga status-erro';
+			statusCarga.textContent = '⚠️ Não encontrei nenhum participante válido nessa lista. Confira o arquivo/texto e tente de novo.';
+			btnContinuarConfig.classList.add('hidden');
+		}
+
+		if (avisos.length > 0) {
+			avisosCarga.classList.remove('hidden');
+			avisosCarga.innerHTML = avisos.map((a) => `<p>⚠️ ${a}</p>`).join('');
+		} else {
+			avisosCarga.classList.add('hidden');
+			avisosCarga.innerHTML = '';
+		}
+	}
+
+	inputArquivo.addEventListener('change', async () => {
+		const arquivo = inputArquivo.files?.[0];
+		if (!arquivo) return;
+
+		try {
+			const dados = await arquivo.arrayBuffer();
+			const workbook = XLSX.read(dados, { type: 'array' });
+			const primeiraAba = workbook.Sheets[workbook.SheetNames[0]];
+			const linhas: any[][] = XLSX.utils.sheet_to_json(primeiraAba, { header: 1, raw: false, defval: '' });
+
+			const bruta = linhas
+				.map((linha) => ({ numero: String(linha[0] ?? '').trim(), nome: String(linha[1] ?? '').trim() }))
+				.filter((item) => item.numero !== '' && item.nome !== '');
+
+			const { lista, avisos } = normalizarLista(bruta);
+			aplicarListaCarregada(lista, avisos, bruta.length);
+		} catch (erro) {
+			statusCarga.classList.remove('hidden');
+			statusCarga.className = 'status-carga status-erro';
+			statusCarga.textContent = '⚠️ Não consegui ler esse arquivo. Confira se é mesmo um .xlsx/.xls válido.';
+			console.error(erro);
+		}
+	});
+
+	btnMostrarManual.addEventListener('click', () => {
+		manualWrapper.classList.toggle('hidden');
+	});
+
+	btnUsarManual.addEventListener('click', () => {
+		const linhas = listaManual.value.split('\n').map((l) => l.trim()).filter(Boolean);
+		const bruta: { numero: string; nome: string }[] = [];
+		for (const linha of linhas) {
+			const par = separarLinha(linha);
+			if (par) bruta.push({ numero: par[0], nome: par[1] });
+		}
+		const { lista, avisos } = normalizarLista(bruta);
+		aplicarListaCarregada(lista, avisos, bruta.length);
+	});
+
+	btnContinuarConfig.addEventListener('click', () => {
+		totalParticipantesTexto.textContent = String(participantes.length);
+		mostrarPainel(painelConfig);
+	});
+
+	btnVoltarUpload.addEventListener('click', () => {
+		mostrarPainel(painelUpload);
+	});
+
+	// --- Passo 2 → 3: disparar o sorteio ---
+
+	function embaralhar<T>(lista: T[]): T[] {
+		const copia = [...lista];
+		for (let i = copia.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[copia[i], copia[j]] = [copia[j], copia[i]];
+		}
+		return copia;
+	}
+
+	async function esperar(ms: number): Promise<void> {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
+
+	btnSortear.addEventListener('click', async () => {
+		const quantidade = parseInt(inputQuantidade.value, 10);
+		const ordenar = checkOrdenar.checked;
+		const repeticao = checkRepeticao.checked;
+		const umPorPessoa = checkUmPorPessoa.checked;
+
+		if (isNaN(quantidade) || quantidade < 1) {
+			alert('Digite uma quantidade válida de ganhadores.');
+			return;
+		}
+		if (participantes.length === 0) {
+			alert('Carregue uma lista de participantes primeiro.');
+			return;
+		}
+
+		// monta o "pool" de onde os ganhadores vão sair
+		let pool = [...participantes];
+		if (umPorPessoa) {
+			// mantém só 1 número por pessoa (o restante fica de fora do sorteio,
+			// pra ninguém ganhar 2 prêmios mesmo tendo comprado mais de 1 número)
+			const vistos = new Set<string>();
+			pool = pool.filter((p) => {
+				const chave = p.nome.toUpperCase();
+				if (vistos.has(chave)) return false;
+				vistos.add(chave);
+				return true;
+			});
+		}
+
+		if (!repeticao && quantidade > pool.length) {
+			alert(`Só tem ${pool.length} participante(s) disponível(is) sem repetição — reduza a quantidade ou marque "permitir repetição".`);
+			return;
+		}
+
+		const sorteados: Participante[] = [];
+		let disponiveis = [...pool];
+		for (let i = 0; i < quantidade; i++) {
+			if (!repeticao && disponiveis.length === 0) break;
+			const origem = repeticao ? pool : disponiveis;
+			const indice = Math.floor(Math.random() * origem.length);
+			sorteados.push(origem[indice]);
+			if (!repeticao) disponiveis.splice(indice, 1);
+		}
+
+		if (ordenar) sorteados.sort((a, b) => a.numero - b.numero);
+
+		await rodarSuspense(sorteados);
+	});
+
+	// --- Passo 3: animação de suspense ---
+
+	async function rodarSuspense(sorteados: Participante[]) {
+		mostrarPainel(painelSuspense);
+		suspenseSpinner.classList.add('hidden');
+		suspenseContagem.classList.remove('hidden');
+
+		for (const numero of ['Preparando o sorteio...', '3', '2', '1']) {
+			suspenseContagem.textContent = numero;
+			suspenseContagem.classList.remove('pulso');
+			void suspenseContagem.offsetWidth; // reinicia a animação CSS
+			suspenseContagem.classList.add('pulso');
+			await esperar(700);
+		}
+
+		suspenseContagem.classList.add('hidden');
+		suspenseSpinner.classList.remove('hidden');
+
+		// gira nomes reais dos participantes (não números aleatórios soltos —
+		// assim o suspense mostra sempre gente que está de verdade concorrendo)
+		const duracao = 4200;
+		const inicio = performance.now();
+		await new Promise<void>((resolve) => {
+			function passo(agora: number) {
+				const progresso = Math.min((agora - inicio) / duracao, 1);
+				const atraso = 40 + progresso * progresso * 260; // desacelera com o tempo
+
+				const aleatorio = participantes[Math.floor(Math.random() * participantes.length)];
+				suspenseNome.textContent = aleatorio.nome;
+				suspenseNumero.textContent = String(aleatorio.numero).padStart(3, '0');
+
+				if (progresso < 1) {
+					setTimeout(() => requestAnimationFrame(passo), atraso);
+				} else {
+					resolve();
+				}
+			}
+			requestAnimationFrame(passo);
+		});
+
+		await mostrarResultado(sorteados);
+	}
+
+	// --- Passo 4: revelar resultado ---
+
+	function iniciarConfete() {
+		if (confetti) confetti.clear();
+		confetti = new ConfettiGenerator({
+			target: 'confettiCanvas',
+			respawn: true,
+			start_from_edge: false,
+			angle: 90,
+			origin: { x: 0.5, y: 1.0 },
+		});
+		confetti.render();
+	}
+
+	async function mostrarResultado(sorteados: Participante[]) {
+		ultimoResultado = sorteados;
+		listaGanhadores.innerHTML = '';
+		infoResultado.textContent = `${sorteados.length} ganhador(es) • ${new Date().toLocaleString('pt-BR')}`;
+
+		mostrarPainel(painelResultado);
+		iniciarConfete();
+
+		for (let i = 0; i < sorteados.length; i++) {
+			const p = sorteados[i];
+			const card = document.createElement('div');
+			card.className = 'card-ganhador';
+			card.innerHTML = `
+				<span class="card-ganhador-posicao">${sorteados.length > 1 ? `#${i + 1}` : '🏆'}</span>
+				<span class="card-ganhador-nome">${p.nome}</span>
+				<span class="card-ganhador-numero">${p.numero}</span>
+			`;
+			listaGanhadores.appendChild(card);
+			await esperar(i === 0 ? 0 : 550);
+			requestAnimationFrame(() => card.classList.add('revelado'));
+		}
+	}
+
+	btnSalvar.addEventListener('click', () => {
+		const linhas = [
+			'Resultado do Sorteio Zamtech',
+			`Data: ${new Date().toLocaleString('pt-BR')}`,
+			`Ganhadores: ${ultimoResultado.length}`,
+			'',
+			...ultimoResultado.map((p, i) => `${i + 1}. Nº ${p.numero} — ${p.nome}`),
+		];
+		const blob = new Blob([linhas.join('\n')], { type: 'text/plain' });
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = `resultado_sorteio_zamtech_${Date.now()}.txt`;
+		a.click();
+	});
+
+	btnSortearNovamente.addEventListener('click', () => {
+		if (confetti) confetti.clear();
+		mostrarPainel(painelConfig);
+	});
+
+	btnNovaLista.addEventListener('click', () => {
+		if (confetti) confetti.clear();
+		participantes = [];
+		inputArquivo.value = '';
+		listaManual.value = '';
+		statusCarga.classList.add('hidden');
+		avisosCarga.classList.add('hidden');
+		btnContinuarConfig.classList.add('hidden');
+		mostrarPainel(painelUpload);
+	});
+
+	function redimensionarCanvas() {
+		const canvas = document.getElementById('confettiCanvas') as HTMLCanvasElement;
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	}
+	redimensionarCanvas();
+	window.addEventListener('resize', redimensionarCanvas);
+</script>
+
+<style>
+	.sorteio-page {
+		background: var(--color-dark-blue);
+		background: radial-gradient(circle, rgb(1, 7, 46) 0%, rgba(0, 2, 18, 1) 51%, rgb(0, 8, 32) 100%);
+		color: var(--color-white);
+		font-family: var(--font-text);
+		min-height: 100vh;
+	}
+
+	.container {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+	}
+
+	.hero-section {
+		padding: 5rem 0 2.5rem 0;
+		text-align: center;
+	}
+
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: rgba(255, 255, 255, 0.1);
+		padding: 0.5rem 1rem;
+		border-radius: var(--radius-full);
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin-bottom: 1.5rem;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.hero-section h1 {
+		font-size: 2.25rem;
+		font-weight: 700;
+		margin-bottom: 0.75rem;
+	}
+
+	.hero-section p {
+		color: rgba(255, 255, 255, 0.75);
+		max-width: 480px;
+		margin: 0 auto;
+	}
+
+	.sorteio-section {
+		padding: 0 0 5rem 0;
+	}
+
+	.panel {
+		position: relative;
+		background: rgba(10, 14, 40, 0.85);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: var(--radius-signature);
+		padding: 2.5rem;
+		box-shadow: var(--elevation-3);
+		overflow: hidden;
+	}
+
+	.panel::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: var(--gradient-signal);
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
+	.panel-header {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.passo-numero {
+		flex-shrink: 0;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 50%;
+		background: var(--gradient-brand);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 700;
+		font-size: 1.1rem;
+	}
+
+	.panel-header h2 {
+		font-size: 1.4rem;
+		font-weight: 700;
+		margin: 0 0 0.35rem 0;
+	}
+
+	.panel-header p {
+		color: rgba(255, 255, 255, 0.7);
+		font-size: 0.95rem;
+		margin: 0;
+	}
+
+	/* --- Passo 1 --- */
+	.dropzone {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		text-align: center;
+		border: 2px dashed rgba(255, 255, 255, 0.25);
+		border-radius: var(--radius-lg);
+		padding: 2.5rem 1.5rem;
+		cursor: pointer;
+		transition: var(--transition-default);
+	}
+
+	.dropzone:hover {
+		border-color: var(--color-secondary);
+		background: rgba(7, 86, 255, 0.08);
+	}
+
+	.dropzone-icon {
+		opacity: 0.85;
+		margin-bottom: 0.25rem;
+	}
+
+	.dropzone strong {
+		font-size: 1.05rem;
+	}
+
+	.dropzone span {
+		font-size: 0.85rem;
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.status-carga {
+		margin-top: 1.25rem;
+		padding: 0.875rem 1rem;
+		border-radius: var(--radius-sm);
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	.status-ok {
+		background: rgba(21, 128, 61, 0.18);
+		border: 1px solid rgba(21, 128, 61, 0.4);
+		color: #86efac;
+	}
+
+	.status-erro {
+		background: rgba(185, 28, 28, 0.18);
+		border: 1px solid rgba(185, 28, 28, 0.4);
+		color: #fca5a5;
+	}
+
+	.avisos {
+		margin-top: 0.75rem;
+		font-size: 0.85rem;
+		color: #fde68a;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.avisos p {
+		margin: 0;
+	}
+
+	.toggle-manual {
+		display: block;
+		margin: 1.25rem auto 0 auto;
+		background: none;
+		border: none;
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 0.85rem;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.manual-wrapper {
+		margin-top: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.manual-wrapper label {
+		font-size: 0.85rem;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.manual-wrapper textarea {
+		width: 100%;
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: var(--radius-sm);
+		padding: 0.875rem 1rem;
+		color: var(--color-white);
+		font-family: inherit;
+		font-size: 0.9rem;
+		resize: vertical;
+	}
+
+	.btn-principal {
+		width: 100%;
+		margin-top: 1.5rem;
+		background: var(--gradient-brand);
+		color: var(--color-white);
+		border: none;
+		border-radius: var(--radius-sm);
+		padding: 1rem;
+		font-size: 1rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition: var(--transition-default);
+	}
+
+	.btn-principal:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--elevation-glow);
+	}
+
+	.btn-secundario {
+		background: rgba(255, 255, 255, 0.08);
+		color: var(--color-white);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: var(--radius-sm);
+		padding: 0.875rem 1.25rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: var(--transition-default);
+	}
+
+	.btn-secundario:hover {
+		background: rgba(255, 255, 255, 0.16);
+	}
+
+	/* --- Passo 2 --- */
+	.campo-config {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.campo-config label {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	.campo-config input {
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: var(--radius-sm);
+		padding: 0.875rem 1rem;
+		color: var(--color-white);
+		font-size: 1.1rem;
+		max-width: 160px;
+	}
+
+	.opcoes-config {
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+		margin-bottom: 2rem;
+	}
+
+	.opcao-check {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		font-size: 0.9rem;
+		color: rgba(255, 255, 255, 0.85);
+		cursor: pointer;
+	}
+
+	.opcao-check input {
+		width: 1.1rem;
+		height: 1.1rem;
+		accent-color: var(--color-secondary);
+	}
+
+	.acoes-config {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.btn-sortear {
+		flex: 1;
+		min-width: 200px;
+		margin-top: 0;
+	}
+
+	/* --- Passo 3: suspense --- */
+	.painel-suspense {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 340px;
+		text-align: center;
+	}
+
+	.suspense-contagem {
+		font-size: 2.5rem;
+		font-weight: 800;
+		background: var(--gradient-brand);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	.suspense-contagem.pulso {
+		animation: pulsoContagem 0.7s ease-out;
+	}
+
+	@keyframes pulsoContagem {
+		0% { transform: scale(0.6); opacity: 0; }
+		40% { transform: scale(1.15); opacity: 1; }
+		100% { transform: scale(1); opacity: 1; }
+	}
+
+	.suspense-label {
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		font-size: 0.8rem;
+		color: rgba(255, 255, 255, 0.55);
+		margin-bottom: 0.5rem;
+	}
+
+	.suspense-nome {
+		font-size: 1.75rem;
+		font-weight: 700;
+		margin-bottom: 0.25rem;
+		min-height: 2.2rem;
+	}
+
+	.suspense-numero {
+		font-size: 3.5rem;
+		font-weight: 800;
+		background: var(--gradient-brand);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		filter: blur(0.4px);
+		animation: pulsarNumero 0.5s infinite alternate;
+	}
+
+	@keyframes pulsarNumero {
+		0% { transform: scale(1); }
+		100% { transform: scale(1.05); }
+	}
+
+	/* --- Passo 4: resultado --- */
+	.resultado-header .passo-numero {
+		background: linear-gradient(135deg, #f6c945 0%, #f59e0b 100%);
+		font-size: 1.3rem;
+	}
+
+	.lista-ganhadores {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		margin-bottom: 2rem;
+	}
+
+	.card-ganhador {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		background: linear-gradient(120deg, rgba(246, 201, 69, 0.12) 0%, rgba(7, 86, 255, 0.1) 100%);
+		border: 1px solid rgba(246, 201, 69, 0.35);
+		border-radius: var(--radius-md);
+		padding: 1rem 1.25rem;
+		opacity: 0;
+		transform: translateY(14px) scale(0.97);
+		transition: opacity 0.5s ease, transform 0.5s ease;
+	}
+
+	.card-ganhador.revelado {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+
+	.card-ganhador-posicao {
+		flex-shrink: 0;
+		font-weight: 700;
+		color: #fde68a;
+		min-width: 2.2rem;
+		text-align: center;
+	}
+
+	.card-ganhador-nome {
+		flex: 1;
+		font-weight: 700;
+		font-size: 1.05rem;
+	}
+
+	.card-ganhador-numero {
+		flex-shrink: 0;
+		font-weight: 800;
+		font-size: 1.2rem;
+		background: var(--gradient-brand);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	#confettiCanvas {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 50;
+	}
+
+	@media (max-width: 640px) {
+		.hero-section h1 {
+			font-size: 1.75rem;
+		}
+		.panel {
+			padding: 1.5rem;
+		}
+		.acoes-config {
+			flex-direction: column;
+		}
+		.acoes-config button {
+			width: 100%;
+		}
+		.suspense-numero {
+			font-size: 2.5rem;
+		}
+	}
+</style>
