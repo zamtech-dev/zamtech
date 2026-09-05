@@ -11,10 +11,10 @@ const {
 } = Astro.props;
 
 // Imagem usada quando um link do site é compartilhado (WhatsApp, Facebook, etc).
-// Antes não existia nenhuma tag og:image — o link caía sem preview nenhum.
-// "background-internet-zamtech.webp" já existia em assets, nunca tinha sido
-// usada em lugar nenhum, e é exatamente a cara da marca (fibra + azul).
-const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-internet-zamtech.webp";
+// Trocada pela versão com o logotipo centralizado, feita especificamente pra
+// esse preview de compartilhamento (a anterior ficava sem identidade visual
+// clara no card gerado pelas redes sociais).
+const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-internet-zamtech-com-logotipo-centralizada-para-compartilhar-nas-redes-sociais.webp";
 ---
 
 <!DOCTYPE html>

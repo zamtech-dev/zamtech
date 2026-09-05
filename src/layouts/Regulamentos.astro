@@ -5,15 +5,33 @@ import "../styles/regulamentos.css";
 
 interface Props {
   title?: string;
+  heroTitulo?: string;
+  heroTexto?: string;
+  heroImagem?: string;
+  heroBadge?: string;
 }
 
-const { title = "Zamtech - Fibra Óptica" } = Astro.props;
+const {
+  title = "Zamtech - Fibra Óptica",
+  heroTitulo = "Transparência e Compromisso",
+  heroTexto = "Acesse abaixo todos os termos, políticas e contratos que regem a prestação dos nossos serviços.",
+  heroImagem = "/assets/img/regulamento-img/2149646123.jpg",
+  heroBadge = "Assuntos Regulamentares",
+} = Astro.props;
 ---
 
 <Layout title={title}>
+  <section class="hero-regulamentos" style={`background-image: linear-gradient(rgba(0, 15, 118, 0.85), rgba(3, 37, 208, 0.85)), url("${heroImagem}");`}>
+    <div class="container hero-content">
+      <span class="badge-hero">{heroBadge}</span>
+      <h1>{heroTitulo}</h1>
+      <p>{heroTexto}</p>
+    </div>
+  </section>
+
   <div class="container-regulamentos">
     <SidebarRegulamentos />
-    
+
     <main class="content">
       <slot />
     </main>
@@ -21,6 +39,48 @@ const { title = "Zamtech - Fibra Óptica" } = Astro.props;
 </Layout>
 
 <style>
+  .hero-regulamentos {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 90px 0 70px;
+    color: var(--color-white);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .badge-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-regulamentos h1 {
+    font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-regulamentos p {
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin: 0 auto;
+  }
+
   .container-regulamentos {
     max-width: 1100px; /* Aumentado para acomodar perfeitamente a sidebar e o conteúdo */
     margin: 3rem auto;

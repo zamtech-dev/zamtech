@@ -21,6 +21,17 @@ interface Props {
     recursos?: string[];
     adicionais?: Adicional[];
     isFeatured?: boolean;
+    // Foto de fundo do banner no topo do card (não o card inteiro — só a
+    // faixa de cima, estilo cartão de plano com foto + preço "recortando"
+    // a imagem). Se a página não passar nenhuma, usa uma imagem genérica
+    // de fibra/conexão como fallback.
+    imagemFundo?: string;
+    // Posição do foco da foto (equivale a CSS background-position). Usado
+    // quando a imagem é vertical/retrato e o "center" padrão acaba
+    // cortando cabeça ou rosto na faixa baixa e larga do card — nesses
+    // casos passa "center top" (ou similar) pra puxar o corte pra baixo
+    // em vez de cortar de cima.
+    posicaoFundo?: string;
     // "whatsapp" (padrão, usado em /planos-residenciais e /planos-empresariais):
     // botão manda direto pro WhatsApp com o plano + adicionais escolhidos.
     // "selecionar" (usado em /contratar): botão não manda pra lugar nenhum
@@ -40,6 +51,8 @@ const {
     recursos = [],
     adicionais = [],
     isFeatured = false,
+    imagemFundo = "/assets/img/backgrounds/background-internet-zamtech.webp",
+    posicaoFundo = "center",
     modo = "whatsapp",
 } = Astro.props;
 
@@ -54,88 +67,113 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     data-velocidade={velocidade}
     data-modo={modo}
 >
-    {badge && <div class="card-badge">{badge}</div>}
-
-    <header class="card-header">
-        <h3 class="plan-title">{nome}</h3>
-        {velocidade && <span class="speed-tag">{velocidade}</span>}
-    </header>
-
-    <div class="card-price">
-        <span class="currency">R$</span>
-        <span class="val-inteiro">{inteiroInicial}</span>
-        <div class="price-fraction">
-            <span class="val-centavos">,{centavosIniciais}</span>
-            <span class="period">/mês</span>
-        </div>
-    </div>
-
-    {economia && <p class="saving-tag">{economia}</p>}
-    {descricao && <p class="plan-description">{descricao}</p>}
-
-    <!-- RECURSOS DO PLANO -->
     {
-        recursos.length > 0 && (
-            <ul class="resources-list">
-                {recursos.map((rec) => (
-                    <li>
-                        <img
-                            src={
-                                isFeatured
-                                    ? "/assets/icons/check-zamtech-white.svg"
-                                    : "/assets/icons/check-zamtech.svg"
-                            }
-                            alt="Check"
-                        />
-                        <span>{rec}</span>
-                    </li>
-                ))}
-            </ul>
-        )
-    }
-
-    <!-- LISTA DE OPCIONAIS / ADICIONAIS -->
-    {
-        adicionais.length > 0 && (
-            <div class="adicionais-container">
-                <span class="adicionais-title">Turbine seu plano:</span>
-                {adicionais.map((item) => (
-                    <div class="adicional-item">
-                        {/* Sem repetir o preço aqui: o switch já mostra o
-                            que está ligado/desligado, e o preço lá em cima
-                            do card já atualiza sozinho ao marcar/desmarcar —
-                            escrever "+ R$ X" de novo em cada linha só
-                            duplicava informação que o próprio card já dá. */}
-                        <span class="adicional-label">{item.nome}</span>
-                        <label class="switch">
-                            <input
-                                type="checkbox"
-                                class="chk-adicional"
-                                data-preco={item.preco}
-                                data-nome={item.nome}
-                                checked={item.incluso}
-                                disabled={item.incluso}
-                            />
-                            <span class="slider" />
-                        </label>
-                    </div>
-                ))}
+        badge && (
+            <div class="card-badge">
+                <svg viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+                {badge}
             </div>
         )
     }
 
-    <!-- BOTÃO DE AÇÃO -->
-    {
-        modo === "whatsapp" ? (
-            <a href="#" class="btn btn-primary btn-whatsapp">
-                Adquirir Plano
-            </a>
-        ) : (
-            <button type="button" class="btn btn-primary btn-selecionar-plano">
-                Escolher este plano
-            </button>
-        )
-    }
+    <!-- FAIXA COM FOTO NO TOPO — só essa parte do card tem imagem, o resto
+         do corpo continua claro (branco), com a "onda" fazendo a costura
+         entre as duas partes, igual à referência que você mandou. -->
+    <div
+        class="hero-banner"
+        style={`background-image: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.25) 45%, rgba(0, 0, 0, 0) 100%), url("${imagemFundo}"); background-position: ${posicaoFundo};`}
+    >
+        <span class="hero-subtitle">{nome}</span>
+        {velocidade && <h3 class="hero-title">{velocidade}</h3>}
+        {economia && <span class="hero-tag">{economia}</span>}
+
+        <svg class="curve-divider" viewBox="0 0 360 65" preserveAspectRatio="none">
+            <path d="M 0 35 C 40 35, 45 60, 85 60 C 130 60, 140 0, 185 0 L 360 0 L 360 65 L 0 65 Z" />
+        </svg>
+
+        <div class="price-box">
+            <div class="price-main">
+                <span class="currency">R$</span>
+                <span class="val-inteiro">{inteiroInicial}</span>
+                <div class="price-fraction">
+                    <span class="val-centavos">,{centavosIniciais}</span>
+                    <span class="period">/mês</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORPO CLARO DO CARD -->
+    <div class="card-body">
+        <!-- BOTÃO DE AÇÃO -->
+        {
+            modo === "whatsapp" ? (
+                <a href="#" class="btn btn-primary btn-whatsapp">
+                    Adquirir Plano
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </a>
+            ) : (
+                <button type="button" class="btn btn-primary btn-selecionar-plano">
+                    Escolher este plano
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
+            )
+        }
+
+        <!-- RECURSOS DO PLANO -->
+        {
+            recursos.length > 0 && (
+                <ul class="resources-list">
+                    {recursos.map((rec) => (
+                        <li>
+                            <img src="/assets/icons/check-zamtech.svg" alt="Check" />
+                            <span>{rec}</span>
+                        </li>
+                    ))}
+                </ul>
+            )
+        }
+
+        <!-- LISTA DE OPCIONAIS / ADICIONAIS -->
+        {
+            adicionais.length > 0 && (
+                <div class="adicionais-container">
+                    <span class="adicionais-title">Turbine seu plano:</span>
+                    {adicionais.map((item) => (
+                        <div class="adicional-item">
+                            {/* Sem repetir o preço aqui: o switch já mostra o
+                                que está ligado/desligado, e o preço lá em cima
+                                do card já atualiza sozinho ao marcar/desmarcar —
+                                escrever "+ R$ X" de novo em cada linha só
+                                duplicava informação que o próprio card já dá. */}
+                            <span class="adicional-label">{item.nome}</span>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    class="chk-adicional"
+                                    data-preco={item.preco}
+                                    data-nome={item.nome}
+                                    checked={item.incluso}
+                                    disabled={item.incluso}
+                                />
+                                <span class="slider" />
+                            </label>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+
+        {descricao && <p class="description-text">{descricao}</p>}
+    </div>
 </article>
 
 <script>
@@ -232,102 +270,175 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
 </script>
 
 <style>
+    /* ==========================================================================
+       CARD DE PLANO — estrutura em 2 partes (igual à referência que você
+       mandou): uma faixa com FOTO no topo (só ali, não o card inteiro) e um
+       corpo CLARO embaixo, com uma "onda" SVG costurando as duas partes e
+       o preço "sentado" bem em cima dessa costura.
+       ========================================================================== */
     .card-plano-dinamico {
         position: relative;
         background-color: var(--color-white);
-        border: var(--radius-small) solid var(--color-secondary);
-        border-radius: var(--radius-signature-sm);
-        padding: var(--space-24);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-signature);
         display: flex;
         flex-direction: column;
-        align-items: left;
-        color: var(--color-gray-dark);
         transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
         box-shadow: var(--elevation-1);
-        gap: var(--space-4);
     }
 
     .card-plano-dinamico:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--elevation-2);
-        border-color: var(--color-primary);
-    }
-
-    .card-plano--featured {
-        border: 2px solid var(--color-secondary);
-        background: var(--gradient-brand);
-        color: var(--color-white);
-    }
-
-    .card-plano--featured:hover {
-        border-color: var(--color-secondary);
+        transform: translateY(-4px);
         box-shadow: var(--elevation-3);
     }
 
+    /* Card em destaque: mesmo formato, só ganha um contorno na cor
+       secundária da marca pra se destacar no meio da grade — sem precisar
+       mudar a estrutura toda nem sair da paleta azul da Zamtech. */
+    .card-plano--featured {
+        border: 2px solid var(--color-secondary);
+        box-shadow: var(--elevation-2);
+    }
+
+    .card-plano--featured:hover {
+        box-shadow: var(--elevation-glow);
+    }
+
+    /* Selo saltando pra fora do card, por cima da borda de cima — igual um
+       "ticket" preso na parte de cima do cartão. Cores da própria marca
+       (azul), nada de amarelo/laranja que não tem nada a ver com a
+       identidade da Zamtech. */
     .card-badge {
         position: absolute;
         top: -14px;
-        right: var(--space-24);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
         background: var(--gradient-brand);
         color: var(--color-white);
-        font-family: var(--font-display);
         font-size: var(--fs-caption);
         font-weight: 700;
         padding: var(--space-8) var(--space-16);
         border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: var(--elevation-2);
+        text-align: center;
+        white-space: nowrap;
         border: 2px solid var(--color-white);
     }
 
-    .brand-tag {
-        font-size: var(--fs-caption);
-        color: var(--color-secondary);
-        letter-spacing: 0.1em;
-        font-weight: 700;
+    .card-badge svg {
+        width: 14px;
+        height: 14px;
+        fill: var(--color-white);
+        flex-shrink: 0;
     }
 
-    .plan-title {
-        font-size: var(--fs-sm);
-        margin: var(--space-4) 0;
-    }
-
-    .speed-tag {
-        font-size: var(--fs-h2);
-        font-weight: 900;
-        color: var(--color-primary);
-    }
-
-    .card-plano--featured .speed-tag {
-        font-size: var(--fs-h2);
-        font-weight: 900;
+    /* FAIXA COM FOTO — cantos de cima arredondados e overflow escondido
+       só aqui (não no card inteiro), assim o selo do badge consegue
+       "vazar" pra fora da borda de cima sem ser cortado. */
+    .hero-banner {
+        position: relative;
+        height: 224px;
+        background-size: cover;
+        background-position: center;
+        /* --radius-signature é um shorthand de 4 cantos (28px 28px 28px
+           4px, o "cantinho" característico da Zamtech) — não dá pra usar
+           calc() em cima de um valor com 4 números de uma vez (isso
+           invalida a propriedade inteira e o raio vira 0, que foi
+           exatamente o bug do canto quadrado). Por isso os valores dos
+           dois cantos de cima vêm fixos aqui, batendo com os mesmos 28px
+           do canto superior do card. */
+        border-radius: 28px 28px 0 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 var(--space-24);
         color: var(--color-white);
     }
 
-    .card-price {
+    .hero-subtitle {
+        font-size: var(--fs-caption);
+        font-weight: 600;
+        opacity: 0.95;
+        display: block;
+        margin-bottom: var(--space-4);
+    }
+
+    .hero-title {
+        font-size: clamp(1.15rem, 4vw, 1.5rem);
+        font-family: var(--font-display);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.3px;
+        margin-bottom: var(--space-4);
+    }
+
+    .hero-tag {
+        display: block;
+        font-size: var(--fs-caption);
+        font-weight: 600;
+        opacity: 0.9;
+    }
+
+    /* Onda de transição entre a foto e o corpo claro do card */
+    .curve-divider {
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        /* Antes tinha 46px — a mesma altura da faixa branca à direita
+           (onde o preço fica sentado). O número é mais alto que isso
+           sozinho, então ele "estourava" pra cima e ficava colado direto
+           na foto, sem respiro nenhum entre o valor e a imagem. Aumentando
+           essa faixa branca sobra espaço de verdade acima do preço. */
+        height: 68px;
+        pointer-events: none;
+    }
+
+    .curve-divider path {
+        fill: var(--color-white);
+    }
+
+    /* Preço "sentado" em cima da onda — por isso o texto é escuro, não
+       branco: ali embaixo já não tem mais foto, é a cor clara do corpo. */
+    .price-box {
+        position: absolute;
+        bottom: 10px;
+        right: var(--space-16);
+        z-index: 2;
+        text-align: right;
+    }
+
+    .price-main {
+        color: var(--color-dark-blue);
+        font-weight: 800;
+        line-height: 1;
         display: flex;
-        flex: row;
-        align-items: center;
-        margin: var(--space-12) 0;
+        align-items: baseline;
+        justify-content: flex-end;
     }
 
     .currency {
-        font-size: var(--fs-h5);
-        font-weight: 600;
-        margin-right: var(--space-4);
+        font-size: var(--fs-sm);
+        font-weight: 700;
+        margin-right: 3px;
     }
 
     .val-inteiro {
-        /* display: flex;
-        flex-direction: row; */
-        font-size: var(--fs-h1);
+        font-size: var(--fs-h2);
         font-weight: 900;
         font-family: var(--font-display);
-        line-height: 1;
+        letter-spacing: -0.5px;
     }
 
     .price-fraction {
         display: flex;
         flex-direction: column;
-        margin-left: var(--space-4);
+        margin-left: 2px;
     }
 
     .val-centavos {
@@ -336,65 +447,87 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
     }
 
     .period {
-        font-size: var(--fs-caption);
-        color: var(--color-gray-dark);
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--color-gray-medium);
     }
 
-    .card-plano--featured .period {
+    /* CORPO CLARO — o padding daqui tinha sumido porque eu usei
+       "var(--space-20)", um token que não existe no seu global.css (só
+       existem 4, 8, 12, 16, 24, 32, 48, 64). Uma var(--x) que não existe
+       não "cai" pra zero por acaso — ela invalida a propriedade inteira,
+       que aí volta pro valor inicial (padding: 0). Por isso ficou tudo
+       espremido, sem respiro nenhum. */
+    .card-body {
+        padding: var(--space-24);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-24);
+        /* Mesmo motivo do hero-banner: os dois cantos de baixo do
+           --radius-signature são 28px (direita) e 4px (esquerda) — fixos
+           aqui em vez de calc() pelo mesmo bug do canto quadrado. */
+        border-radius: 0 0 28px 4px;
+    }
+
+    .btn-whatsapp,
+    .btn-selecionar-plano {
+        width: 100%;
+        background: var(--gradient-brand);
+        color: var(--color-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-8);
+    }
+
+    .btn-whatsapp svg,
+    .btn-selecionar-plano svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .btn-whatsapp:hover,
+    .btn-selecionar-plano:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--elevation-glow);
+    }
+
+    .card-plano--featured .btn-whatsapp,
+    .card-plano--featured .btn-selecionar-plano {
+        background: var(--color-dark-blue);
         color: var(--color-white);
     }
 
-    .saving-tag {
-        color: var(--color-secondary);
-        font-size: var(--fs-caption);
-        font-weight: 700;
-        margin-bottom: var(--space-8);
-    }
-
-    .card-plano--featured .saving-tag {
-        color: var(--color-white);
-        font-size: var(--fs-caption);
-        font-weight: 700;
-        margin-bottom: var(--space-8);
-    }
-
-    .plan-description {
-        font-size: var(--fs-sm);
-        color: var(--color-gray-dark);
-        margin-bottom: var(--space-16);
-        line-height: 1.4;
-    }
-
-    .card-plano--featured .plan-description {
-        font-size: var(--fs-sm);
-        color: var(--color-white);
-        margin-bottom: var(--space-16);
-        line-height: 1.4;
-    }
-
+    /* RECURSOS */
     .resources-list {
         list-style: none;
-        margin-bottom: var(--space-16);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-12);
     }
 
     .resources-list li {
         display: flex;
         align-items: center;
-        gap: var(--space-8);
+        gap: var(--space-12);
         font-size: var(--fs-sm);
-        margin-bottom: var(--space-4);
+        font-weight: 600;
+        color: var(--color-dark-blue);
     }
 
     .resources-list img {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
 
     /* ADICIONAIS / SWITCHES */
     .adicionais-container {
-        padding: var(--space-0);
+        background: var(--color-gray-light);
+        border: 1px solid var(--color-border);
+        padding: var(--space-16);
         border-radius: var(--radius-md);
-        margin-bottom: var(--space-16);
     }
 
     .adicionais-title {
@@ -405,20 +538,13 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         color: var(--color-secondary);
     }
 
-    .card-plano--featured .adicionais-title {
-        display: block;
-        font-size: var(--fs-caption);
-        font-weight: 700;
-        margin-bottom: var(--space-8);
-        color: var(--color-white);
-    }
-
     .adicional-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: var(--space-8);
         gap: var(--space-16);
+        color: var(--color-gray-dark);
     }
 
     .adicional-item:last-child {
@@ -427,10 +553,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
 
     .adicional-label {
         font-size: var(--fs-sm);
-        display: flex;
-        flex-direction: column;
         font-weight: 500;
-        margin: var(--space-4);
     }
 
     /* TOGGLE SWITCH CSS */
@@ -439,6 +562,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         display: inline-block;
         width: 38px;
         height: 22px;
+        flex-shrink: 0;
     }
 
     .switch input {
@@ -454,7 +578,7 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #333;
+        background-color: #ccc;
         transition: 0.3s;
         border-radius: var(--radius-full);
     }
@@ -484,24 +608,12 @@ const [inteiroInicial, centavosIniciais] = precoBase.toFixed(2).split(".");
         cursor: not-allowed;
     }
 
-    .btn-whatsapp,
-    .btn-selecionar-plano {
-        width: 100%;
-    }
-
-    /* No card destaque (fundo em degradê azul) o botão .btn-primary usa o
-       MESMO degradê de fundo do card — some, sem contraste nenhum. Nos
-       cards destaque o botão vira branco sólido com texto azul, garantindo
-       contraste em qualquer um dos dois fundos. */
-    .card-plano--featured .btn-whatsapp,
-    .card-plano--featured .btn-selecionar-plano {
-        background: var(--color-white);
-        color: var(--color-primary);
-    }
-
-    .card-plano--featured .btn-whatsapp:hover,
-    .card-plano--featured .btn-selecionar-plano:hover {
-        background: var(--color-gray-light);
-        filter: none;
+    /* DESCRIÇÃO */
+    .description-text {
+        text-align: center;
+        color: var(--color-gray-medium);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        line-height: 1.4;
     }
 </style>

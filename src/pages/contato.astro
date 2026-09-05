@@ -91,10 +91,8 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
 	.contato-page {
-		background: var(--color-dark-blue);
-		background:
-			radial-gradient(circle, rgb(1, 7, 46) 0%, rgba(0, 2, 18, 1) 51%, rgb(0, 8, 32) 100%);
-		color: var(--color-white);
+		background: var(--color-gray-light);
+		color: var(--color-gray-dark);
 		font-family: var(--font-text);
 		min-height: 100vh;
 	}
@@ -107,6 +105,9 @@ import Layout from '../layouts/Layout.astro';
 
 	.hero-section {
 		position: relative;
+		background-image: linear-gradient(rgba(0, 15, 118, 0.85), rgba(3, 37, 208, 0.85)), url("/assets/img/mulher-encantada-assiste-a-um-webinar-interessante-em-um-laptop-portatil-recebe-uma-ligacao-de-um-amigo-aproveita-o-tempo-livre-no-interior-do-cafe-recria-no-pais-quente-do-resort-pessoas-comunicacao-estilo-de-v.jpg");
+		background-size: cover;
+		background-position: center;
 		padding: 6rem 0 3rem 0;
 		text-align: center;
 	}
@@ -115,13 +116,14 @@ import Layout from '../layouts/Layout.astro';
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		background: rgba(255, 255, 255, 0.1);
+		background: rgba(255, 255, 255, 0.15);
 		padding: 0.5rem 1rem;
 		border-radius: var(--radius-full);
 		font-size: 0.875rem;
 		font-weight: 500;
 		margin-bottom: 1.5rem;
 		border: 1px solid rgba(255, 255, 255, 0.15);
+		backdrop-filter: blur(4px);
 	}
 
 	.hero-section h1 {
@@ -133,7 +135,7 @@ import Layout from '../layouts/Layout.astro';
 
 	.hero-section p {
 		font-size: 1rem;
-		color: rgba(255, 255, 255, 0.75);
+		color: rgba(255, 255, 255, 0.9);
 		max-width: 600px;
 		margin: 0 auto;
 	}
@@ -144,8 +146,8 @@ import Layout from '../layouts/Layout.astro';
 
 	.form-wrapper {
 		position: relative;
-		background: rgba(10, 14, 40, 0.85);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: var(--color-white);
+		border: 1px solid var(--color-border);
 		border-radius: var(--radius-signature);
 		padding: 3rem;
 		max-width: 700px;
@@ -173,10 +175,11 @@ import Layout from '../layouts/Layout.astro';
 		font-size: 1.5rem;
 		font-weight: 700;
 		margin-bottom: 0.75rem;
+		color: var(--color-dark-blue);
 	}
 
 	.form-header p {
-		color: rgba(255, 255, 255, 0.75);
+		color: var(--color-gray-medium);
 		font-size: 1rem;
 	}
 
@@ -195,17 +198,17 @@ import Layout from '../layouts/Layout.astro';
 	.input-group label {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: rgba(255, 255, 255, 0.85);
+		color: var(--color-gray-dark);
 	}
 
 	.input-group input,
 	.input-group select,
 	.input-group textarea {
-		background: rgba(255, 255, 255, 0.06);
-		border: 1px solid rgba(255, 255, 255, 0.18);
+		background: var(--color-gray-light);
+		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
 		padding: 0.875rem 1rem;
-		color: var(--color-white);
+		color: var(--color-gray-dark);
 		font-size: 1rem;
 		font-family: inherit;
 		transition: border-color 0.2s;
@@ -213,8 +216,8 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	.input-group select option {
-		background: var(--color-dark-blue);
-		color: var(--color-white);
+		background: var(--color-white);
+		color: var(--color-gray-dark);
 	}
 
 	.input-group input:focus,

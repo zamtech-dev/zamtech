@@ -84,18 +84,26 @@ import "../styles/global.css";
     </section>
 
     <section class="help-cta-section">
-        <div class="container help-cta-box">
-            <div class="help-cta-content">
-                <h2>Ainda precisa de ajuda?</h2>
-                <p>Nossa equipe está sempre pronta para garantir que você tenha a melhor experiência com a nossa fibra óptica.</p>
-            </div>
-            <div class="help-cta-buttons">
-                <a href="tel:2731413637" class="btn btn-yellow">
-                    Ligar: (27) 3141-3637
-                </a>
-                <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                    Atendimento Geral WhatsApp
-                </a>
+        <div class="container">
+            <div class="help-cta-box">
+                <div class="help-cta-avatar">
+                    <img
+                        src="/assets/img/zanita-avatar/zanita-confiante.webp"
+                        alt="Zanita, a mascote da Zamtech, com uma expressão confiante"
+                    />
+                </div>
+                <div class="help-cta-content">
+                    <h2>Ainda precisa de ajuda?</h2>
+                    <p>Nossa equipe está sempre pronta para garantir que você tenha a melhor experiência com a nossa fibra óptica.</p>
+                    <div class="help-cta-buttons">
+                        <a href="tel:2731413637" class="help-cta-btn">
+                            Ligar Telefone
+                        </a>
+                        <a href="https://wa.me/5527995057736" target="_blank" rel="noopener noreferrer" class="help-cta-btn">
+                            WhatsApp
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -293,56 +301,108 @@ import "../styles/global.css";
         line-height: 1.6;
     }
 
-    /* Help CTA Section */
+    /* ==========================================================================
+       Help CTA Section — avatar grande da Zanita à esquerda, fundo cinza
+       claro (não mais azul escuro) e texto na cor normal do site à
+       direita, seguindo o exemplo de referência que você mandou.
+       ========================================================================== */
     .help-cta-section {
         padding: 60px 0 100px;
-        background-color: var(--color-gray-light);
+        background-color: var(--color-white);
     }
 
     .help-cta-box {
-        background-color: var(--color-dark-blue);
-        border-radius: var(--radius-lg);
-        padding: var(--space-32);
+        background-color: var(--color-gray-light);
+        border-radius: 28px;
+        display: flex;
+        align-items: center;
+        gap: var(--space-32);
+        max-width: 820px;
+        margin: 0 auto;
+        padding: var(--space-24) var(--space-48) var(--space-24) var(--space-24);
+        box-shadow: var(--elevation-1);
+    }
+
+    .help-cta-avatar {
+        flex-shrink: 0;
+        width: 280px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .help-cta-avatar img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .help-cta-content {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: var(--space-24);
-        color: var(--color-white);
-        box-shadow: var(--elevation-2);
+        gap: var(--space-16);
+        color: var(--color-gray-dark);
     }
 
     .help-cta-content h2 {
         font-size: var(--fs-h2);
-        margin-bottom: var(--space-8);
-        color: var(--color-white);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: var(--color-dark-blue);
     }
 
     .help-cta-content p {
-        opacity: 0.85;
         font-size: var(--fs-body);
-        max-width: 600px;
+        line-height: 1.4;
+        color: var(--color-gray-medium);
+        max-width: 440px;
     }
 
     .help-cta-buttons {
         display: flex;
         gap: var(--space-16);
         flex-wrap: wrap;
+        margin-top: var(--space-8);
+    }
+
+    .help-cta-btn {
+        background-color: transparent;
+        border: 1.5px solid var(--color-gray-medium);
+        border-radius: var(--radius-md);
+        padding: var(--space-12) var(--space-24);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        color: var(--color-gray-dark);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
+    }
+
+    .help-cta-btn:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+        border-color: var(--color-gray-dark);
+        transform: translateY(-1px);
     }
 
     @media (max-width: 768px) {
         .help-cta-box {
-            padding: var(--space-24);
-        }
-        
-        .help-cta-buttons {
             flex-direction: column;
-            width: 100%;
+            padding: var(--space-32) var(--space-24);
+            text-align: center;
         }
 
-        .help-cta-buttons .btn {
-            width: 100%;
+        .help-cta-avatar {
+            width: 200px;
+        }
+
+        .help-cta-content {
+            align-items: center;
+        }
+
+        .help-cta-buttons {
+            justify-content: center;
         }
     }
 </style>
