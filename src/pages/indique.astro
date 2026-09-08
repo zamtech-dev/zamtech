@@ -4,7 +4,7 @@ import "../styles/global.css";
 ---
 
 <Layout title="Indique e Ganhe - Zamtech Fibra Óptica">
-    <!-- 1. HERO -->
+
     <section class="section-dark section indique-hero">
         <div class="container indique-hero-content">
             <span class="chip-brand">Programa de Indicação</span>
@@ -19,7 +19,6 @@ import "../styles/global.css";
         </div>
     </section>
 
-    <!-- 2. COMO FUNCIONA -->
     <section class="section como-funciona-section">
         <div class="container">
             <h2 class="titulo-secao">Como funciona</h2>
@@ -51,7 +50,6 @@ import "../styles/global.css";
         </div>
     </section>
 
-    <!-- 3. QUANTO VOCÊ PODE GANHAR -->
     <section class="section-dark section calculo-section">
         <div class="container calculo-container">
             <h2 class="titulo-secao">Quanto você pode ganhar</h2>
@@ -78,7 +76,6 @@ import "../styles/global.css";
         </div>
     </section>
 
-    <!-- 4. REGRAS PRINCIPAIS -->
     <section class="section regras-section">
         <div class="container">
             <h2 class="titulo-secao">Regras principais</h2>
@@ -122,7 +119,6 @@ import "../styles/global.css";
         </div>
     </section>
 
-    <!-- 5. FORMULÁRIO: GERAR LINK -->
     <section class="section form-section" id="gerar-link">
         <div class="container">
             <div class="form-wrapper card-padrao">
@@ -156,7 +152,6 @@ import "../styles/global.css";
         </div>
     </section>
 
-    <!-- 6. FAQ -->
     <section class="section faq-indique-section">
         <div class="container">
             <h2 class="titulo-secao">Perguntas frequentes</h2>
@@ -194,7 +189,6 @@ import "../styles/global.css";
         </div>
     </section>
 
-    <!-- 7. CTA FINAL -->
     <section class="section indique-cta-section">
         <div class="container indique-cta-box">
             <h2>Ficou com alguma dúvida?</h2>
@@ -205,7 +199,7 @@ import "../styles/global.css";
 </Layout>
 
 <script>
-    // Validação de CPF (algoritmo oficial de dígitos verificadores)
+
     function validarCPF(valor: string): boolean {
         const cpf = valor.replace(/[^\d]/g, "");
         if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -251,9 +245,6 @@ import "../styles/global.css";
     const mensagemIndique = document.getElementById("mensagemIndique") as HTMLElement;
     const btnGerarLink = document.getElementById("btnGerarLink") as HTMLButtonElement;
 
-    // Botão "Gerar meu link" começa cinza/travado (atributo disabled já vem
-    // assim no HTML). Só libera (fica azul, clicável) quando nome + CPF
-    // válido + checkbox "Li e concordo" estiverem todos OK ao mesmo tempo.
     function atualizarEstadoBotaoGerarLink() {
         const nomeOk = !!nomeInput?.value.trim();
         const cpfOk = !!cpfInput?.value && validarCPF(cpfInput.value);
@@ -279,9 +270,6 @@ import "../styles/global.css";
 
     type Contrato = { id: number; descricao: string };
 
-    // Faz a chamada pra API. Separado do handler de submit pra poder chamar
-    // de novo depois que a pessoa escolhe o contrato (2ª chamada, agora com
-    // contrato_id preenchido).
     async function chamarGerarLink(nome: string, cpf: string, contratoId?: number) {
         const corpo: Record<string, unknown> = { nome, cpf };
         if (contratoId) corpo.contrato_id = contratoId;
@@ -294,9 +282,6 @@ import "../styles/global.css";
         return response.json();
     }
 
-    // Trata a resposta da API — chamado tanto depois do 1º envio do
-    // formulário quanto depois de escolher um contrato na tela de "qual
-    // contrato você quer usar?".
     function tratarRespostaGerarLink(data: any, nome: string, cpf: string) {
         if (data.sucesso && data.link) {
             const mensagemZap = `Ei! Usa esse link pra assinar a Zamtech: ${data.link}`;
@@ -335,9 +320,7 @@ import "../styles/global.css";
         } else if (data.tipo === "escolher_contrato" && Array.isArray(data.contratos)) {
             mostrarEscolhaContrato(nome, cpf, data.contratos, data.mensagem);
         } else {
-            // tipo 'bloqueio' = regra do programa não foi cumprida (vermelho, sem WhatsApp,
-            // pois falar com a gente não muda o resultado agora). tipo 'erro' = problema
-            // temporário do nosso lado ou do SGP (azul, com WhatsApp como alternativa).
+
             const ehErroDeSistema = data.tipo === "erro";
             let html = `<p>${data.mensagem || "Não consegui confirmar seus dados agora."}</p>`;
             if (ehErroDeSistema) {
@@ -347,9 +330,6 @@ import "../styles/global.css";
         }
     }
 
-    // Mostra a lista de contratos ativos pra pessoa escolher qual usar pra
-    // indicar. Ao clicar num contrato, chama a API de novo já com o
-    // contrato_id — sem precisar redigitar nome/CPF.
     function mostrarEscolhaContrato(nome: string, cpf: string, contratos: Contrato[], mensagem: string) {
         const opcoesHtml = contratos
             .map((c) => `<button type="button" class="contrato-opcao" data-contrato-id="${c.id}">${c.descricao}</button>`)
@@ -415,7 +395,7 @@ import "../styles/global.css";
 </script>
 
 <style>
-    /* 1. HERO */
+
     .indique-hero {
         text-align: center;
     }
@@ -454,7 +434,6 @@ import "../styles/global.css";
         padding: 0 var(--space-32);
     }
 
-    /* 2. COMO FUNCIONA */
     .como-funciona-section {
         background-color: var(--color-white);
     }
@@ -506,7 +485,6 @@ import "../styles/global.css";
         line-height: 1.6;
     }
 
-    /* 3. CALCULADORA */
     .calculo-container {
         text-align: center;
     }
@@ -568,7 +546,6 @@ import "../styles/global.css";
         margin-right: auto;
     }
 
-    /* 4. REGRAS */
     .regras-section {
         background-color: var(--color-white);
     }
@@ -612,7 +589,6 @@ import "../styles/global.css";
         text-decoration: underline;
     }
 
-    /* 5. FORMULÁRIO */
     .form-section {
         background-color: var(--color-gray-light);
     }
@@ -687,9 +663,6 @@ import "../styles/global.css";
         color: #dc2626;
     }
 
-    /* Sem isso, o `display: block` acima empata em prioridade com a regra
-       que esconde o atributo [hidden] do navegador, e o texto de erro
-       aparece sempre — mesmo escondido pelo JS. */
     .input-erro[hidden] {
         display: none;
     }
@@ -717,8 +690,6 @@ import "../styles/global.css";
         font-weight: 600;
     }
 
-    /* Estado de sucesso ("seu link tá pronto") tem visual próprio — desliga
-       a caixa genérica de mensagem e deixa o card abaixo assumir sozinho. */
     .mensagem-retorno-indique.sucesso {
         background: none;
         border: none;
@@ -727,15 +698,6 @@ import "../styles/global.css";
         color: inherit;
     }
 
-    /* .contratos-lista, .contrato-opcao, .link-sucesso-card e companhia estão
-       no <style is:global> lá embaixo, não aqui — são classes que só existem
-       depois que o JS injeta HTML via innerHTML (resposta da API), e um
-       <style> comum do Astro (escopado) não alcança elemento que não estava
-       no HTML original da página. Foi por isso que a caixa do link ficava
-       sem nenhum estilo (sem fundo, sem borda, sem respiro) mesmo com o CSS
-       certinho escrito — o seletor simplesmente nunca "batia" no elemento. */
-
-    /* 6. FAQ (mesmo padrão da Central de Ajuda) */
     .faq-indique-section {
         background-color: var(--color-white);
     }
@@ -796,7 +758,6 @@ import "../styles/global.css";
         line-height: 1.6;
     }
 
-    /* 7. CTA FINAL */
     .indique-cta-section {
         background-color: var(--color-dark-blue);
     }
@@ -831,11 +792,6 @@ import "../styles/global.css";
     }
 </style>
 
-<!-- Estilo GLOBAL (não escopado) só pra classes que aparecem em HTML
-     injetado via JS (mostrarEscolhaContrato / tratarRespostaGerarLink).
-     O <style> escopado do Astro só alcança o que já existia no HTML da
-     página; qualquer coisa que o JS cria depois com innerHTML precisa
-     estar aqui, senão o CSS existe no arquivo mas nunca aplica. -->
 <style is:global>
     .contratos-lista {
         display: flex;

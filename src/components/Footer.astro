@@ -1,5 +1,5 @@
 ---
-// Footer.astro
+
 ---
 
 <footer class="main-footer">
@@ -10,7 +10,6 @@
             </a>
         </div>
 
-        <!-- GRADE DE LINKS (estilo Apple: colunas com título e links pequenos) -->
         <div class="footer-links-grid">
             <div class="footer-link-col">
                 <h4 class="footer-link-title">Planos e Contratação</h4>
@@ -55,7 +54,6 @@
 
         <hr class="footer-divider" />
 
-        <!-- BLOCO DE CONTATO E REDES (equivalente ao "outras formas de comprar" da Apple) -->
         <div class="footer-info-block">
             <div class="footer-info-col">
                 <h5 class="footer-info-title">Conecte-se com a Zamtech</h5>
@@ -82,7 +80,6 @@
             </div>
         </div>
 
-        <!-- LINHA FINAL (copyright, estilo Apple: bem pequena) -->
         <div class="footer-bottom-bar">
             <p>© 2026 Zamtech Fibra Óptica. Todos os direitos reservados. CNPJ 26.558.295/0001-00</p>
         </div>
@@ -90,13 +87,7 @@
 </footer>
 
 <style>
-    /* ==========================================================================
-       RODAPÉ (FOOTER) — estilo compacto, inspirado no rodapé da Apple:
-       colunas de links pequenos, bloco de contato reduzido logo abaixo, e
-       uma última linha bem pequena só com copyright. Antes o rodapé tinha
-       poucos links (bem grandes) e vários links da Zamtech não apareciam
-       aqui — agora toda página nova do site tem seu lugar aqui.
-       ========================================================================== */
+
     .main-footer {
         position: relative;
         background-color: var(--color-gray-dark);
@@ -106,7 +97,6 @@
         overflow: hidden;
     }
 
-    /* Fio de sinal assinatura Zamtech no topo do rodapé, ecoando o header */
     .main-footer::before {
         content: "";
         position: absolute;
@@ -123,7 +113,6 @@
         align-items: center;
     }
 
-    /* Logo no topo */
     .footer-logo-row {
         margin-bottom: var(--space-32);
         display: flex;
@@ -136,7 +125,6 @@
         height: auto;
     }
 
-    /* GRADE DE LINKS — 4 colunas, texto pequeno (estilo Apple) */
     .footer-links-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -170,7 +158,6 @@
         color: var(--color-white);
     }
 
-    /* Divisor fino entre a grade de links e o bloco de contato */
     .footer-divider {
         width: 100%;
         border: none;
@@ -179,7 +166,6 @@
         margin-bottom: var(--space-32);
     }
 
-    /* BLOCO DE CONTATO E REDES — igual ao parágrafo pequeno de endereço/telefone da Apple */
     .footer-info-block {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -240,7 +226,6 @@
         color: var(--color-white);
     }
 
-    /* LINHA FINAL — bem pequena, só copyright (igual ao rodapé da Apple) */
     .footer-bottom-bar {
         width: 100%;
         border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -253,9 +238,6 @@
         text-align: center;
     }
 
-    /* ==========================================================================
-       RESPONSIVIDADE
-       ========================================================================== */
     @media (max-width: 900px) {
         .footer-links-grid {
             grid-template-columns: repeat(2, 1fr);

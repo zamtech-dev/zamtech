@@ -1,10 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap');
 
-/* ==========================================================================
-   1. DESIGN TOKENS (SISTEMA DE CORES, ESPAÇAMENTO E TIPOGRAFIA)
-   ========================================================================== */
 :root {
-    /* Paleta Oficial Zamtech (inalterada) */
+
     --color-primary: #0325D0;
     --color-secondary: #0756FF;
     --color-dark-blue: #000F76;
@@ -17,16 +14,9 @@
     --color-gray-medium: #525252;
     --color-gray-low: #a3a3a3;
 
-    /* Borda visível de verdade — --color-gray-light (#f5f5f5) é quase branco,
-       então usado como cor de borda ele some em qualquer fundo claro (só
-       aparecia quando o elemento ganhava --color-primary no hover/focus).
-       Esse token é tingido de azul-marca, sutil mas perceptível sem hover. */
     --color-border: rgba(3, 37, 208, 0.18);
     --color-border-dark: rgba(255, 255, 255, 0.18);
 
-    /* Cores semânticas de status (sucesso/erro/alerta) — usadas em badges,
-       mensagens de retorno e cards de pagamento em todo o site, pra parar
-       de cada página inventar seu próprio vermelho/verde. */
     --color-success: #15803d;
     --color-success-bg: #f0fdf4;
     --color-success-border: #bbf7d0;
@@ -34,86 +24,67 @@
     --color-danger-bg: #fef2f2;
     --color-danger-border: #fecaca;
 
-    /* Tipografia (inalterada) */
     --font-display: 'Red Hat Display', sans-serif;
     --font-text: 'Red Hat Text', sans-serif;
 
-    /* Escala Tipográfica Controlada (Sem exageros)
-       Reduzida em 2026-09, depois ficou pequena demais pro gosto do Lidson —
-       reajustada num meio-termo: maior que a versão compacta, mas sem
-       voltar pro tamanho exagerado de antes. Degraus entre cada nível
-       continuam claros. */
     --fs-caption: 0.8125rem;
-    /* 13px */
+
     --fs-sm: 0.9375rem;
-    /* 15px */
+
     --fs-body: 1.0625rem;
-    /* 17px */
+
     --fs-h5: 1.125rem;
-    /* 18px */
+
     --fs-h4: 1.3125rem;
-    /* 21px */
+
     --fs-h3: 1.5rem;
-    /* 24px */
+
     --fs-h2: 1.875rem;
-    /* 30px */
+
     --fs-h1: 2.375rem;
-    /* 38px */
 
-    /* Sistema de Grade (Múltiplos de 8px) */
     --space-4: 0.25rem;
-    /* 4px */
-    --space-8: 0.5rem;
-    /* 8px */
-    --space-12: 0.75rem;
-    /* 12px */
-    --space-16: 1rem;
-    /* 16px */
-    --space-24: 1.5rem;
-    /* 24px */
-    --space-32: 2rem;
-    /* 32px */
-    --space-48: 3rem;
-    /* 48px */
-    --space-64: 4rem;
-    /* 64px */
 
-    /* Arredondamento */
+    --space-8: 0.5rem;
+
+    --space-12: 0.75rem;
+
+    --space-16: 1rem;
+
+    --space-24: 1.5rem;
+
+    --space-32: 2rem;
+
+    --space-48: 3rem;
+
+    --space-64: 4rem;
+
     --radius-small: 2px;
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 16px;
     --radius-gg: 32px;
     --radius-full: 9999px;
-    /* Corte assinatura Zamtech: um canto "plugado", os outros suaves.
-       É a nossa identidade de forma — remete ao conector de fibra óptica.
-       Usar com moderação: hero, cards de destaque, imagens principais. */
+
     --radius-signature: 28px 28px 28px 4px;
     --radius-signature-sm: 16px 16px 16px 4px;
 
-    /* Gradiente de marca — azul Zamtech, do escuro pro claro. Sem roxo:
-       o roxo (--color-purple) fica reservado só para seções gamers. */
     --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     --gradient-brand-soft: linear-gradient(135deg, rgba(3, 37, 208, 0.08) 0%, rgba(7, 86, 255, 0.08) 100%);
     --gradient-signal: linear-gradient(120deg, var(--color-dark-blue) 0%, var(--color-primary) 55%, var(--color-secondary) 100%);
-    /* Gradiente exclusivo para seções/planos gamer */
+
     --gradient-gamer: linear-gradient(135deg, var(--color-primary) 0%, var(--color-purple) 100%);
 
-    /* Elevações e Sombras — discretas, tingidas de azul-marca */
     --elevation-1: 0 1px 2px rgba(3, 15, 60, 0.05), 0 1px 1px rgba(3, 15, 60, 0.06);
     --elevation-2: 0 3px 10px rgba(3, 15, 60, 0.08), 0 1px 3px rgba(3, 15, 60, 0.06);
     --elevation-3: 0 10px 24px rgba(3, 15, 60, 0.10), 0 3px 8px rgba(3, 15, 60, 0.06);
-    /* Brilho de sinal — usar com moderação, só no hover do CTA principal */
+
     --elevation-glow: 0 4px 14px rgba(7, 86, 255, 0.20);
 
-    /* Transições */
     --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ==========================================================================
-   2. RESET & BASE
-   ========================================================================== */
 *,
 *::before,
 *::after {
@@ -127,12 +98,7 @@
     flex-direction: column;
     align-items: center;
     background-color: #000217;
-    /* Textura de fibra óptica (asset já existente, "background-abstract-dark.webp")
-       por baixo do degradê de sempre. O degradê continua fazendo o vinheteamento
-       (escurece as bordas pra não brigar com o texto), e a imagem só dá uma
-       profundidade a mais no fundo — mesma ideia que já era usada com a versão
-       branca dela em .social-proof-section (index.astro), agora replicada aqui
-       pra ficar padrão em toda seção escura do site. */
+
     background-image:
         radial-gradient(circle,
             rgba(1, 7, 46, 0.55) 0%,
@@ -179,7 +145,6 @@ button {
     background: none;
 }
 
-/* Foco visível consistente com a marca (acessibilidade) */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -190,14 +155,6 @@ select:focus-visible {
     border-radius: var(--radius-sm);
 }
 
-/* ==========================================================================
-   2B. ANIMAÇÃO DE ENTRADA NO SCROLL
-   ========================================================================== */
-/* Qualquer elemento com data-reveal começa "escondido" (leve fade + subida)
-   e o script global em Layout.astro observa a tela: quando o elemento entra
-   na área visível, adiciona .is-visible e a transição CSS cuida do resto.
-   Funciona em QUALQUER página do site (o observer é global), sem precisar
-   de nenhuma lib. Reduced-motion sempre mostra tudo direto, sem animar. */
 [data-reveal] {
     opacity: 0;
     transform: translateY(28px);
@@ -210,9 +167,6 @@ select:focus-visible {
     transform: translateY(0);
 }
 
-/* Variante com leve atraso, pra dar aquele efeito "em cascata" quando vários
-   cards de uma mesma grade aparecem quase juntos (usar data-reveal-atraso
-   com "1", "2", "3"... nos irmãos de uma grade). */
 [data-reveal][data-reveal-atraso="1"] { transition-delay: 0.1s; }
 [data-reveal][data-reveal-atraso="2"] { transition-delay: 0.2s; }
 [data-reveal][data-reveal-atraso="3"] { transition-delay: 0.3s; }
@@ -226,9 +180,6 @@ select:focus-visible {
     }
 }
 
-/* Seção com leve tingimento azul-marca — alterna com o branco puro pra criar
-   ritmo visual entre as seções claras (igual grandes provedores intercalam
-   tons da cor da marca em vez de deixar tudo no mesmo branco chapado). */
 .section-tint {
     background-color: #EEF1FC;
     background-image:
@@ -240,9 +191,6 @@ select:focus-visible {
     background-blend-mode: normal, soft-light;
 }
 
-/* ==========================================================================
-   3. CONTAINERS & LAYOUT
-   ========================================================================== */
 .container {
     width: 100%;
     max-width: 1200px;
@@ -271,9 +219,6 @@ select:focus-visible {
     }
 }
 
-/* ==========================================================================
-   4. HIERARQUIA DE TIPOGRAFIA
-   ========================================================================== */
 h1,
 h2,
 h3,
@@ -310,8 +255,6 @@ p {
     color: inherit;
 }
 
-/* Destaque de texto com o gradiente de marca — usar em 1-3 palavras-chave
-   dentro de um título, nunca no título inteiro. */
 .text-gradient {
     background: var(--gradient-brand);
     -webkit-background-clip: text;
@@ -319,15 +262,12 @@ p {
     color: transparent;
 }
 
-/* ==========================================================================
-   5. COMPONENTES BASE (BOTÕES & BADGES)
-   ========================================================================== */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 48px;
-    /* Touch target recomendado pelo Google */
+
     padding: 0 var(--space-24);
     border-radius: var(--radius-md);
     font-weight: 600;
@@ -348,9 +288,6 @@ p {
     filter: brightness(0.95);
 }
 
-/* Estado desativado, padrão pra qualquer botão .btn do site (ex: "Gerar meu
-   link" em /indique, que só libera depois que o formulário inteiro tá
-   preenchido certo). Fica cinza e sem os efeitos de hover/active. */
 .btn:disabled {
     background: var(--color-gray-low);
     color: var(--color-white);
@@ -375,7 +312,6 @@ p {
     border-color: var(--color-white);
 }
 
-/* Utilities de fundo */
 .bg-dark {
     background-color: var(--color-gray-dark);
     color: var(--color-white);
@@ -386,7 +322,6 @@ p {
     color: var(--color-gray-dark);
 }
 
-/* Essa classe agora funciona em QUALQUER arquivo do site */
 .card-padrao {
     position: relative;
     background-color: var(--color-gray-dark);
@@ -396,7 +331,6 @@ p {
     overflow: hidden;
 }
 
-/* Fio de luz no topo do card — assinatura visual sutil, sem exagero */
 .card-padrao::before {
     content: "";
     position: absolute;
@@ -407,7 +341,6 @@ p {
     background: var(--gradient-brand);
 }
 
-/* Variante com o corte assimétrico assinatura Zamtech */
 .card-signature {
     border-radius: var(--radius-signature);
 }
@@ -421,8 +354,6 @@ p {
     padding-bottom: var(--space-16);
 }
 
-/* Traço-assinatura sob os títulos de seção: substitui a linha genérica
-   por um degradê curto da marca. */
 .titulo-secao::after {
     content: "";
     position: absolute;
@@ -435,8 +366,6 @@ p {
     background: var(--gradient-brand);
 }
 
-/* Divisor-assinatura: linha fina em degradê para separar blocos sem
-   recorrer a bordas cinzas genéricas. */
 .divider-brand {
     height: 1px;
     width: 100%;
@@ -454,9 +383,6 @@ p {
     background-color: rgba(3, 37, 208, 0.08);
 }
 
-/* Caixa de retorno de formulário (sucesso/aviso), usada em /indique,
-   /assinar e /segunda-via — visual único pra qualquer mensagem de resposta
-   de formulário no site inteiro. */
 .mensagem-retorno-indique {
     margin-top: var(--space-16);
     padding: var(--space-12) var(--space-16);
@@ -473,8 +399,6 @@ p {
     display: none;
 }
 
-/* Quando o formulário esbarra numa regra/erro — vermelho, pra ficar claro
-   que não é "tenta de novo", é "isso aqui não pode seguir assim". */
 .mensagem-retorno-indique.negativa {
     background: var(--color-danger-bg);
     border-color: rgba(220, 38, 38, 0.3);
@@ -489,7 +413,6 @@ p {
     width: 100%;
 }
 
-/* Selo/chip de marca — para tags como "Mais vendido", "Novo" etc. */
 .chip-brand {
     display: inline-flex;
     align-items: center;

@@ -44,7 +44,6 @@ import "../styles/global.css";
                 <span>Buscando faturas no sistema...</span>
             </div>
 
-            <!-- Container do Filtro de Mês -->
             <div id="filtroMesContainer" style="display:none; width:100%; margin-top:24px;">
                 <div class="filtro-wrapper">
                     <label for="selectMes" class="filtro-label">📅 Filtrar por mês de vencimento:</label>
@@ -106,7 +105,6 @@ import "../styles/global.css";
                         const mesPadrao = popularFiltroMes(faturasGlobais);
                         if (filtroContainer) filtroContainer.style.display = "block";
 
-                        // Filtra e exibe inicialmente o mês atual (ou todos se o mês atual não tiver fatura)
                         if (mesPadrao !== "todos") {
                             const filtradas = faturasGlobais.filter(f => f.vencimento.startsWith(mesPadrao));
                             renderizarFaturas(filtradas);
@@ -160,20 +158,18 @@ import "../styles/global.css";
             const [ano, mes] = anoMes.split("-");
             const nomeMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
             const labelFormatado = `${nomeMeses[parseInt(mes, 10) - 1]} de ${ano}`;
-            
+
             const option = document.createElement("option");
             option.value = anoMes;
             option.textContent = labelFormatado;
             selectMes.appendChild(option);
         });
 
-        // Descobre o mês e ano atual (YYYY-MM)
         const agora = new Date();
         const anoAtual = agora.getFullYear();
         const mesAtual = String(agora.getMonth() + 1).padStart(2, '0');
         const mesAtualStr = `${anoAtual}-${mesAtual}`;
 
-        // Se houver fatura para o mês atual, seleciona ele automaticamente
         if (mesesUnicos.includes(mesAtualStr)) {
             selectMes.value = mesAtualStr;
             return mesAtualStr;

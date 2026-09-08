@@ -139,9 +139,6 @@ import "../styles/global.css";
             .replace(/(\d{5})(\d{1,3})$/, "$1-$2");
     }
 
-    // Operação pediu nome sempre em caixa alta (facilita conferir no SGP).
-    // Preserva a posição do cursor, senão ele pula pro final a cada letra
-    // digitada no meio do nome — bem irritante de usar.
     function forcarMaiusculo(input: HTMLInputElement) {
         const posicaoCursor = input.selectionStart;
         input.value = input.value.toUpperCase();
@@ -183,9 +180,6 @@ import "../styles/global.css";
         cepStatus.classList.toggle("input-dica--erro", negativo);
     }
 
-    // Busca o endereço assim que o CEP fica completo (8 dígitos), pra pessoa
-    // não precisar digitar rua/bairro/cidade na mão. API pública do próprio
-    // Correios via ViaCEP — grátis, sem chave, sem custo nenhum pra gente.
     async function buscarEnderecoPorCep(cep: string) {
         mostrarDicaCep("Buscando endereço...");
         try {
@@ -228,8 +222,6 @@ import "../styles/global.css";
     const params = new URLSearchParams(window.location.search);
     const ref = (params.get("ref") || "").trim();
 
-    // Guardado aqui na 1ª chamada (validar-ref.php) pra poder usar depois,
-    // lá no botão de WhatsApp que aparece quando o cadastro dá certo.
     let indicadorNomeCompleto = "";
 
     async function iniciar() {
@@ -307,11 +299,7 @@ import "../styles/global.css";
                 const data = await response.json();
 
                 if (data.sucesso) {
-                    // Carol monitora o SGP na mão (sem robô nenhum olhando isso), então
-                    // quanto mais rápido ela souber que caiu um pré-cadastro novo, mais
-                    // rápido ela consegue converter e agendar a instalação. Por isso o
-                    // botão: a pessoa avisa direto no WhatsApp, sem precisar a gente ficar
-                    // ficando de olho o dia inteiro esperando aparecer.
+
                     const mensagemZap = `Oi! Acabei de fazer meu pré-cadastro no site${indicadorNomeCompleto ? ` (indicado por ${indicadorNomeCompleto})` : ""}. Meu nome é ${dados.nome}, CPF ${dados.cpf}. Pode conferir e agilizar minha instalação?`;
                     mostrarMensagem(`
                         <p>${data.mensagem}</p>

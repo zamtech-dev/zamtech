@@ -5,27 +5,25 @@
     display: flex;
     gap: 3rem;
     width: 100%;
-    /* Impede que qualquer coisa estoure o limite da tela */
+    
     box-sizing: border-box; 
   }
 
   .content {
     flex: 1;
-    min-width: 0; /* Essencial para elementos flexbox não empurrarem o layout para fora */
+    min-width: 0; 
   }
 
   @media (max-width: 768px) {
     .container-regulamentos {
       flex-direction: column;
       gap: 1.5rem;
-      padding: 0 1rem; /* Reduz o padding lateral no celular */
+      padding: 0 1rem; 
       margin: 1.5rem auto;
     }
   }
 
-  /* ==========================================================================
-   ESTILOS UNIFICADOS - PÁGINAS DE REGULAMENTOS E TERMOS
-   ========================================================================== */
+  
 
 .regulamentos-page {
     display: flex;

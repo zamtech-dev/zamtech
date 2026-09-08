@@ -1,5 +1,5 @@
 ---
-// Header.astro
+
 ---
 
 <header class="main-header" id="main-header">
@@ -393,7 +393,6 @@
         overlay.addEventListener("click", closeMenu);
     }
 
-    // EFEITO DE SCROLL GLASSMORPHISM
     if (header) {
         window.addEventListener("scroll", () => {
             if (window.scrollY > 40) {
@@ -420,8 +419,6 @@
         box-sizing: border-box;
     }
 
-    /* Fio de sinal assinatura Zamtech: uma linha fina do espectro
-       azul > roxo sempre visível no topo do site. */
     .main-header::after {
         content: "";
         position: absolute;
@@ -433,21 +430,13 @@
         opacity: 0.9;
     }
 
-    /* ESTADO COMPACTO (QUANDO ROLA A PÁGINA) */
     .main-header.scrolled {
         top: 2px;
-        /* Largura fixa em % ficava espremendo "Planos Residenciais / Planos
-           Empresariais" em telas de notebook (era mais apertado em telas
-           GRANDES do que no breakpoint de tablet logo abaixo — o oposto do
-           esperado). Com clamp() a pílula nunca fica menor que 560px
-           enquanto tiver espaço, mas também não estica além da conta em
-           telas muito largas. (Reduzido de 700px pra 560px depois que
-           "Indique e Ganhe" saiu do menu superior — só sobraram 2 links.) */
+
         width: clamp(560px, 40vw, 780px);
         max-width: 94vw;
         border-radius: var(--radius-full);
-        /* Voltou a ser fundo sólido (sem blur/vidro), só que agora
-           --color-dark-blue (#000F76) em vez do --gradient-brand de antes. */
+
         background: var(--color-dark-blue);
         border: 1px solid rgba(255, 255, 255, 0.2);
         box-shadow: var(--elevation-3);
@@ -459,9 +448,6 @@
         display: none;
     }
 
-    /* Texto do menu um pouco mais compacto só no estado "pílula" — junto com
-       o gap garantido no .header-container, evita que os links encostem na
-       logo em telas de notebook (~1280-1440px), onde a pílula é mais estreita. */
     .main-header.scrolled .nav-menu-top {
         gap: var(--space-16);
     }
@@ -476,10 +462,7 @@
         align-items: center;
         width: 100%;
         height: 30px;
-        /* Respiro mínimo garantido entre a logo e o menu, mesmo se a pílula
-           do header compactado ficar apertada — antes dependia só do
-           space-between "sobrar espaço", e quando não sobrava, o texto
-           "Planos Residenciais" ficava colado na logo. */
+
         gap: var(--space-24);
     }
 
@@ -490,7 +473,7 @@
     }
 
     .main-header.scrolled .brand-logo {
-        height: 28px; /* Redução sutil na logo ao compactar */
+        height: 28px;
     }
 
     .menu-top-wrapper {
@@ -505,7 +488,6 @@
         list-style: none;
     }
 
-    /* TIPOGRAFIA DOS LINKS SUPERIORES */
     .nav-menu-top a {
         color: var(--color-white);
         font-family: var(--font-display);
@@ -535,14 +517,13 @@
     }
 
     .main-header.scrolled .btn-menu-toggle {
-        border-radius: var(--radius-full); /* Adapta o botão ao formato pílula do header */
+        border-radius: var(--radius-full);
     }
 
     .btn-menu-toggle:hover {
         background-color: var(--color-primary);
     }
 
-    /* SIDEBAR LATERAL (470px COM RESPIRO) */
     .sidebar-menu {
         position: fixed;
         top: 0;
@@ -593,7 +574,6 @@
         gap: var(--space-24);
     }
 
-    /* 1. BLOQUINHOS (TOP GRID) */
     .bloquinhos-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -641,7 +621,6 @@
         line-height: 1.2;
     }
 
-    /* CARDS DE SEÇÃO DA SIDEBAR */
     .menu-section-card {
         background-color: var(--color-white);
         border: 1px solid rgba(0, 0, 0, 0.08);
@@ -668,8 +647,7 @@
 
     .indique-card:hover,
     .precadastro-card:hover {
-        /* Mesma cor de borda que os bloquinhos (2ª via, Login, Ajuda) usam no
-           hover deles — antes ficava azul aqui e cinza nos outros. */
+
         border-color: var(--color-gray-low);
         box-shadow: var(--elevation-2);
         transform: translateY(-2px);
@@ -731,7 +709,6 @@
         object-fit: contain;
     }
 
-    /* SANFONAS (ACCORDIONS) */
     .accordion-item {
         border-bottom: 1px solid var(--color-border);
         padding-bottom: var(--space-12);
@@ -838,7 +815,6 @@
         font-weight: 600;
     }
 
-    /* OVERLAY */
     .menu-overlay {
         position: fixed;
         top: 0;
@@ -858,7 +834,6 @@
         visibility: visible;
     }
 
-    /* RESPONSIVIDADE */
     @media (max-width: 992px) {
         .main-header.scrolled {
             width: 85%;

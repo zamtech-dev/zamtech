@@ -10,10 +10,7 @@ const {
     description = "Internet fibra óptica de alta velocidade, PABX em nuvem e monitoramento para sua casa ou empresa. Conheça os planos Zamtech.",
 } = Astro.props;
 
-// Imagem usada quando um link do site é compartilhado (WhatsApp, Facebook, etc).
-// Trocada pela versão com o logotipo centralizado, feita especificamente pra
-// esse preview de compartilhamento (a anterior ficava sem identidade visual
-// clara no card gerado pelas redes sociais).
+
 const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-internet-zamtech-com-logotipo-centralizada-para-compartilhar-nas-redes-sociais.webp";
 ---
 
@@ -48,14 +45,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     <ConsentimentoLGPD />
     <BotaoWhatsApp />
 
-    <!-- BARRA FLUTUANTE DE CEP — aparece em qualquer página do site depois
-         que a pessoa rola a tela (igual grandes provedores tipo Nio fazem),
-         pra ela não precisar voltar lá em cima pra checar viabilidade. Na
-         home ela some enquanto o formulário grande do topo ainda está
-         visível (senão fica CTA duplicado na tela) e aparece assim que ele
-         sai da vista; nas outras páginas aparece depois de um scroll curto.
-         Clicar abre um painel lateral com a mesma lógica de consulta usada
-         na home (src/scripts/viabilidade.ts). -->
+    
     <div class="cep-float-bar" id="cepFloatBar">
         <div class="container cep-float-bar-inner">
             <p>Será que a Zamtech já chegou aí?</p>
@@ -92,13 +82,12 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
         padding-top: 60px;
     }
 
-    /* ===================== BARRA FLUTUANTE DE CEP ===================== */
+    
     .cep-float-bar {
         position: fixed;
         left: 0;
         right: 0;
-        /* 96px = espaço suficiente pra não brigar com o botão flutuante de
-           WhatsApp (BotaoWhatsApp.astro), que também fica fixo no rodapé. */
+        
         bottom: 96px;
         z-index: 60;
         display: flex;
@@ -157,14 +146,12 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
         }
     }
 
-    /* ===================== PAINEL LATERAL DE CEP ===================== */
+    
     .cep-panel-overlay {
         position: fixed;
         inset: 0;
         background: rgba(0, 4, 30, 0.45);
-        /* Precisa ficar ACIMA do botão flutuante de WhatsApp (z-index 99998
-           em BotaoWhatsApp.astro), senão ele fica boiando por cima do painel
-           enquanto a pessoa preenche o CEP. */
+        
         z-index: 99999;
         opacity: 0;
         pointer-events: none;
@@ -297,9 +284,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     }
 </style>
 <script>
-    // Observer global de "aparecer suave no scroll" (data-reveal) — funciona
-    // em qualquer página do site sem precisar repetir esse script em cada
-    // uma. Ver a classe [data-reveal] em global.css.
+
     const prefereReduzirMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const elementosRevelar = document.querySelectorAll<HTMLElement>("[data-reveal]");
 
@@ -321,8 +306,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     }
 </script>
 <script>
-    // BARRA FLUTUANTE + PAINEL DE CEP — disponível em qualquer página. Reusa
-    // a mesma lógica de consulta da busca da home (src/scripts/viabilidade.ts).
+
     import { mascaraCep, consultarViaCep, consultarViabilidade, irParaContratar, WHATSAPP_COMERCIAL } from "../scripts/viabilidade";
 
     const barra = document.getElementById("cepFloatBar") as HTMLDivElement;
@@ -337,11 +321,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     const textoVerificar = document.getElementById("cepPanelSubmitTexto") as HTMLSpanElement;
     const resultado = document.getElementById("cepPanelResultado") as HTMLParagraphElement;
 
-    // Na home, a barra só aparece depois que o formulário grande do topo sair
-    // da tela (senão fica CTA repetido). Nas outras páginas, aparece depois
-    // de um scroll curto. Em /contratar não faz sentido nenhuma das duas —
-    // a pessoa já está preenchendo CEP/número ali mesmo, então a barra nunca
-    // aparece nessa página.
+
     const formHero = document.getElementById("viabilidade-form");
     const paginaSemBarraFlutuante = window.location.pathname.startsWith("/contratar");
 

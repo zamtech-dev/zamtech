@@ -19,7 +19,7 @@ import "../styles/global.css";
     <main class="regulamentos-container section">
         <div class="container">
             <div class="regulamentos-grid">
-                <!-- CARD 0: INDIQUE E GANHE -->
+
                 <a href="/regulamento-indique-e-ganhe" class="regulamento-card">
                     <div class="card-icon">
                         <span class="icon-mask" style={`--icon-src: url("/assets/icons/others-icons/beneficios.svg")`} role="img" aria-label="Indique e Ganhe"></span>
@@ -35,7 +35,6 @@ import "../styles/global.css";
                     <span class="card-action">Acessar Documento &rarr;</span>
                 </a>
 
-                <!-- CARD 1: POLÍTICA DE PRIVACIDADE -->
                 <a href="/politica-de-privacidade" class="regulamento-card">
                     <div class="card-icon">
                         <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/politica-de-privacidade.svg")`} role="img" aria-label="Política de Privacidade"></span>
@@ -51,7 +50,6 @@ import "../styles/global.css";
                     <span class="card-action">Acessar Documento &rarr;</span>
                 </a>
 
-                <!-- CARD 2: TERMOS DE USO -->
                 <a href="/termos-de-uso" class="regulamento-card">
                     <div class="card-icon">
                         <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/termos-de-uso.svg")`} role="img" aria-label="Termos de Uso"></span>
@@ -66,7 +64,6 @@ import "../styles/global.css";
                     <span class="card-action">Acessar Documento &rarr;</span>
                 </a>
 
-                <!-- CARD 3: TERMO DE CONTRATO -->
                 <a href="/termos-de-contrato" class="regulamento-card">
                     <div class="card-icon">
                         <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/contrato-de-prestacao.svg")`} role="img" aria-label="Termos de Contrato"></span>
@@ -81,7 +78,6 @@ import "../styles/global.css";
                     <span class="card-action">Acessar Documento &rarr;</span>
                 </a>
 
-                <!-- CARD 4: TERMO DE ADESÃO -->
                 <a href="/termos-de-adesao" class="regulamento-card">
                     <div class="card-icon">
                         <span class="icon-mask" style={`--icon-src: url("/assets/icons/regulamentos/termos-de-adesao.svg")`} role="img" aria-label="Termo de Adesão"></span>
@@ -111,7 +107,6 @@ import "../styles/global.css";
                     </div>
                     <span class="card-action">Acessar Documento &rarr;</span>
                 </a>
-
 
                 <a href="/vacinacao" class="regulamento-card">
                     <div class="card-icon">
@@ -226,18 +221,10 @@ import "../styles/global.css";
         box-shadow: var(--elevation-1);
     }
 
-    /* Ícone "mascarado": em vez de mostrar a cor original do SVG (alguns
-       arquivos vinham pretos, outros já vinham azuis — inconsistente), a
-       gente usa o SVG só como silhueta e pinta tudo com a mesma cor da
-       marca. Assim os 7 ícones desta grade ficam sempre idênticos, não
-       importa a cor do arquivo original. */
     .icon-mask {
         width: 24px;
         height: 24px;
-        /* #0756ff é exatamente a cor que os OUTROS 6 ícones desse grid já
-           usavam no arquivo original (conferido no SVG) — é ela que fica
-           igual em todos os 7, e é a cor que você disse ser a mais usada
-           na marca. */
+
         background-color: var(--color-secondary);
         -webkit-mask-image: var(--icon-src);
         mask-image: var(--icon-src);

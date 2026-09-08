@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import CardPlano from '../components/CardPlano.astro';
 
-// Adicionais Padrao para os planos residenciais simples
+
 const adicionaisPadraoResidencial = [
     { nome: "Tecnologia Mesh", preco: 39.90 },
     { nome: "Câmera Inteligente", preco: 39.90 },
@@ -13,12 +13,12 @@ const adicionaisPadraoResidencial = [
 <Layout title="Planos de Internet - Zamtech Fibra Óptica">
     <main class="container section">
         
-        <!-- SEÇÃO RESIDENCIAIS -->
+        
         <section>
             <h2 class="titulo-secao">Planos Residenciais</h2>
             <div class="plans-grid">
                 
-                <!-- 300 MEGA -->
+                
                 <CardPlano
                     nome="ZAMTECH 300"
                     velocidade="300 Mega"
@@ -32,7 +32,7 @@ const adicionaisPadraoResidencial = [
                     adicionais={adicionaisPadraoResidencial}
                 />
 
-                <!-- 500 MEGA -->
+                
                 <CardPlano
                     nome="ZAMTECH 500"
                     velocidade="500 Mega"
@@ -46,7 +46,7 @@ const adicionaisPadraoResidencial = [
                     adicionais={adicionaisPadraoResidencial}
                 />
 
-                <!-- 800 MEGA -->
+                
                 <CardPlano
                     nome="ZAMTECH 800"
                     velocidade="800 Mega"
@@ -60,7 +60,7 @@ const adicionaisPadraoResidencial = [
                     adicionais={adicionaisPadraoResidencial}
                 />
 
-                <!-- COMBO 800 + MESH -->
+                
                 <CardPlano
                     nome="ZAMTECH 800 + MESH"
                     velocidade="800 Mega + Módulo Mesh"
@@ -81,7 +81,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- COMBO 800 + CÂMERA -->
+                
                 <CardPlano
                     nome="ZAMTECH 800 + CÂMERA"
                     velocidade="800 Mega + Câmera em Nuvem"
@@ -101,7 +101,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- PLANO GAMER -->
+                
                 <CardPlano
                     nome="PLANO GAME 1G"
                     velocidade="1 Giga + Wi-Fi 6"
@@ -124,12 +124,12 @@ const adicionaisPadraoResidencial = [
             </div>
         </section>
 
-        <!-- SEÇÃO EMPRESARIAIS -->
+        
         <section class="section">
             <h2 class="titulo-secao">Planos Empresariais (B2B)</h2>
             <div class="plans-grid">
                 
-                <!-- START 600 -->
+                
                 <CardPlano
                     nome="START 600"
                     velocidade="600 Mega Empresarial"
@@ -142,7 +142,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- ESCALA 850 -->
+                
                 <CardPlano
                     nome="ESCALA 850"
                     velocidade="850 Mega Empresarial"
@@ -155,7 +155,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- PRIME 1G -->
+                
                 <CardPlano
                     nome="PRIME 1G"
                     velocidade="1 Giga Empresarial"
@@ -168,7 +168,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- START SECURE (COMBO COMPLETO) -->
+                
                 <CardPlano
                     nome="START SECURE"
                     velocidade="600 Mega + Voz + Câmera"
@@ -188,7 +188,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- SCALE SECURE -->
+                
                 <CardPlano
                     nome="SCALE SECURE"
                     velocidade="850 Mega + Voz + Câmera"
@@ -206,7 +206,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- PRIME SECURE -->
+                
                 <CardPlano
                     nome="PRIME SECURE"
                     velocidade="1 Giga + Voz + Câmera"
@@ -228,12 +228,12 @@ const adicionaisPadraoResidencial = [
             </div>
         </section>
 
-        <!-- SEÇÃO COMBOS PABX EM NUVEM -->
+        
         <section class="section">
             <h2 class="titulo-secao">PABX em Nuvem & Combos</h2>
             <div class="plans-grid">
                 
-                <!-- PABX ESSENTIAL (AVULSO) -->
+                
                 <CardPlano
                     nome="PABX ESSENTIAL"
                     precoBase={49.90}
@@ -246,7 +246,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- PABX PRO (AVULSO) -->
+                
                 <CardPlano
                     nome="PABX PRO"
                     precoBase={79.90}
@@ -261,7 +261,7 @@ const adicionaisPadraoResidencial = [
                     ]}
                 />
 
-                <!-- COMBO PABX CONNECT -->
+                
                 <CardPlano
                     nome="PABX CONNECT"
                     velocidade="600 Mega + PABX em Nuvem"

@@ -4,13 +4,13 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Zamtech - Fibra Óptica">
     <main>
-        <!-- HERO SECTION -->
+
         <section class="hero-section">
             <div class="container">
                 <h1 class="hero-title">Internet rápida, segura e acessível</h1>
 
                 <div class="plans-showcase">
-                    <!-- Card 500 Mega -->
+
                     <article class="plan-card">
                         <div class="plan-header">
                             <span class="plan-brand">ZAMTECH</span>
@@ -31,7 +31,6 @@ import Layout from "../layouts/Layout.astro";
                             >Adquirir Plano</a>
                     </article>
 
-                    <!-- Card Destaque (800 Mega Mesh) -->
                     <article class="plan-card plan-card--featured">
                         <div class="plan-badge">RECOMENDADO</div>
                         <div class="plan-header">
@@ -56,7 +55,6 @@ import Layout from "../layouts/Layout.astro";
                             >Adquirir Combo Mesh</a>
                     </article>
 
-                    <!-- Card 800 Mega -->
                     <article class="plan-card">
                         <div class="plan-header">
                             <span class="plan-brand">ZAMTECH</span>
@@ -80,13 +78,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- CONSULTA DE VIABILIDADE -->
-        <!-- Busca estilo Google: a pessoa digita o endereço e a gente checa a
-             CTO (caixinha de fibra) mais próxima cadastrada no SGP, com
-             latitude/longitude e portas livres. É uma estimativa por
-             distância, nunca uma confirmação 100% técnica — por isso o texto
-             sempre fala "provavelmente" e sempre existe um caminho pro
-             WhatsApp/comercial confirmar de verdade. -->
         <section class="section viabilidade-section">
             <div class="container-narrow">
                 <h2 class="viabilidade-title">Já chegamos na sua rua?</h2>
@@ -125,7 +116,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- FEATURES BÁSICAS -->
         <section class="section section-tint features-section">
             <div class="container">
                 <div class="grid-3-cols">
@@ -180,7 +170,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- POR QUE ESCOLHER A ZAMTECH -->
         <section class="section why-choose-section">
             <div class="container">
                 <header class="section-header">
@@ -275,7 +264,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- SEÇÃO MESH -->
         <section class="section dark-section">
             <div class="container">
                 <div class="badge-group">
@@ -333,8 +321,6 @@ import Layout from "../layouts/Layout.astro";
                 </div>
             </div>
 
-            <!-- SEÇÃO MONITORAMENTO -->
-
             <div class="container">
                 <div class="badge-group space-top-padding">
                     <span>Monitoramento</span>
@@ -375,7 +361,6 @@ import Layout from "../layouts/Layout.astro";
                 </div>
             </div>
 
-            <!-- BANNER CÂMERA -->
             <div class="camera-banner-card">
                 <div class="camera-banner-content">
                     <h3 class="camera-banner-title">Câmera de monitoramento</h3>
@@ -397,7 +382,7 @@ import Layout from "../layouts/Layout.astro";
                 </div>
             </div>
         </section>
-        <!-- VÍDEO MONITORAMENTO -->
+
         <section class="vid-bg-camera">
             <video
                 autoplay
@@ -429,7 +414,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- SEÇÃO PABX -->
         <section class="section dark-section">
             <div class="container">
                 <div class="badge-group badge-pabx">
@@ -515,7 +499,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- SEÇÃO B2B / NEGÓCIOS -->
         <section class="section dark-section b2b-section">
             <div class="container">
                 <header class="container-narrow section-header">
@@ -581,7 +564,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- PROVA SOCIAL -->
         <section class="section section-tint social-proof-section">
             <div class="container">
                 <header class="container-narrow section-header">
@@ -666,7 +648,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- FAQ (PERGUNTAS FREQUENTES) -->
         <section class="section dark-section faq-section">
             <div class="container">
                 <header class="section-header">
@@ -734,8 +715,6 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </section>
 
-        <!-- AINDA PRECISA DE AJUDA? — mesma seção da página /ajuda, pra
-             fechar a home com um convite direto pra falar com a Zamtech. -->
         <section class="help-cta-section">
             <div class="container">
                 <div class="help-cta-box">
@@ -764,15 +743,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
-    // CONSULTA DE VIABILIDADE — CEP + número (igual grandes provedores tipo
-    // Nio fazem), que checa a CTO mais próxima cadastrada no SGP. CEP é bem
-    // mais preciso que a pessoa digitar o endereço na mão: sem risco de
-    // confundir rua com nome repetido em outra cidade. Ver
-    // /api/viabilidade/consultar.php pra entender a lógica do lado do servidor.
-    // A lógica de consulta em si (mascarar CEP, chamar ViaCEP, chamar nosso
-    // backend, redirecionar) mora em src/scripts/viabilidade.ts — mesmo
-    // arquivo usado pela barra flutuante em Layout.astro, pra nunca ficarem
-    // dessincronizadas.
+
     import { mascaraCep, consultarViaCep, consultarViabilidade, irParaContratar, WHATSAPP_COMERCIAL } from "../scripts/viabilidade";
 
     const form = document.getElementById("viabilidade-form") as HTMLFormElement;
@@ -789,10 +760,6 @@ import Layout from "../layouts/Layout.astro";
         statusCep.hidden = false;
     }
 
-    // Enquanto a pessoa digita o CEP: formata "00000-000" e, assim que
-    // completar os 8 números, já confirma o endereço na hora (via ViaCEP,
-    // de graça, direto do navegador) — assim ela vê "achamos sua rua" antes
-    // de nem clicar em Verificar, igual o padrão que grandes provedores usam.
     inputCep.addEventListener("input", () => {
         inputCep.value = mascaraCep(inputCep.value);
         const digitos = inputCep.value.replace(/\D/g, "");
@@ -898,7 +865,6 @@ import Layout from "../layouts/Layout.astro";
         textoBtn.textContent = "Buscando...";
         resultado.hidden = true;
 
-        // Usado como identificação do lead se a busca cair em sem cobertura/vaga.
         const enderecoParaLead = `CEP ${inputCep.value}, nº ${numero}`;
 
         try {
@@ -908,9 +874,7 @@ import Layout from "../layouts/Layout.astro";
             if (!data.sucesso) {
                 mostrarResultado(`<p>${data.mensagem}</p>`, "erro");
             } else if (data.atende) {
-                // Atende -> já manda direto pra página de planos/contratação,
-                // sem precisar de mais um clique. O CEP/número resolvidos vão
-                // na URL pra /contratar não precisar perguntar de novo.
+
                 textoBtn.textContent = "Encontramos! Redirecionando...";
                 mostrarResultado(`<p>${data.mensagem}</p>`, "sucesso");
                 irParaContratar(cep, numero);
@@ -921,8 +885,7 @@ import Layout from "../layouts/Layout.astro";
                     <a href="${WHATSAPP_COMERCIAL}" target="_blank" rel="noopener noreferrer" class="btn btn-outlined-light">Falar no WhatsApp</a>
                 `, "aviso");
             } else {
-                // sem_cobertura ou sem_vaga -> mostra a mensagem e já oferece
-                // captura de contato, pra Carol saber da demanda na região.
+
                 mostrarResultado(`
                     <p>${data.mensagem}</p>
                     ${data.endereco_encontrado ? `<p class="viabilidade-endereco-confirmado">${data.endereco_encontrado}</p>` : ""}
@@ -943,11 +906,7 @@ import Layout from "../layouts/Layout.astro";
 </script>
 
 <style>
-    /* ==========================================================================
-       ESTILOS EXCLUSIVOS DA HOME (UTILIZANDO TOKEN DO GLOBAL.CSS)
-       ========================================================================== */
 
-    /* UTILITIES E LAYOUT */
     .container-narrow {
         width: 100%;
         max-width: 720px;
@@ -973,7 +932,6 @@ import Layout from "../layouts/Layout.astro";
         border: 1px solid var(--color-white);
     }
 
-    /* CABEÇALHOS DE SEÇÃO */
     .section-header {
         position: relative;
         text-align: center;
@@ -1009,7 +967,6 @@ import Layout from "../layouts/Layout.astro";
         line-height: 1.6;
     }
 
-    /* BADGES */
     .badge-group {
         display: flex;
         align-items: center;
@@ -1035,7 +992,6 @@ import Layout from "../layouts/Layout.astro";
         font-weight: 600;
     }
 
-    /* 1. HERO SECTION */
     .hero-section {
         width: 100%;
         background: url("/assets/img/backgrounds/background-image-website-top-02.webp")
@@ -1067,7 +1023,6 @@ import Layout from "../layouts/Layout.astro";
     margin-top: 120px;
 }
 
-    /* PLAN CARDS */
     .plan-card {
         position: relative;
         display: flex;
@@ -1176,7 +1131,6 @@ import Layout from "../layouts/Layout.astro";
         margin-bottom: var(--space-24);
     }
 
-    /* 1.5 CONSULTA DE VIABILIDADE */
     .viabilidade-section {
         background-color: var(--color-white);
         text-align: center;
@@ -1351,10 +1305,7 @@ import Layout from "../layouts/Layout.astro";
     }
 
     @media (max-width: 600px) {
-        /* No celular a "pílula única" ficava espremida e o CEP colado no
-           Número sem nenhuma separação visível. Em vez disso, empilha os 3
-           campos como caixas separadas, cada uma com sua própria borda e
-           respiro — igual o padrão que grandes provedores usam no mobile. */
+
         .viabilidade-search {
             flex-direction: column;
             align-items: stretch;
@@ -1381,7 +1332,6 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
-    /* 2. FEATURES BÁSICAS */
     .features-section {
         background-color: var(--color-white);
     }
@@ -1432,7 +1382,6 @@ import Layout from "../layouts/Layout.astro";
         line-height: 1.6;
     }
 
-    /* 3. POR QUE ESCOLHER A ZAMTECH */
     .why-choose-section {
         background:
             linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
@@ -1468,11 +1417,6 @@ import Layout from "../layouts/Layout.astro";
         line-height: 1.5;
     }
 
-    /* SEÇÕES ESCURAS GLOBAIS */
-    /* Mesmo tratamento do .section-dark global (global.css): degradê de sempre
-       por cima da textura "background-abstract-dark.webp", só pra essa página
-       ficar visualmente igual ao /assinar e /indique em vez de um azul chapado
-       sem nenhuma textura. */
     .dark-section {
         display: flex;
         flex-direction: column;
@@ -1492,7 +1436,6 @@ import Layout from "../layouts/Layout.astro";
         color: var(--color-white);
     }
 
-    /* 4. SEÇÃO MESH */
     .mesh-image {
         margin: 0 auto var(--space-32) auto;
         max-width: 280px;
@@ -1507,7 +1450,6 @@ import Layout from "../layouts/Layout.astro";
         margin-bottom: var(--space-48);
         text-align: center;
     }
-
 
     .info-card {
         padding: var(--space-32);
@@ -1566,7 +1508,6 @@ import Layout from "../layouts/Layout.astro";
         color: rgba(255, 255, 255, 0.85);
     }
 
-    /* 5. SEÇÃO MONITORAMENTO */
     .cards-horizontal-grid {
         display: flex;
         flex-wrap: wrap;
@@ -1604,7 +1545,6 @@ import Layout from "../layouts/Layout.astro";
             url("/assets/img/cards-imgs/aplicativo-zamtech-img.webp");
     }
 
-    /* BANNER CÂMERA */
     .camera-feature-card {
         background-color: var(--color-white);
         display: flex;
@@ -1639,7 +1579,6 @@ import Layout from "../layouts/Layout.astro";
         width: 32px;
     }
 
-    /* VÍDEO MONITORAMENTO */
     .vid-bg-camera {
         position: relative;
         width: 100%;
@@ -1680,7 +1619,6 @@ import Layout from "../layouts/Layout.astro";
         width: fit-content;
     }
 
-    /* 6. SEÇÃO PABX */
     .pabx-media-container {
         display: flex;
         justify-content: center;
@@ -1692,7 +1630,6 @@ import Layout from "../layouts/Layout.astro";
         max-width: 360px;
     }
 
-    /* 7. SEÇÃO B2B (NEGÓCIOS) */
     .dark-section.b2b-section {
         background-color: var(--color-gray-dark);
     }
@@ -1741,13 +1678,11 @@ import Layout from "../layouts/Layout.astro";
         text-align: center;
     }
 
-    /* 8. PROVA SOCIAL */
     .social-proof-section {
         background-image: url("/assets/img/backgrounds/background-abstract-white.webp");
         background-position: center;
         background-size: cover;
     }
-
 
     .testimonials-grid {
         display: flex;
@@ -1821,7 +1756,6 @@ import Layout from "../layouts/Layout.astro";
         color: var(--color-dark-blue);
     }
 
-    /* 9. FAQ */
     .faq-section {
         background-color: var(--color-black);
     }
@@ -1885,7 +1819,7 @@ import Layout from "../layouts/Layout.astro";
             rgba(0, 15, 118, 0.73) 33%,
             rgba(0, 1, 8, 0.52) 80%
         );
-        border-radius: var(--radius-signature); /* corte assinatura Zamtech */
+        border-radius: var(--radius-signature);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1932,12 +1866,11 @@ import Layout from "../layouts/Layout.astro";
         width: 320px;
         height: auto;
         object-fit: contain;
-        /* Efeito visual: A imagem "salta" levemente para fora do topo/base do card */
+
         margin-top: -72px;
         margin-bottom: -72px;
     }
 
-    /* RESPONSIVIDADE (MOBILE / TABLET) */
     @media (max-width: 900px) {
         .camera-banner-card {
             flex-direction: column-reverse;
@@ -1966,7 +1899,6 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
-    /* RESPONSIVIDADE */
     @media (max-width: 768px) {
         .hero-section {
             background-image: url("/assets/img/backgrounds/background-image-website-top-02-mobile.webp");
@@ -2011,10 +1943,6 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
-    /* ==========================================================================
-       Help CTA Section — mesma seção usada em /ajuda: avatar grande da
-       Zanita à esquerda, fundo cinza claro, texto normal à direita.
-       ========================================================================== */
     .help-cta-section {
         padding: 60px 0 100px;
         background-color: var(--color-white);

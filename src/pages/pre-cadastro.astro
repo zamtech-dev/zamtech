@@ -232,9 +232,6 @@ import "../styles/global.css";
             .replace(/(\d{5})(\d{1,3})$/, "$1-$2");
     }
 
-    // Operação pediu nome sempre em caixa alta (facilita conferir no SGP).
-    // Preserva a posição do cursor, senão ele pula pro final a cada letra
-    // digitada no meio do nome — bem irritante de usar.
     function forcarMaiusculo(input: HTMLInputElement) {
         const posicaoCursor = input.selectionStart;
         input.value = input.value.toUpperCase();
@@ -243,9 +240,6 @@ import "../styles/global.css";
         }
     }
 
-    // --- Alterna entre Pessoa Física e Pessoa Jurídica: troca labels,
-    // mostra/esconde os campos exclusivos de empresa e ajusta a máscara e
-    // o maxlength do campo de documento. ---
     const btnPessoaFisica = document.getElementById("btnPessoaFisica") as HTMLButtonElement;
     const btnPessoaJuridica = document.getElementById("btnPessoaJuridica") as HTMLButtonElement;
     const labelNome = document.getElementById("labelNome") as HTMLElement;
@@ -280,8 +274,7 @@ import "../styles/global.css";
             grupoNomeFantasia.hidden = true;
             grupoResponsavel.hidden = true;
             respNomeInput.required = false;
-            // Estado civil e sexo só existem no cadastro de Pessoa Física
-            // no SGP — pra Pessoa Jurídica esses campos nem fazem sentido.
+
             grupoEstadoCivilSexo.hidden = false;
             estadoCivilSelect.required = true;
             sexoSelect.required = true;
@@ -324,8 +317,6 @@ import "../styles/global.css";
     const ufInput = document.getElementById("uf") as HTMLInputElement;
     ufInput?.addEventListener("input", () => { ufInput.value = ufInput.value.toUpperCase().slice(0, 2); });
 
-    // --- Dia de vencimento: 1 a 25, exatamente como no template de
-    // WhatsApp que os clientes já preenchem hoje. ---
     const diaVencimentoSelect = document.getElementById("diaVencimento") as HTMLSelectElement;
     for (let dia = 1; dia <= 25; dia++) {
         const opcao = document.createElement("option");
@@ -347,9 +338,6 @@ import "../styles/global.css";
         cepStatus.classList.toggle("input-dica--erro", negativo);
     }
 
-    // Mesma ideia da página /assinar: busca o endereço assim que o CEP fica
-    // completo, via ViaCEP (API pública dos Correios, grátis e sem chave),
-    // pra pessoa não precisar digitar rua/bairro/cidade na mão.
     async function buscarEnderecoPorCep(cep: string) {
         mostrarDicaCep("Buscando endereço...");
         try {
@@ -444,11 +432,7 @@ import "../styles/global.css";
             const data = await response.json();
 
             if (data.sucesso) {
-                // Carol acompanha os pré-cadastros pelo SGP (sem robô nenhum
-                // de olho), então quanto mais rápido ela souber que chegou um
-                // novo, mais rápido consegue ligar e fechar o plano. Por isso
-                // o botão: a pessoa avisa direto no WhatsApp, do jeito que já
-                // funciona no /assinar do Indique e Ganhe.
+
                 const rotuloDocumento = tipoPessoa === "J" ? "CNPJ" : "CPF";
                 const mensagemZap = `Oi! Acabei de fazer meu pré-cadastro no site. Meu nome é ${dados.nome}, ${rotuloDocumento} ${dados.cpfCnpj}. Pode conferir e agilizar minha instalação?`;
                 mostrarMensagem(`
@@ -562,12 +546,7 @@ import "../styles/global.css";
 
     .input-row {
         display: grid;
-        /* minmax(0, 1fr) em vez de só "1fr": "1fr" sozinho equivale a
-           minmax(auto, 1fr), e o "auto" deixa a coluna crescer pra caber o
-           conteúdo "natural" de um filho (o input type="date" no Safari do
-           iPhone, por causa do texto da data por extenso) — é isso que
-           empurrava a caixa pra fora da tela. Com minmax(0, 1fr) a coluna
-           nunca cresce além do espaço disponível. */
+
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: var(--space-16);
     }
@@ -580,12 +559,7 @@ import "../styles/global.css";
         display: flex;
         flex-direction: column;
         gap: var(--space-8);
-        /* O min-width:0 no input (mais abaixo) não bastava — o Safari do
-           iPhone usa o tamanho "natural" do input type="date" (que é grande,
-           por causa do texto da data por extenso) pra decidir o tamanho
-           MÍNIMO desse item dentro do grid do .input-row, ignorando o
-           width:100% do input lá dentro. Precisa zerar o mínimo aqui, no
-           item do grid, não só no input. */
+
         min-width: 0;
     }
 
@@ -602,11 +576,7 @@ import "../styles/global.css";
     .input-group input,
     .input-group select {
         width: 100%;
-        /* min-width: 0 é o que resolve — input dentro de flex column tem um
-           "min-width: auto" implícito, e o input type="date" no celular
-           calcula esse mínimo pelo tamanho do texto da data por extenso
-           ("3 de set. de 2026"), que é maior que a tela. Sem isso ele
-           empurra a caixa pra fora da tela em vez de encolher. */
+
         min-width: 0;
         max-width: 100%;
         padding: var(--space-12) var(--space-16);

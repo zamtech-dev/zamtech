@@ -81,7 +81,7 @@ import Layout from '../layouts/Layout.astro';
 			}
 			mensagem += `*Mensagem:* ${mensagemUsuario}`;
 
-			const numeroWhatsApp = '552731413637'; // Número padrão Zamtech
+			const numeroWhatsApp = '552731413637';
 			const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
 
 			window.open(url, '_blank');

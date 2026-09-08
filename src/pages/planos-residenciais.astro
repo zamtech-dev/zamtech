@@ -3,7 +3,6 @@ import Layout from "../layouts/Layout.astro";
 import CardPlano from "../components/CardPlano.astro";
 import "../styles/global.css";
 
-// Adicionais padrão para planos residenciais simples
 const adicionaisResidencial = [
     { nome: "Mais Pontos de Wi-Fi (Mesh)", preco: 39.90 },
     { nome: "Câmera Inteligente", preco: 39.90 },
@@ -12,7 +11,7 @@ const adicionaisResidencial = [
 ---
 
 <Layout title="Planos Residenciais - Zamtech Fibra Óptica">
-    <!-- 1. HERO SECTION RESIDENCIAL -->
+
     <section class="hero-residencia">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
@@ -34,7 +33,6 @@ const adicionaisResidencial = [
         </div>
     </section>
 
-    <!-- 2. SEÇÃO DE PLANOS COM SWITCH -->
     <section id="planos" class="section section-planos">
         <div class="container">
             <div class="header-planos">
@@ -44,7 +42,6 @@ const adicionaisResidencial = [
                     Selecione abaixo a categoria de plano que melhor se adapta à rotina e ao tamanho da sua casa.
                 </p>
 
-                <!-- SWITCH / CHAVE DE ALTERNÂNCIA -->
                 <div class="switch-container">
                     <button id="btn-entrada" class="switch-btn">
                         Planos de Entrada
@@ -56,9 +53,8 @@ const adicionaisResidencial = [
                 </div>
             </div>
 
-            <!-- GRID 1: MELHORES PLANOS (PADRÃO VISÍVEL) -->
             <div id="grid-melhores" class="plans-grid">
-                <!-- ZAMTECH 800 + MESH (ULTRA MESH) -->
+
                 <CardPlano
                     nome="ZAMTECH 800 - Ultra Mesh"
                     velocidade="800 Mega + Wi-Fi na Casa Toda"
@@ -78,7 +74,6 @@ const adicionaisResidencial = [
                     ]}
                 />
 
-                <!-- ZAMTECH 800 + CÂMERA (ULTRA SECURE) -->
                 <CardPlano
                     nome="ZAMTECH 800 - Ultra Secure"
                     velocidade="800 Mega + Câmera em Nuvem"
@@ -98,7 +93,6 @@ const adicionaisResidencial = [
                     ]}
                 />
 
-                <!-- PLANO GAMER 1G -->
                 <CardPlano
                     nome="PLANO GAMER 1G"
                     velocidade="1 Giga + Wi-Fi 6 Especial"
@@ -119,9 +113,8 @@ const adicionaisResidencial = [
                 />
             </div>
 
-            <!-- GRID 2: PLANOS DE ENTRADA (OCULTO INICIALMENTE) -->
             <div id="grid-entrada" class="plans-grid hidden">
-                <!-- ZAMTECH 300 - PLAY -->
+
                 <CardPlano
                     nome="ZAMTECH 300 - Play"
                     velocidade="300 Mega"
@@ -134,7 +127,6 @@ const adicionaisResidencial = [
                     adicionais={adicionaisResidencial}
                 />
 
-                <!-- ZAMTECH 500 - STREAM -->
                 <CardPlano
                     nome="ZAMTECH 500 - Stream"
                     velocidade="500 Mega"
@@ -149,7 +141,6 @@ const adicionaisResidencial = [
                     adicionais={adicionaisResidencial}
                 />
 
-                <!-- ZAMTECH 800 - ULTRA -->
                 <CardPlano
                     nome="ZAMTECH 800 - Ultra"
                     velocidade="800 Mega"
@@ -165,7 +156,6 @@ const adicionaisResidencial = [
         </div>
     </section>
 
-    <!-- 3. SEÇÃO EDUCATIVA: COMO POTENCIALIZAR SUA INTERNET -->
     <section class="section section-potencializar">
         <div class="container">
             <div class="potencializar-header">
@@ -175,12 +165,12 @@ const adicionaisResidencial = [
             </div>
 
             <div class="potencializar-grid">
-                <!-- CARD MESH -->
+
                 <div class="potencializar-card">
                     <div class="card-img-wrapper">
-                        <img 
-                            src="/assets/equipamentos/roteador-wifi-mesh.webp" 
-                            alt="Roteador Wi-Fi Mesh" 
+                        <img
+                            src="/assets/equipamentos/roteador-wifi-mesh.webp"
+                            alt="Roteador Wi-Fi Mesh"
                             loading="lazy"
                         />
                     </div>
@@ -197,12 +187,11 @@ const adicionaisResidencial = [
                     </div>
                 </div>
 
-                <!-- CARD CÂMERA -->
                 <div class="potencializar-card">
                     <div class="card-img-wrapper">
-                        <img 
-                            src="/assets/equipamentos/camera-monitoramento.webp" 
-                            alt="Câmera de Monitoramento Inteligente" 
+                        <img
+                            src="/assets/equipamentos/camera-monitoramento.webp"
+                            alt="Câmera de Monitoramento Inteligente"
                             loading="lazy"
                         />
                     </div>
@@ -226,7 +215,6 @@ const adicionaisResidencial = [
         </div>
     </section>
 
-    <!-- 4. CHAMADA FINAL PARA SUPORTE/DUVIDAS -->
     <section class="section section-cta">
         <div class="container cta-box">
             <h2>Ainda em dúvida sobre qual plano escolher?</h2>
@@ -240,7 +228,6 @@ const adicionaisResidencial = [
     </section>
 </Layout>
 
-<!-- JAVASCRIPT DE ALTERNÂNCIA DOS PLANOS -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const btnEntrada = document.getElementById("btn-entrada");
@@ -267,7 +254,7 @@ const adicionaisResidencial = [
 </script>
 
 <style>
-    /* 1. HERO SECTION RESIDENCIAL */
+
     .hero-residencia {
         position: relative;
         padding: var(--space-64) 0;
@@ -340,7 +327,6 @@ const adicionaisResidencial = [
         background-color: var(--color-primary);
     }
 
-    /* 2. SEÇÃO DE PLANOS & SWITCH */
     .section-planos {
         background-color: var(--color-white);
     }
@@ -370,7 +356,6 @@ const adicionaisResidencial = [
         font-size: var(--fs-body);
     }
 
-    /* Estilos da Chave de Alternância (Switch) */
     .switch-container {
         display: inline-flex;
         background-color: var(--color-gray-light);
@@ -409,7 +394,6 @@ const adicionaisResidencial = [
         font-weight: 800;
     }
 
-    /* Grids de Planos */
     .plans-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
@@ -420,7 +404,6 @@ const adicionaisResidencial = [
         display: none !important;
     }
 
-    /* 3. SEÇÃO EDUCATIVA (COMO POTENCIALIZAR) */
     .section-potencializar {
         background-color: var(--color-gray-light);
     }
@@ -533,7 +516,6 @@ const adicionaisResidencial = [
         font-weight: 900;
     }
 
-    /* 4. CHAMADA FINAL (CTA) */
     .section-cta {
         background-color: var(--color-dark-blue);
         color: var(--color-white);

@@ -3,11 +3,6 @@ import Layout from "../layouts/Layout.astro";
 import CardPlano from "../components/CardPlano.astro";
 import "../styles/global.css";
 
-// Mesmos planos e adicionais de /planos-residenciais (CardPlano.astro é o
-// mesmo componente, só que aqui com modo="selecionar" — em vez de mandar
-// pro WhatsApp, o botão avança pra etapa de pré-cadastro com o plano e os
-// adicionais escolhidos). Se um preço mudar lá, precisa mudar aqui também
-// — são dois lugares por enquanto.
 const adicionaisResidencial = [
     { nome: "Mais Pontos de Wi-Fi (Mesh)", preco: 39.90 },
     { nome: "Câmera Inteligente", preco: 39.90 },
@@ -15,14 +10,6 @@ const adicionaisResidencial = [
 ];
 ---
 
-<!-- CONTRATAR EM ETAPAS — inspirado no fluxo da Nio (CEP -> escolhe o plano
-     -> dados de contato -> confirmação), adaptado pro processo da Zamtech:
-     a etapa final não é pagamento (a gente não cobra pelo site), é avisar a
-     Carol pelo WhatsApp que o pré-cadastro já foi enviado, com o plano
-     escolhido. Chega aqui de duas formas: direto (digita o CEP na etapa 1)
-     ou vindo da busca de viabilidade da home, que já manda ?cep=&numero= na
-     URL — nesse caso a etapa 1 confere de novo (nunca confia cegamente num
-     link) e já pula pra etapa 2 se dermos certo. -->
 <Layout title="Contratar Zamtech - Fibra Óptica em poucos passos">
     <section class="section-dark section contratar-hero">
         <div class="container contratar-hero-content">
@@ -57,7 +44,6 @@ const adicionaisResidencial = [
         <div class="container">
             <div class="form-wrapper card-padrao">
 
-                <!-- ===================== ETAPA 1 — ENDEREÇO ===================== -->
                 <div class="wizard-panel" id="painelEtapa1">
                     <h2>Confirma seu endereço</h2>
                     <p class="wizard-panel-subtitulo">Assim já sabemos se a fibra da Zamtech chega até você.</p>
@@ -88,14 +74,10 @@ const adicionaisResidencial = [
                     </div>
                 </div>
 
-                <!-- ===================== ETAPA 2 — PLANO ===================== -->
                 <div class="wizard-panel" id="painelEtapa2" hidden>
                     <h2>Qual combina com você?</h2>
                     <p class="wizard-panel-subtitulo">Isso é só uma referência pra gente — nosso time confirma tudo certinho na ligação.</p>
 
-                    <!-- Só planos residenciais aqui — o filtro Residencial/Empresarial
-                         que existia poluía demais essa etapa do wizard. Empresas
-                         continuam com /planos-empresariais só pra elas. -->
                     <div class="planos-toggle" id="subtoggleResidencial">
                         <button type="button" class="planos-toggle-btn is-active" id="btnPlanosCombos">Melhores Planos (Combos)</button>
                         <button type="button" class="planos-toggle-btn" id="btnPlanosEntrada">Planos de Entrada</button>
@@ -205,7 +187,6 @@ const adicionaisResidencial = [
                     <button type="button" id="btnEtapa2Voltar" class="btn btn-outlined-light">Voltar</button>
                 </div>
 
-                <!-- ===================== ETAPA 3 — DADOS DE CONTATO ===================== -->
                 <div class="wizard-panel" id="painelEtapa3" hidden>
                     <h2>Seus dados</h2>
                     <p class="wizard-plano-resumo" id="resumoPlanoEscolhido"></p>
@@ -300,7 +281,6 @@ const adicionaisResidencial = [
                     <div id="mensagemContratar" class="mensagem-retorno-precadastro hidden"></div>
                 </div>
 
-                <!-- ===================== ETAPA 4 — PRONTO ===================== -->
                 <div class="wizard-panel wizard-panel--final" id="painelEtapa4" hidden>
                     <div class="wizard-final-icone">🎉</div>
                     <h2>Pré-cadastro enviado!</h2>
@@ -314,18 +294,12 @@ const adicionaisResidencial = [
 </Layout>
 
 <script>
-    // ---------- Plano escolhido ----------
-    // Os cards em si (com os adicionais/switches) são o mesmo componente
-    // CardPlano.astro usado em /planos-residenciais — aqui com modo=
-    // "selecionar", então em vez de montar link de WhatsApp sozinho, cada
-    // card dispara "zamtech:plano-selecionado" (ver CardPlano.astro) com o
-    // plano já calculado (preço final incluindo os adicionais marcados).
+
     type PlanoSelecionado = { nome: string; velocidade: string; precoFinal: number; adicionais: string[] };
 
     let planoEscolhido: PlanoSelecionado | null = null;
     let enderecoConfirmado: { cep: string; logradouro: string; numero: string; bairro: string; cidade: string; uf: string } | null = null;
 
-    // ---------- Navegação entre etapas ----------
     const paineis: Record<number, HTMLElement> = {
         1: document.getElementById("painelEtapa1") as HTMLElement,
         2: document.getElementById("painelEtapa2") as HTMLElement,
@@ -345,14 +319,11 @@ const adicionaisResidencial = [
             passoEl.classList.toggle("is-active", passo === numero);
             passoEl.classList.toggle("is-done", passo < numero);
         });
-        // Etapa 2 (escolha de plano) precisa de mais espaço horizontal pros
-        // cards do CardPlano não ficarem espremidos — as outras etapas são
-        // formulário e ficam melhor na largura estreita de sempre.
+
         formWrapper.classList.toggle("form-wrapper--largo", numero === 2);
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // ---------- ETAPA 1: CEP + número ----------
     const etapa1Cep = document.getElementById("etapa1Cep") as HTMLInputElement;
     const etapa1Numero = document.getElementById("etapa1Numero") as HTMLInputElement;
     const etapa1Status = document.getElementById("etapa1Status") as HTMLParagraphElement;
@@ -405,7 +376,7 @@ const adicionaisResidencial = [
                 }
                 setTimeout(() => irParaEtapa(2), 400);
             } else if (data.sucesso) {
-                // sem_cobertura, sem_vaga, endereco_nao_encontrado ou cep_nao_encontrado
+
                 mostrarStatusEtapa1("", "ok");
                 etapa1Status.hidden = true;
                 etapa1SemCoberturaMsg.textContent = data.mensagem;
@@ -460,8 +431,6 @@ const adicionaisResidencial = [
         }
     });
 
-    // Chegou com ?cep=&numero= (ex: vindo da busca da home) — pré-preenche e
-    // já confere de novo, nunca confia cegamente no que veio na URL.
     const paramsUrl = new URLSearchParams(window.location.search);
     const cepUrl = paramsUrl.get("cep");
     const numeroUrl = paramsUrl.get("numero");
@@ -476,10 +445,6 @@ const adicionaisResidencial = [
         verificarEndereco();
     }
 
-    // ---------- ETAPA 2: escolha do plano ----------
-    // Os cards (com adicionais e cálculo de preço) são renderizados pelo
-    // próprio CardPlano.astro no HTML da página — aqui só escuta o evento
-    // que ele dispara quando a pessoa clica em "Escolher este plano".
     window.addEventListener("zamtech:plano-selecionado", ((ev: CustomEvent) => {
         const detalhe = ev.detail as PlanoSelecionado;
         planoEscolhido = detalhe;
@@ -490,9 +455,6 @@ const adicionaisResidencial = [
         irParaEtapa(3);
     }) as EventListener);
 
-    // ---------- ETAPA 2: filtro de plano (só residencial — o toggle
-    // Residencial/Empresarial que existia aqui foi removido por deixar a
-    // etapa poluída; planos empresariais continuam em /planos-empresariais) ----------
     const planosGridCombos = document.getElementById("planosGridCombos") as HTMLDivElement;
     const planosGridEntrada = document.getElementById("planosGridEntrada") as HTMLDivElement;
     const btnPlanosCombos = document.getElementById("btnPlanosCombos") as HTMLButtonElement;
@@ -513,7 +475,6 @@ const adicionaisResidencial = [
     document.getElementById("btnEtapa2Voltar")?.addEventListener("click", () => irParaEtapa(1));
     document.getElementById("btnEtapa3Voltar")?.addEventListener("click", () => irParaEtapa(2));
 
-    // ---------- ETAPA 3: dados de contato (mesmos campos do /pre-cadastro) ----------
     function validarCPF(valor: string): boolean {
         const cpf = valor.replace(/[^\d]/g, "");
         if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -627,8 +588,7 @@ const adicionaisResidencial = [
             cidade: enderecoConfirmado.cidade,
             uf: enderecoConfirmado.uf,
             pontoReferencia: (document.getElementById("pontoReferencia") as HTMLInputElement).value.trim(),
-            // Plano é só referência pra Carol — quem decide/fecha de fato é ela
-            // na ligação, por isso vai como texto livre, não como plano_id.
+
             velocidadeDesejada: `${planoEscolhido.nome} (${planoEscolhido.velocidade}, R$ ${planoEscolhido.precoFinal.toFixed(2).replace(".", ",")}/mês${planoEscolhido.adicionais.length > 0 ? ", com " + planoEscolhido.adicionais.join(", ") : ""}) — escolhido em /contratar`,
             diaVencimento: diaVencimentoSelect.value,
             aceite: (document.getElementById("aceite") as HTMLInputElement).checked,
@@ -670,7 +630,6 @@ const adicionaisResidencial = [
         }
     });
 
-    // Atualiza o resumo do endereço na etapa 3 assim que ele é confirmado.
     const observadorEndereco = setInterval(() => {
         if (enderecoConfirmado) {
             enderecoConfirmadoResumo.textContent = `${enderecoConfirmado.logradouro}, ${enderecoConfirmado.numero} - ${enderecoConfirmado.bairro}, ${enderecoConfirmado.cidade}/${enderecoConfirmado.uf} (CEP ${enderecoConfirmado.cep})`;
@@ -772,11 +731,6 @@ const adicionaisResidencial = [
         transition: max-width 0.3s var(--ease-brand);
     }
 
-    /* Etapa 2 (escolha de plano) precisa de mais espaço horizontal do que um
-       formulário — senão os cards do CardPlano ficam espremidos. Alternado
-       via JS só quando a etapa 2 está ativa; mesma largura máxima do
-       .container do resto do site (global.css), pra aproveitar o espaço
-       lateral que sobrava na tela sem ficar largo demais. */
     .form-wrapper--largo {
         max-width: 1200px;
     }
@@ -911,7 +865,6 @@ const adicionaisResidencial = [
         margin-top: var(--space-12);
     }
 
-    /* ETAPA 2 — planos */
     .planos-toggle {
         display: flex;
         gap: var(--space-8);
@@ -956,7 +909,6 @@ const adicionaisResidencial = [
         display: none;
     }
 
-    /* ETAPA 3 */
     .wizard-plano-resumo {
         background: rgba(3, 37, 208, 0.06);
         border: 1px solid var(--color-primary);
@@ -1018,7 +970,6 @@ const adicionaisResidencial = [
         display: none;
     }
 
-    /* ETAPA 4 */
     .wizard-panel--final {
         text-align: center;
         padding: var(--space-24) 0;

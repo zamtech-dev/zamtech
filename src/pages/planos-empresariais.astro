@@ -3,7 +3,6 @@ import Layout from "../layouts/Layout.astro";
 import CardPlano from "../components/CardPlano.astro";
 import "../styles/global.css";
 
-// Adicionais Corporativos Padrão para os cards
 const adicionaisEmpresarialPadrao = [
     { nome: "Linha Telefônica (Voz)", preco: 29.90 },
     { nome: "Câmera Inteligente Nuvem", preco: 39.90 },
@@ -56,11 +55,7 @@ const adicionaisEmpresarialPadrao = [
             </div>
 
             <div id="grid-conectividade" class="plans-grid">
-                <!-- Ordenado por velocidade (600 → 850 → 1G), e dentro de cada
-                     velocidade sempre o plano só-internet antes do combo com
-                     voz/câmera — assim dá pra comparar "quanto custa a mais
-                     pra levar o combo" olhando os cards um do lado do outro,
-                     em vez de eles espalhados e parecendo produtos soltos. -->
+
                 <CardPlano
                     nome="Empresarial 600 - Start"
                     velocidade="600 Mega 100% Fibra"
@@ -160,7 +155,7 @@ const adicionaisEmpresarialPadrao = [
             </div>
 
             <div id="grid-pabx" class="plans-grid hidden">
-                
+
                 <CardPlano
                     nome="Empresarial 600 - PABX Connect"
                     velocidade="600 Mega + PABX em Nuvem"
@@ -418,7 +413,7 @@ const adicionaisEmpresarialPadrao = [
 </script>
 
 <style>
-    /* 1. HERO EMPRESARIAL */
+
     .hero-empresarial {
         position: relative;
         padding: var(--space-64) 0;
@@ -490,7 +485,6 @@ const adicionaisEmpresarialPadrao = [
         background-color: var(--color-primary);
     }
 
-    /* 2. SEÇÃO DE PLANOS B2B & SWITCH */
     .section-planos {
         background-color: var(--color-white);
     }
@@ -528,7 +522,6 @@ const adicionaisEmpresarialPadrao = [
         font-size: var(--fs-body);
     }
 
-    /* Switch de Categorias */
     .switch-container {
         display: inline-flex;
         background-color: var(--color-gray-light);
@@ -569,7 +562,6 @@ const adicionaisEmpresarialPadrao = [
         font-weight: 800;
     }
 
-    /* Grids de Planos */
     .plans-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
@@ -580,7 +572,6 @@ const adicionaisEmpresarialPadrao = [
         display: none !important;
     }
 
-    /* 3. TABELA DE SERVIÇOS B2B */
     .section-servicos-b2b {
         background-color: var(--color-gray-light);
     }
@@ -668,7 +659,6 @@ const adicionaisEmpresarialPadrao = [
         background-color: rgba(3, 37, 208, 0.02);
     }
 
-    /* 4. SEÇÃO EDUCATIVA B2B */
     .section-educativa-b2b {
         background-color: var(--color-white);
     }
@@ -732,7 +722,6 @@ const adicionaisEmpresarialPadrao = [
         line-height: 1.6;
     }
 
-    /* 5. CTA B2B */
     .section-cta-b2b {
         background-color: var(--color-dark-blue);
         color: var(--color-white);
