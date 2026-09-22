@@ -48,7 +48,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     
     <div class="cep-float-bar" id="cepFloatBar">
         <div class="container cep-float-bar-inner">
-            <p>Será que a Zamtech já chegou aí?</p>
+            <p>Verificar viabilidade em minha residência</p>
             <button type="button" class="btn btn-primary cep-float-bar-btn" id="cepFloatBarBtn">
                 Informe seu CEP e confira
             </button>
@@ -87,8 +87,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
         position: fixed;
         left: 0;
         right: 0;
-        
-        bottom: 96px;
+        bottom: 20px;
         z-index: 60;
         display: flex;
         justify-content: center;
@@ -132,17 +131,9 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
         border-radius: 999px;
     }
 
-    @media (max-width: 600px) {
-        .cep-float-bar-inner {
-            flex-direction: column;
-            align-items: stretch;
-            text-align: center;
-            padding: var(--space-16);
-            border-radius: var(--radius-lg);
-        }
-
-        .cep-float-bar-btn {
-            width: 100%;
+    @media (max-width: 768px) {
+        .cep-float-bar {
+            display: none !important;
         }
     }
 
@@ -324,6 +315,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
 
     const formHero = document.getElementById("viabilidade-form");
     const paginaSemBarraFlutuante = window.location.pathname.startsWith("/contratar");
+    const rodape = document.querySelector<HTMLElement>("footer.main-footer");
 
     function atualizarVisibilidadeBarra() {
         if (paginaSemBarraFlutuante) {
@@ -334,6 +326,15 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
             barra.classList.remove("is-visible");
             return;
         }
+        // Perto do rodapé, some — senão a barra fica em cima do rodapé e não
+        // dá pra enxergar/clicar em nada lá embaixo.
+        if (rodape) {
+            const retanguloRodape = rodape.getBoundingClientRect();
+            if (retanguloRodape.top < window.innerHeight) {
+                barra.classList.remove("is-visible");
+                return;
+            }
+        }
         if (formHero) {
             const retangulo = formHero.getBoundingClientRect();
             barra.classList.toggle("is-visible", retangulo.bottom < 0);
@@ -343,6 +344,7 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     }
 
     window.addEventListener("scroll", atualizarVisibilidadeBarra, { passive: true });
+    window.addEventListener("resize", atualizarVisibilidadeBarra, { passive: true });
     atualizarVisibilidadeBarra();
 
     function abrirPainel() {
