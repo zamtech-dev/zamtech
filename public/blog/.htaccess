@@ -1,0 +1,17 @@
+# Blog Zamtech — URLs amigáveis e proteção básica.
+
+RewriteEngine On
+
+# /blog/sitemap-blog.xml -> sitemap-blog.php
+RewriteRule ^sitemap-blog\.xml$ sitemap-blog.php [L]
+
+# /blog/artigo-01 -> artigo.php?slug=artigo-01
+# (só entra aqui se não for um arquivo/pasta real, como assets/ ou admin/)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z0-9-]+)/?$ artigo.php?slug=$1 [L,QSA]
+
+# Ninguém de fora precisa ler os arquivos que começam com "_" direto
+<FilesMatch "^_">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,234 @@
+/* Blog público Zamtech — usa os mesmos tokens visuais do site principal */
+
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap');
+
+:root {
+    --color-primary: #0325D0;
+    --color-secondary: #0756FF;
+    --color-dark-blue: #000F76;
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+    --color-gray-light: #f5f5f5;
+    --color-gray-dark: #141414;
+    --color-gray-medium: #525252;
+    --color-gray-low: #a3a3a3;
+    --color-border: rgba(3, 37, 208, 0.18);
+
+    --font-display: 'Red Hat Display', sans-serif;
+    --font-text: 'Red Hat Text', sans-serif;
+
+    --fs-caption: 0.8125rem;
+    --fs-sm: 0.9375rem;
+    --fs-body: 1.0625rem;
+    --fs-h5: 1.125rem;
+    --fs-h4: 1.3125rem;
+    --fs-h3: 1.5rem;
+    --fs-h2: 1.875rem;
+    --fs-h1: 2.375rem;
+
+    --space-4: 0.25rem;
+    --space-8: 0.5rem;
+    --space-12: 0.75rem;
+    --space-16: 1rem;
+    --space-24: 1.5rem;
+    --space-32: 2rem;
+    --space-48: 3rem;
+    --space-64: 4rem;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    --elevation-1: 0 1px 2px rgba(3, 15, 60, 0.05), 0 1px 1px rgba(3, 15, 60, 0.06);
+    --elevation-2: 0 3px 10px rgba(3, 15, 60, 0.08), 0 1px 3px rgba(3, 15, 60, 0.06);
+    --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-text);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    background-color: var(--color-white);
+    color: var(--color-gray-dark);
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height: 1.25; }
+
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-16); }
+.section { padding-top: var(--space-48); padding-bottom: var(--space-48); }
+
+@media (min-width: 768px) {
+    .container { padding: 0 var(--space-24); }
+    .section { padding-top: var(--space-64); padding-bottom: var(--space-64); }
+}
+
+/* --- Header --- */
+.blog-header {
+    border-bottom: 1px solid var(--color-gray-light);
+    padding: var(--space-16) 0;
+}
+
+.blog-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.blog-header-logo img { height: 32px; }
+
+.blog-header-nav { display: flex; gap: var(--space-24); }
+
+.blog-header-nav a {
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    color: var(--color-gray-medium);
+    transition: var(--transition-default);
+}
+
+.blog-header-nav a:hover,
+.blog-header-nav a.ativo { color: var(--color-primary); }
+
+@media (max-width: 640px) {
+    .blog-header-nav { gap: var(--space-12); }
+    .blog-header-nav a { font-size: var(--fs-caption); }
+}
+
+/* --- Footer --- */
+.blog-footer {
+    background-color: var(--color-gray-dark);
+    color: var(--color-white);
+    padding: var(--space-32) 0;
+    margin-top: var(--space-64);
+}
+
+.blog-footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-12);
+    text-align: center;
+}
+
+.blog-footer-logo { height: 28px; filter: brightness(0) invert(1); }
+.blog-footer-inner p { color: rgba(255,255,255,0.6); font-size: var(--fs-caption); }
+.blog-footer-inner a:last-child { color: var(--color-secondary); font-size: var(--fs-sm); font-weight: 600; }
+
+/* --- Listagem --- */
+.blog-titulo-pagina { font-size: var(--fs-h1); color: var(--color-primary); text-align: center; }
+.blog-subtitulo-pagina { text-align: center; color: var(--color-gray-medium); margin-top: var(--space-8); margin-bottom: var(--space-48); }
+
+.blog-vazio { text-align: center; padding: var(--space-64) 0; color: var(--color-gray-medium); }
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-24);
+}
+
+@media (max-width: 960px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .blog-grid { grid-template-columns: 1fr; } }
+
+.blog-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-white);
+    box-shadow: var(--elevation-1);
+    border: 1px solid var(--color-gray-light);
+    transition: var(--transition-default);
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card:hover { box-shadow: var(--elevation-2); transform: translateY(-2px); }
+
+.blog-card-imagem { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+
+.blog-card-corpo { padding: var(--space-16) var(--space-20, var(--space-16)); display: flex; flex-direction: column; gap: var(--space-8); flex: 1; }
+
+.blog-card-data { font-size: var(--fs-caption); color: var(--color-gray-low); font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+
+.blog-card-titulo { font-size: var(--fs-h4); color: var(--color-gray-dark); }
+
+.blog-card-resumo {
+    font-size: var(--fs-sm);
+    color: var(--color-gray-medium);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.blog-paginacao {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-8);
+    margin-top: var(--space-48);
+}
+
+.blog-paginacao a {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    color: var(--color-gray-medium);
+}
+
+.blog-paginacao a.ativa { background: var(--gradient-brand); color: var(--color-white); }
+
+/* --- Página de artigo --- */
+.artigo-pagina { max-width: 760px; }
+
+.artigo-cabecalho { text-align: center; margin-bottom: var(--space-32); }
+.artigo-cabecalho h1 { font-size: var(--fs-h1); color: var(--color-gray-dark); }
+.artigo-meta { color: var(--color-gray-medium); font-size: var(--fs-sm); margin-top: var(--space-12); }
+
+.artigo-imagem-capa {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-32);
+}
+
+.artigo-corpo { font-size: var(--fs-body); color: var(--color-gray-dark); }
+.artigo-corpo p { margin-bottom: var(--space-24); }
+.artigo-corpo h2 { font-size: var(--fs-h2); margin: var(--space-48) 0 var(--space-16); color: var(--color-primary); }
+.artigo-corpo h3 { font-size: var(--fs-h3); margin: var(--space-32) 0 var(--space-16); }
+.artigo-corpo h4 { font-size: var(--fs-h4); margin: var(--space-24) 0 var(--space-12); }
+.artigo-corpo a { color: var(--color-primary); text-decoration: underline; }
+
+.blog-quote {
+    border-left: 4px solid var(--color-primary);
+    padding: var(--space-8) 0 var(--space-8) var(--space-24);
+    margin: var(--space-32) 0;
+    font-style: italic;
+    font-size: var(--fs-h5);
+    color: var(--color-gray-medium);
+}
+
+.blog-quote cite { display: block; margin-top: var(--space-8); font-style: normal; font-size: var(--fs-caption); font-weight: 600; }
+
+.blog-delimiter { border: none; border-top: 2px solid var(--color-gray-light); margin: var(--space-48) auto; width: 80px; }
+
+.blog-figure { margin: var(--space-32) 0; }
+.blog-figure img { width: 100%; border-radius: var(--radius-md); }
+.blog-figure figcaption { text-align: center; font-size: var(--fs-caption); color: var(--color-gray-medium); margin-top: var(--space-8); }
+
+.blog-embed { margin: var(--space-32) 0; }
+.blog-embed-video iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: var(--radius-md); }
+.blog-embed-codepen iframe { width: 100%; height: 400px; border: none; border-radius: var(--radius-md); }
+
+.artigo-voltar { margin-top: var(--space-64); text-align: center; }
+.btn-voltar-blog { display: inline-flex; padding: var(--space-12) var(--space-24); border: 1.5px solid var(--color-gray-low); border-radius: var(--radius-md); font-weight: 600; }
+.btn-voltar-blog:hover { border-color: var(--color-primary); color: var(--color-primary); }

@@ -1,0 +1,343 @@
+/* Editor de artigos — visual "Medium", com a tipografia da Zamtech */
+
+.editor-shell {
+    flex: 1;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--space-32) var(--space-24);
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: var(--space-32);
+    align-items: start;
+}
+
+.editor-coluna { min-width: 0; }
+
+.status-salvamento {
+    font-size: var(--fs-caption);
+    color: var(--color-gray-medium);
+    margin-right: var(--space-8);
+}
+
+/* --- Capa --- */
+.capa-preview {
+    width: 100%;
+    min-height: 80px;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-white);
+    border: 1.5px dashed var(--color-gray-low);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-24);
+    overflow: hidden;
+    position: relative;
+}
+
+.capa-preview img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+}
+
+.capa-preview .btn-trocar-capa {
+    position: absolute;
+    bottom: var(--space-12);
+    right: var(--space-12);
+}
+
+/* --- Título --- */
+.campo-titulo {
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: none;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: var(--fs-h1);
+    color: var(--color-gray-dark);
+    line-height: 1.2;
+    margin-bottom: var(--space-24);
+}
+
+.campo-titulo:focus { outline: none; }
+.campo-titulo::placeholder { color: var(--color-gray-low); }
+
+/* --- Blocos --- */
+.blocos-container { display: flex; flex-direction: column; }
+
+.bloco {
+    position: relative;
+    padding: var(--space-8) var(--space-12) var(--space-8) 44px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-4);
+}
+
+.bloco:hover { background-color: rgba(3, 37, 208, 0.03); }
+
+.bloco-conteudo-editavel {
+    outline: none;
+    min-height: 1.6em;
+    font-size: var(--fs-body);
+    line-height: 1.7;
+}
+
+.bloco[data-type="heading"] .bloco-conteudo-editavel {
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+.bloco[data-type="heading"][data-nivel="2"] .bloco-conteudo-editavel { font-size: var(--fs-h2); }
+.bloco[data-type="heading"][data-nivel="3"] .bloco-conteudo-editavel { font-size: var(--fs-h3); }
+.bloco[data-type="heading"][data-nivel="4"] .bloco-conteudo-editavel { font-size: var(--fs-h4); }
+
+.bloco[data-type="paragraph"] .bloco-conteudo-editavel:empty::before {
+    content: "Escreva alguma coisa...";
+    color: var(--color-gray-low);
+}
+
+.bloco[data-type="quote"] .bloco-conteudo-editavel {
+    font-style: italic;
+    font-size: var(--fs-h5);
+    color: var(--color-gray-medium);
+    border-left: 3px solid var(--color-primary);
+    padding-left: var(--space-16);
+}
+
+.bloco-legenda-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: var(--fs-caption);
+    color: var(--color-gray-medium);
+    margin-top: var(--space-8);
+    padding-left: var(--space-16);
+}
+.bloco-legenda-input:focus { outline: none; }
+
+.bloco[data-type="delimiter"] .bloco-conteudo-editavel {
+    border-top: 2px solid var(--color-gray-light);
+    height: 1px;
+    margin: var(--space-16) 0;
+}
+
+.bloco[data-type="image"] img {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    display: block;
+}
+
+.bloco[data-type="embed"] .embed-caixa {
+    background-color: var(--color-gray-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-medium);
+}
+
+.bloco[data-type="embed"] iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: var(--radius-md); }
+
+/* --- Controles do bloco (aparecem no hover) --- */
+.bloco-controles {
+    /* Grade 2x2 (em vez de coluna de 4) de propósito: uma coluna de 4
+       botões de 26px fica mais alta que blocos curtos (divisor, título),
+       e a parte que "vaza" pra fora do bloco acaba flutuando por cima do
+       bloco vizinho e roubando clique dele. Em grade 2x2 a altura total
+       fica baixa o bastante pra caber dentro de qualquer bloco. */
+    position: absolute;
+    left: 2px;
+    top: var(--space-8);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    width: 40px;
+    /* Sempre clicável (pointer-events: auto) — só muda a opacidade no
+       hover. Deixar como "none" quando invisível parece mais limpo, mas
+       quebra em touch (tablet) e em cliques rápidos, porque o :hover
+       real do navegador só é aplicado depois que o mouse já está em
+       cima — então o clique inicial "esbarra" no bloco de trás. */
+    opacity: 0.3;
+    pointer-events: auto;
+    transition: opacity 0.15s ease;
+}
+
+.bloco:hover .bloco-controles,
+.bloco-controles:focus-within { opacity: 1; }
+
+.bloco-controles button {
+    width: 19px;
+    height: 19px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    font-size: 10px;
+    color: var(--color-gray-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bloco-controles button:hover { background-color: var(--color-gray-light); color: var(--color-gray-dark); }
+.bloco-controles .btn-excluir-bloco:hover { color: var(--color-danger); }
+
+.btn-add-bloco-final {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    color: var(--color-gray-medium);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-md);
+    border: 1.5px dashed var(--color-gray-low);
+    margin-top: var(--space-16);
+}
+.btn-add-bloco-final:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* --- Menu flutuante "+" --- */
+.menu-flutuante {
+    position: fixed;
+    background-color: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-3);
+    border: 1px solid var(--color-gray-light);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    min-width: 220px;
+}
+
+.menu-flutuante[hidden] { display: none; }
+
+.menu-flutuante button {
+    text-align: left;
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-dark);
+}
+.menu-flutuante button:hover { background-color: var(--color-gray-light); }
+
+/* --- Barra de formatação flutuante --- */
+.barra-formatacao {
+    position: fixed;
+    background-color: var(--color-gray-dark);
+    border-radius: var(--radius-md);
+    display: flex;
+    z-index: 200;
+    box-shadow: var(--elevation-3);
+    overflow: hidden;
+}
+
+.barra-formatacao[hidden] { display: none; }
+
+.barra-formatacao button {
+    color: var(--color-white);
+    padding: var(--space-8) var(--space-16);
+    font-size: var(--fs-sm);
+}
+.barra-formatacao button:hover { background-color: rgba(255,255,255,0.15); }
+
+/* --- Modais --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    padding: var(--space-16);
+}
+
+.modal-overlay[hidden] { display: none; }
+
+.modal-caixa {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-imagem-caixa { max-width: 640px; }
+
+.modal-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-16) var(--space-24);
+    border-bottom: 1px solid var(--color-gray-light);
+}
+
+.modal-cabecalho h3 { font-size: var(--fs-h5); }
+
+.modal-abas { display: flex; gap: var(--space-8); }
+.aba-btn { padding: var(--space-8) var(--space-16); border-radius: var(--radius-md); font-size: var(--fs-sm); font-weight: 600; color: var(--color-gray-medium); }
+.aba-btn.ativa { background-color: rgba(3, 37, 208, 0.08); color: var(--color-primary); }
+
+.modal-fechar { font-size: 1.5rem; color: var(--color-gray-medium); line-height: 1; }
+
+.modal-corpo { padding: var(--space-24); overflow-y: auto; flex: 1; }
+
+.modal-rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-8);
+    padding: var(--space-16) var(--space-24);
+    border-top: 1px solid var(--color-gray-light);
+}
+
+.dica-upload { font-size: var(--fs-caption); color: var(--color-gray-medium); margin-top: var(--space-8); }
+
+.crop-viewport {
+    width: 100%;
+    height: 280px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-gray-dark);
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+}
+
+.crop-viewport img {
+    position: absolute;
+    max-width: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#crop-zoom { width: 100%; margin-top: var(--space-12); }
+
+.grade-banco-imagens {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-8);
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.grade-banco-imagens img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.grade-banco-imagens img.selecionada { border-color: var(--color-primary); }
+
+#preview-embed { margin-top: var(--space-16); }
+#preview-embed iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: var(--radius-md); }
+
+@media (max-width: 860px) {
+    .editor-shell { grid-template-columns: 1fr; }
+    .editor-lateral { order: 2; }
+}
