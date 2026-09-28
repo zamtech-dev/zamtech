@@ -101,12 +101,13 @@ if ($artigo['imagem_capa']) {
     <meta name="twitter:description" content="<?= htmlspecialchars($descricaoSeo, ENT_QUOTES) ?>" />
     <meta name="twitter:image" content="<?= htmlspecialchars($imagemSeo, ENT_QUOTES) ?>" />
 
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" />
     <link rel="stylesheet" href="/blog/assets/blog.css" />
 
     <script type="application/ld+json"><?= json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 </head>
-<body>
+<body class="margin-compensa">
     <?php require __DIR__ . '/_header.php'; ?>
 
     <main class="artigo-pagina section container">
@@ -137,6 +138,8 @@ if ($artigo['imagem_capa']) {
     </main>
 
     <?php require __DIR__ . '/_footer.php'; ?>
+    <?php require __DIR__ . '/_lgpd.php'; ?>
+    <?php require __DIR__ . '/_whatsapp.php'; ?>
 
     <?php if ($usaInstagram): ?>
         <script async src="https://www.instagram.com/embed.js"></script>

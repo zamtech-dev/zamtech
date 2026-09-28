@@ -41,10 +41,16 @@
     --radius-full: 9999px;
 
     --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    --gradient-signal: linear-gradient(120deg, var(--color-dark-blue) 0%, var(--color-primary) 55%, var(--color-secondary) 100%);
     --elevation-1: 0 1px 2px rgba(3, 15, 60, 0.05), 0 1px 1px rgba(3, 15, 60, 0.06);
     --elevation-2: 0 3px 10px rgba(3, 15, 60, 0.08), 0 1px 3px rgba(3, 15, 60, 0.06);
+    --elevation-3: 0 10px 25px rgba(3, 15, 60, 0.18);
     --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* compensa a altura do header fixo do site (idêntico ao Layout.astro principal) */
+.margin-compensa { padding-top: 60px; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -69,57 +75,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     .container { padding: 0 var(--space-24); }
     .section { padding-top: var(--space-64); padding-bottom: var(--space-64); }
 }
-
-/* --- Header --- */
-.blog-header {
-    border-bottom: 1px solid var(--color-gray-light);
-    padding: var(--space-16) 0;
-}
-
-.blog-header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.blog-header-logo img { height: 32px; }
-
-.blog-header-nav { display: flex; gap: var(--space-24); }
-
-.blog-header-nav a {
-    font-weight: 600;
-    font-size: var(--fs-sm);
-    color: var(--color-gray-medium);
-    transition: var(--transition-default);
-}
-
-.blog-header-nav a:hover,
-.blog-header-nav a.ativo { color: var(--color-primary); }
-
-@media (max-width: 640px) {
-    .blog-header-nav { gap: var(--space-12); }
-    .blog-header-nav a { font-size: var(--fs-caption); }
-}
-
-/* --- Footer --- */
-.blog-footer {
-    background-color: var(--color-gray-dark);
-    color: var(--color-white);
-    padding: var(--space-32) 0;
-    margin-top: var(--space-64);
-}
-
-.blog-footer-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-12);
-    text-align: center;
-}
-
-.blog-footer-logo { height: 28px; filter: brightness(0) invert(1); }
-.blog-footer-inner p { color: rgba(255,255,255,0.6); font-size: var(--fs-caption); }
-.blog-footer-inner a:last-child { color: var(--color-secondary); font-size: var(--fs-sm); font-weight: 600; }
 
 /* --- Listagem --- */
 .blog-titulo-pagina { font-size: var(--fs-h1); color: var(--color-primary); text-align: center; }

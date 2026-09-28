@@ -1,13 +1,860 @@
-<header class="blog-header">
-    <div class="container blog-header-inner">
-        <a href="/" class="blog-header-logo">
-            <img src="/assets/icons/logo-zamtech.svg" alt="Zamtech" />
+<!-- Cabeçalho idêntico ao Header.astro do site principal (copiado 1:1, já
+     que o arquivo original é HTML/CSS/JS puro, sem nada dinâmico do Astro) -->
+<header class="main-header" id="main-header">
+    <div class="container header-container">
+        <a href="/" class="brand-logo-link">
+            <img
+                src="/assets/icons/logo-zamtech.svg"
+                alt="Zamtech Logo"
+                class="brand-logo"
+            />
         </a>
-        <nav class="blog-header-nav">
-            <a href="/">Início</a>
-            <a href="/planos-residenciais">Planos</a>
-            <a href="/blog" class="ativo">Blog</a>
-            <a href="/ajuda">Ajuda</a>
-        </nav>
+
+        <div class="menu-top-wrapper">
+            <ul class="nav-menu-top">
+                <li><a href="/planos-residenciais">Planos Residenciais</a></li>
+                <li><a href="/planos-empresariais">Planos Empresariais</a></li>
+                <li><a href="/blog" class="ativo">Blog</a></li>
+            </ul>
+            <button type="button" class="btn-menu-toggle" id="open-menu">
+                <img src="/assets/icons/listras-menu.svg" alt="Ícone de Menu" />
+                <span>MENU</span>
+            </button>
+        </div>
     </div>
 </header>
+
+<div class="menu-overlay" id="menu-overlay"></div>
+
+<aside class="sidebar-menu" id="sidebar-menu">
+    <div class="sidebar-header">
+        <button
+            type="button"
+            class="btn-menu-close"
+            id="close-menu"
+            aria-label="Fechar menu">&times;</button
+        >
+    </div>
+
+    <div class="sidebar-content">
+        <div class="bloquinhos-grid">
+            <a
+                href="/segunda-via"
+                class="bloquinho-card"
+            >
+                <div class="bloquinho-icon">
+                    <img
+                        src="/assets/icons/others-icons/2-via-de-contas.svg"
+                        alt="2ª via"
+                    />
+                </div>
+                <span>2ª via de conta</span>
+            </a>
+
+            <a
+                href="https://zamtech.sgp.tsmx.app/centralweb/login"
+                class="bloquinho-card"
+                target="_blank"
+            >
+                <div class="bloquinho-icon">
+                    <img
+                        src="/assets/icons/others-icons/login.svg"
+                        alt="Login"
+                    />
+                </div>
+                <span>Login</span>
+            </a>
+
+            <a href="/ajuda" class="bloquinho-card">
+                <div class="bloquinho-icon">
+                    <img
+                        src="/assets/icons/others-icons/ajuda.svg"
+                        alt="Ajuda"
+                    />
+                </div>
+                <span>Ajuda</span>
+            </a>
+        </div>
+
+        <a href="/pre-cadastro" class="menu-section-card precadastro-card">
+            <h3 class="section-card-title">📝 Pré-Cadastro</h3>
+            <p class="precadastro-card-text">Comece sua contratação agora, sem precisar esperar no WhatsApp</p>
+        </a>
+
+        <a href="/indique" class="menu-section-card indique-card">
+            <h3 class="section-card-title">🎁 Indique e Ganhe</h3>
+            <p class="indique-card-text">Até 100% de desconto na sua fatura indicando amigos</p>
+        </a>
+
+        <div class="menu-section-card">
+            <h3 class="section-card-title">Planos Recomendados</h3>
+
+            <details class="accordion-item">
+                <summary class="accordion-header">
+                    <div class="accordion-title-group header-with-icon">
+                        <img
+                            src="/assets/icons/others-icons/casa-house.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Pra sua casa</span>
+                    </div>
+                    <span class="chevron">&#9662;</span>
+                </summary>
+
+                <div class="accordion-body">
+                    <a href="/planos-residenciais" class="sub-link">
+                        <img
+                            src="/assets/icons/planos-residenciais-icon.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Planos residenciais</span>
+                    </a>
+                    <a href="/beneficios" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/beneficios.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Benefícios</span>
+                    </a>
+                </div>
+            </details>
+
+            <details class="accordion-item">
+                <summary class="accordion-header">
+                    <div class="accordion-title-group header-with-icon">
+                        <img
+                            src="/assets/icons/others-icons/empresarial.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Pra sua empresa</span>
+                    </div>
+                    <span class="chevron">&#9662;</span>
+                </summary>
+                <div class="accordion-body">
+                    <a href="/planos-empresariais" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/empresarial.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Planos empresariais</span>
+                    </a>
+                    <a href="/disponibilidade" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/relogio-disponibilidade.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Consultar disponibilidade</span>
+                    </a>
+                </div>
+            </details>
+        </div>
+
+        <div class="menu-section-card">
+            <h3 class="section-card-title">Com problemas?</h3>
+            <ul class="menu-list">
+                <li>
+                    <a
+                        href="https://wa.me/5527995057736?text=Ol%C3%A1%2C%20gostaria%20de%20falar%20com%20o%20%2ASUPORTE%20T%C3%89CNICO%2A"
+                        target="_blank"
+                    >
+                        <img
+                            src="/assets/icons/others-icons/suporte-tecnico.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Suporte técnico</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/desbloqueio-de-confianca">
+                        <img
+                            src="/assets/icons/others-icons/desbloquear-servico.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Desbloquear minha internet</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section-card">
+            <h3 class="section-card-title">Aplicativos Zamtech</h3>
+
+            <details class="accordion-item">
+                <summary class="accordion-header">
+                    <div class="accordion-title-group">
+                        <span class="app-main-title">Central do Assinante</span>
+                        <small class="app-subtitle"
+                            >Pra baixar fatura, gerenciar plano e mais</small
+                        >
+                    </div>
+                    <span class="chevron">&#9662;</span>
+                </summary>
+                <div class="accordion-body">
+                    <a href="https://ixc.zamtech.com.br/central_assinante_web/login" target="_blank" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/web.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Acessar via Web</span>
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=br.net.tsmx.meuappprovedor&pcampaignid=web_share" target="_blank" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/play-store.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Google PlayStore</span>
+                    </a>
+                    <a href="https://apps.apple.com/br/app/meuappprovedor/id1637448837" target="_blank" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/apple-store.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Apple Store</span>
+                    </a>
+                </div>
+            </details>
+
+            <details class="accordion-item">
+                <summary class="accordion-header">
+                    <div class="accordion-title-group">
+                        <span class="app-main-title"
+                            >Monitoramento Câmera Inteligente</span
+                        >
+                    </div>
+                    <span class="chevron">&#9662;</span>
+                </summary>
+                <div class="accordion-body">
+                    <a href="https://monitoramento.zamtech.com.br" target="_blank" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/web.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Acessar via Web</span>
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=fc.zamtechmonitoramento.me&hl=pt_BR" target="_blank" class="sub-link">
+                        <img
+                            src="/assets/icons/others-icons/play-store.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Google Play Store</span>
+                    </a>
+                    <a href="#" target="_blank" class="sub-link disabled">
+                        <img
+                            src="/assets/icons/others-icons/apple-store.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <span>Apple Store</span>
+                    </a>
+                </div>
+            </details>
+        </div>
+
+        <div class="menu-section-card">
+            <h3 class="section-card-title">Canais de atendimento</h3>
+            <ul class="menu-list">
+                <li class="li-card">
+                    <a
+                        href="https://wa.me/5527995057736"
+                        target="_blank"
+                        class="link-two-lines"
+                    >
+                        <img
+                            src="/assets/icons/others-icons/whatsapp-black.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <div>
+                            <strong class="item-name">WhatsApp</strong>
+                            <small class="item-name">Iniciar conversa</small>
+                        </div>
+                    </a>
+                </li>
+                <li class="li-card">
+                    <a href="tel:2731413637" class="link-two-lines" target="_blank">
+                        <img
+                            src="/assets/icons/others-icons/telefone-phone.svg"
+                            alt=""
+                            class="item-icon"
+                        />
+                        <div>
+                            <strong class="item-name">Telefone</strong>
+                            <small class="item-name">Ligar para suporte</small>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section-card">
+            <details class="accordion-item">
+                <summary class="accordion-header">
+                    <span class="section-card-title"
+                        >Regulamentos e Contratos</span
+                    >
+                    <span class="chevron">&#9662;</span>
+                </summary>
+                <div class="accordion-body">
+                    <a href="/regulamentos" class="sub-link"
+                        ><img
+                            src="/assets/icons/regulamento.svg"
+                            alt=""
+                            class="item-icon"
+                        />Central de Regulamentos</a
+                    >
+                    <a href="/politica-de-privacidade" class="sub-link"
+                        ><img
+                            src="/assets/icons/regulamento.svg"
+                            alt=""
+                            class="item-icon"
+                        />Políticas de privacidade</a
+                    >
+                    <a href="/termos-de-uso" class="sub-link"
+                        ><img
+                            src="/assets/icons/regulamento.svg"
+                            alt=""
+                            class="item-icon"
+                        />Termos de uso</a
+                    >
+                    <a href="/termos-de-contrato" class="sub-link"
+                        ><img
+                            src="/assets/icons/regulamento.svg"
+                            alt=""
+                            class="item-icon"
+                        />Termos de contrato</a
+                    >
+                    <a href="/termos-de-adesao" class="sub-link"
+                        ><img
+                            src="/assets/icons/regulamento.svg"
+                            alt=""
+                            class="item-icon"
+                        />Termos de adesão</a
+                    >
+                </div>
+            </details>
+        </div>
+
+        <div class="menu-section-card">
+            <details class="accordion-item">
+                <summary class="accordion-header">
+                    <span class="section-card-title">Institucionais</span>
+                    <span class="chevron">&#9662;</span>
+                </summary>
+                <div class="accordion-body">
+                    <a href="/sobre" class="sub-link"
+                        ><img
+                            src="/assets/icons/sobre.svg"
+                            alt=""
+                            class="item-icon"
+                        />Sobre a Zamtech</a
+                    >
+                </div>
+            </details>
+        </div>
+    </div>
+</aside>
+
+<script>
+    const btnOpen = document.getElementById("open-menu");
+    const btnClose = document.getElementById("close-menu");
+    const sidebar = document.getElementById("sidebar-menu");
+    const overlay = document.getElementById("menu-overlay");
+    const header = document.getElementById("main-header");
+
+    if (btnOpen && sidebar && overlay) {
+        const openMenu = () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        };
+
+        const closeMenu = () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            document.body.style.overflow = "";
+        };
+
+        btnOpen.addEventListener("click", openMenu);
+        if (btnClose) btnClose.addEventListener("click", closeMenu);
+        overlay.addEventListener("click", closeMenu);
+    }
+
+    if (header) {
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 40) {
+                header.classList.add("scrolled");
+            } else {
+                header.classList.remove("scrolled");
+            }
+        });
+    }
+</script>
+
+<style>
+    .main-header {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        z-index: 100;
+        background-color: var(--color-primary);
+        padding: var(--space-16) 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: var(--transition-default);
+        box-sizing: border-box;
+    }
+
+    .main-header::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gradient-signal);
+        opacity: 0.9;
+    }
+
+    .main-header.scrolled {
+        top: 2px;
+        width: clamp(560px, 40vw, 780px);
+        max-width: 94vw;
+        border-radius: var(--radius-full);
+        background: var(--color-dark-blue);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--elevation-3);
+        padding: var(--space-12) var(--space-32);
+        transition: var(--transition-default);
+    }
+
+    .main-header.scrolled::after {
+        display: none;
+    }
+
+    .main-header.scrolled .nav-menu-top {
+        gap: var(--space-16);
+    }
+
+    .main-header.scrolled .nav-menu-top a {
+        font-size: var(--fs-sm);
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+        gap: var(--space-24);
+    }
+
+    .brand-logo {
+        height: 40px;
+        width: auto;
+        transition: height 0.4s ease;
+    }
+
+    .main-header.scrolled .brand-logo {
+        height: 28px;
+    }
+
+    .menu-top-wrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--space-24);
+    }
+
+    .nav-menu-top {
+        display: flex;
+        gap: var(--space-24);
+        list-style: none;
+    }
+
+    .nav-menu-top a {
+        color: var(--color-white);
+        font-family: var(--font-display);
+        font-size: var(--fs-body);
+        font-weight: 500;
+        white-space: nowrap;
+        transition: var(--transition-default);
+    }
+
+    .nav-menu-top a:hover {
+        opacity: 0.85;
+    }
+
+    .btn-menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-8);
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+        padding: var(--space-8) var(--space-32);
+        border-radius: var(--radius-md);
+        font-family: var(--font-display);
+        font-size: var(--fs-body);
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.5s ease;
+    }
+
+    .main-header.scrolled .btn-menu-toggle {
+        border-radius: var(--radius-full);
+    }
+
+    .btn-menu-toggle:hover {
+        background-color: var(--color-primary);
+    }
+
+    .sidebar-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 470px;
+        max-width: 90vw;
+        height: 100%;
+        background: linear-gradient(
+            160deg,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(220, 235, 250, 1) 59%,
+            rgba(255, 255, 255, 1) 100%
+        );
+        z-index: 1000;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: var(--space-32);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        box-shadow: var(--elevation-3);
+    }
+
+    .sidebar-menu.active {
+        right: 0;
+    }
+
+    .sidebar-header {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: var(--space-24);
+    }
+
+    .btn-menu-close {
+        color: var(--color-gray-dark);
+        font-size: 2.2rem;
+        cursor: pointer;
+        line-height: 1;
+        transition: var(--transition-default);
+    }
+
+    .btn-menu-close:hover {
+        color: var(--color-primary);
+    }
+
+    .sidebar-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-24);
+    }
+
+    .bloquinhos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-12);
+    }
+
+    .bloquinho-card {
+        background-color: var(--color-white);
+        border: 1px solid rgba(114, 114, 114, 0.08);
+        border-radius: var(--radius-md);
+        padding: var(--space-16) var(--space-8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--space-12);
+        box-shadow: var(--elevation-1);
+        transition: var(--transition-default);
+        text-decoration: none;
+    }
+
+    .bloquinho-card:hover {
+        border-color: var(--color-gray-low);
+        transform: translateY(-2px);
+    }
+
+    .bloquinho-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bloquinho-icon img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .bloquinho-card span {
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        color: var(--color-gray-dark);
+        line-height: 1.2;
+    }
+
+    .menu-section-card {
+        background-color: var(--color-white);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--radius-md);
+        padding: var(--space-24);
+        box-shadow: var(--elevation-1);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-16);
+    }
+
+    .section-card-title {
+        font-family: var(--font-display);
+        font-size: var(--fs-h5);
+        font-weight: 700;
+        color: var(--color-primary);
+    }
+
+    .indique-card,
+    .precadastro-card {
+        text-decoration: none;
+        transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
+    }
+
+    .indique-card:hover,
+    .precadastro-card:hover {
+        border-color: var(--color-gray-low);
+        box-shadow: var(--elevation-2);
+        transform: translateY(-2px);
+    }
+
+    .indique-card-text,
+    .precadastro-card-text {
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        color: var(--color-gray-medium);
+    }
+
+    .menu-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+    }
+
+    .menu-list .li-card {
+        color: var(--color-white);
+    }
+
+    .menu-list li a {
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+        padding: var(--space-12) var(--space-16);
+        border-radius: var(--radius-md);
+        color: var(--color-gray-dark);
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        transition: background-color 0.4s ease;
+    }
+
+    .menu-list li a:hover {
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+    }
+    .link-two-lines {
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+    }
+
+    .link-two-lines:hover {
+        color: var(--color-white);
+    }
+
+    .link-two-lines div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .item-icon {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+    }
+
+    .accordion-item {
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: var(--space-12);
+    }
+
+    .accordion-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .accordion-header {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-12) 0;
+        cursor: pointer;
+        transition: var(--transition-default);
+    }
+
+    .accordion-header:hover {
+        color: var(--color-primary);
+    }
+
+    .accordion-title-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .accordion-title-group.header-with-icon {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-12);
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        color: var(--color-gray-dark);
+    }
+
+    .app-main-title {
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        font-weight: 500;
+        color: var(--color-gray-dark);
+    }
+
+    .app-subtitle {
+        font-family: var(--font-text);
+        font-size: var(--fs-caption);
+        color: var(--color-gray-medium);
+    }
+
+    .chevron {
+        font-size: 0.8rem;
+        color: var(--color-primary);
+        transition: transform 0.5s ease;
+        transform: rotate(-90deg);
+    }
+
+    details[open] .chevron {
+        transform: rotate(0deg);
+    }
+
+    .accordion-body {
+        padding: var(--space-12) 0 var(--space-8) var(--space-12);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+    }
+    .accordion-body a:hover {
+        background-color: var(--color-secondary);
+        color: var(--color-white);
+    }
+
+    .sub-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-12);
+        font-family: var(--font-text);
+        font-size: var(--fs-sm);
+        font-weight: 400;
+        color: var(--color-gray-medium);
+        padding: var(--space-8) var(--space-12);
+        border-radius: var(--radius-md);
+        transition: var(--transition-default);
+    }
+
+    .sub-link:hover {
+        background-color: var(--color-gray-light);
+        color: var(--color-primary);
+    }
+
+    .sub-link.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .tag-breve {
+        color: var(--color-secondary);
+        font-weight: 600;
+    }
+
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 5, 28, 0.7);
+        backdrop-filter: blur(12px);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* link "Blog" ativo no menu de topo, só nas páginas do próprio blog */
+    .nav-menu-top a.ativo {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    @media (max-width: 992px) {
+        .main-header.scrolled {
+            width: 85%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .nav-menu-top {
+            display: none;
+        }
+
+        .main-header.scrolled {
+            width: 92%;
+            padding: var(--space-8) var(--space-16);
+        }
+
+        .sidebar-menu {
+            width: 100%;
+            max-width: 100vw;
+            padding: var(--space-24);
+        }
+    }
+</style>

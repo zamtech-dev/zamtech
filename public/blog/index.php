@@ -50,7 +50,8 @@ function formatarDataBr(?string $data): string
     <meta property="og:image" content="<?= SITE_URL ?>/assets/icons/logo-zamtech.svg" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" />
     <link rel="stylesheet" href="/blog/assets/blog.css" />
 
     <script type="application/ld+json">
@@ -62,7 +63,7 @@ function formatarDataBr(?string $data): string
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
     </script>
 </head>
-<body>
+<body class="margin-compensa">
     <?php require __DIR__ . '/_header.php'; ?>
 
     <main class="blog-listagem section container">
@@ -105,5 +106,7 @@ function formatarDataBr(?string $data): string
     </main>
 
     <?php require __DIR__ . '/_footer.php'; ?>
+    <?php require __DIR__ . '/_lgpd.php'; ?>
+    <?php require __DIR__ . '/_whatsapp.php'; ?>
 </body>
 </html>
