@@ -44,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Configurações — Blog Zamtech</title>
     <meta name="robots" content="noindex, nofollow" />
+    <link rel="shortcut icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" />
     <link rel="stylesheet" href="/blog/admin/assets/admin.css" />
 </head>
 <body>

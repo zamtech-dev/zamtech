@@ -49,6 +49,8 @@ $dadosIniciais = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?= $artigo ? 'Editando artigo' : 'Novo artigo' ?> — Blog Zamtech</title>
     <meta name="robots" content="noindex, nofollow" />
+    <link rel="shortcut icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/icons/website-global-icons/icon-zamtech.svg" />
     <link rel="stylesheet" href="/blog/admin/assets/admin.css" />
     <link rel="stylesheet" href="/blog/admin/assets/editor.css" />
 </head>
@@ -151,6 +153,16 @@ $dadosIniciais = [
         <button data-tipo="delimiter">Divisor</button>
         <button data-tipo="image">Imagem</button>
         <button data-tipo="embed">Incorporar (YouTube, Instagram, X, Vimeo, CodePen)</button>
+    </div>
+
+    <!-- Menu pra TROCAR o tipo de um bloco de texto já existente (ex: virou
+         H2 sem querer, quer virar H3) -->
+    <div class="menu-flutuante" id="menu-mudar-tipo" hidden>
+        <button data-tipo="paragraph">Texto</button>
+        <button data-tipo="heading" data-nivel="2">Título (H2)</button>
+        <button data-tipo="heading" data-nivel="3">Subtítulo (H3)</button>
+        <button data-tipo="heading" data-nivel="4">Subtítulo menor (H4)</button>
+        <button data-tipo="quote">Citação</button>
     </div>
 
     <!-- Barra de formatação flutuante (negrito, itálico, sublinhado, link, listas) -->

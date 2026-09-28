@@ -44,9 +44,11 @@
     --space-48: 3rem;
     --space-64: 4rem;
 
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 16px;
+    /* arredondamento mais discreto — mesmo ajuste feito no blog.css, pra
+       manter o painel administrativo com a mesma cara */
+    --radius-sm: 3px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
     --radius-full: 9999px;
 
     --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
@@ -109,12 +111,20 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     border-radius: var(--radius-md);
     font-size: var(--fs-sm);
     font-weight: 600;
-    color: var(--color-gray-medium);
     transition: var(--transition-default);
 }
 
-.admin-topbar-nav a:hover,
-.admin-topbar-nav button:hover {
+/* cor cinza só pros links "nus" do menu (Artigos, Categorias, Sair...) —
+   sem isso, essa regra (mais específica que ".btn-primary" por ter um
+   elemento "button" além da classe) ganhava da cor branca do botão
+   "Publicar" e deixava o texto dele cinza escuro em vez de branco. */
+.admin-topbar-nav a:not(.btn),
+.admin-topbar-nav button:not(.btn) {
+    color: var(--color-gray-medium);
+}
+
+.admin-topbar-nav a:not(.btn):hover,
+.admin-topbar-nav button:not(.btn):hover {
     background-color: var(--color-gray-light);
     color: var(--color-gray-dark);
 }

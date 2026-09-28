@@ -35,9 +35,12 @@
     --space-48: 3rem;
     --space-64: 4rem;
 
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 16px;
+    /* arredondamento mais discreto (o valor antigo — 16px no --radius-lg —
+       deixava capas de artigo, modais e cards com cara de "app de celular"
+       redondo demais; o site real usa cantos bem mais retos) */
+    --radius-sm: 3px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
     --radius-full: 9999px;
 
     --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);

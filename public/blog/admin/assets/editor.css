@@ -70,11 +70,12 @@
 
 .bloco {
     position: relative;
-    /* 56px (não 44px): sobra uns 12px de folga entre os botões de mover/
-       excluir e o começo do texto, pra clicar perto do início de uma
-       linha (pra posicionar o cursor) não correr o risco de acertar um
-       botão sem querer. */
-    padding: var(--space-8) var(--space-12) var(--space-8) 56px;
+    /* 72px: sobra folga entre os botões (mover/excluir/mudar tipo) e o
+       começo do texto, pra clicar perto do início de uma linha (pra
+       posicionar o cursor) não correr o risco de acertar um botão sem
+       querer. Blocos de texto (parágrafo/título/citação) têm 5 botões
+       numa grade mais larga (61px) — o valor aqui já conta com isso. */
+    padding: var(--space-8) var(--space-12) var(--space-8) 72px;
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-4);
 }
@@ -171,6 +172,13 @@
 
 .bloco:hover .bloco-controles,
 .bloco-controles:focus-within { opacity: 1; }
+
+/* variante com 5 botões (blocos de texto, que ganham o botão "Aa" de
+   trocar tipo) — 3 colunas em vez de 2, mesmas 2 linhas de altura */
+.bloco-controles.bloco-controles-5 {
+    grid-template-columns: repeat(3, 1fr);
+    width: 61px;
+}
 
 .bloco-controles button {
     width: 19px;

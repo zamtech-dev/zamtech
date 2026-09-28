@@ -65,7 +65,9 @@
     // Criação de blocos
     // ---------------------------------------------------------------
 
-    function criarControlesBloco(blocoEl) {
+    var TIPOS_QUE_TROCAM = { paragraph: true, heading: true, quote: true };
+
+    function criarControlesBloco(blocoEl, tipo) {
         var controles = document.createElement('div');
         controles.className = 'bloco-controles';
 
@@ -78,6 +80,24 @@
             abrirMenuAdd(rect.right + 6, rect.top, blocoEl);
         });
         controles.appendChild(adicionar);
+
+        // só bloco de texto (parágrafo, título, citação) pode trocar de
+        // tipo — imagem, divisor e embed não fazem sentido virar outra coisa
+        if (TIPOS_QUE_TROCAM[tipo]) {
+            // com 5 botões a grade vira 3 colunas em vez de 2, pra manter
+            // as mesmas 2 linhas de altura (ver comentário no CSS)
+            controles.classList.add('bloco-controles-5');
+            var mudarTipo = document.createElement('button');
+            mudarTipo.type = 'button';
+            mudarTipo.className = 'btn-mudar-tipo';
+            mudarTipo.title = 'Mudar tipo deste bloco (texto, H2, H3...)';
+            mudarTipo.textContent = 'Aa';
+            mudarTipo.addEventListener('click', function () {
+                var rect = mudarTipo.getBoundingClientRect();
+                abrirMenuMudarTipo(rect.right + 6, rect.top, blocoEl);
+            });
+            controles.appendChild(mudarTipo);
+        }
 
         var subir = document.createElement('button');
         subir.type = 'button';
@@ -120,7 +140,7 @@
         var el = document.createElement('div');
         el.className = 'bloco';
         el.setAttribute('data-type', tipo);
-        criarControlesBloco(el);
+        criarControlesBloco(el, tipo);
         return el;
     }
 
@@ -274,6 +294,84 @@
         abrirMenuAdd(rect.left, rect.bottom + 6, container.lastElementChild);
     });
 
+    // ---------------------------------------------------------------
+    // Menu "Aa" — trocar o tipo de um bloco de texto já existente
+    // ---------------------------------------------------------------
+
+    var menuMudarTipo = document.getElementById('menu-mudar-tipo');
+    var blocoMudarTipoAtual = null;
+
+    function abrirMenuMudarTipo(x, y, blocoEl) {
+        blocoMudarTipoAtual = blocoEl;
+        menuMudarTipo.hidden = false;
+
+        var menuRect = menuMudarTipo.getBoundingClientRect();
+        var maxLeft = Math.max(8, window.innerWidth - menuRect.width - 8);
+        var maxTop = Math.max(8, window.innerHeight - menuRect.height - 8);
+        x = Math.min(Math.max(8, x), maxLeft);
+        y = Math.min(Math.max(8, y), maxTop);
+
+        menuMudarTipo.style.left = x + 'px';
+        menuMudarTipo.style.top = y + 'px';
+    }
+
+    function fecharMenuMudarTipo() {
+        menuMudarTipo.hidden = true;
+        blocoMudarTipoAtual = null;
+    }
+
+    document.addEventListener('click', function (ev) {
+        if (!menuMudarTipo.hidden && !menuMudarTipo.contains(ev.target) && !ev.target.classList.contains('btn-mudar-tipo')) {
+            fecharMenuMudarTipo();
+        }
+    });
+
+    menuMudarTipo.querySelectorAll('button').forEach(function (botao) {
+        botao.addEventListener('click', function () {
+            var tipo = botao.getAttribute('data-tipo');
+            var nivel = botao.getAttribute('data-nivel') || null;
+            var blocoEl = blocoMudarTipoAtual;
+            fecharMenuMudarTipo();
+            if (blocoEl) {
+                mudarTipoBloco(blocoEl, tipo, nivel);
+            }
+        });
+    });
+
+    /**
+     * Troca o tipo de um bloco de texto já existente (ex: H2 -> H3, ou
+     * parágrafo -> citação) mantendo o texto que já foi digitado. Como
+     * o CSS de título/parágrafo/citação lê o atributo data-type (e
+     * data-nivel pro tamanho do título), só precisamos trocar esses
+     * atributos — o texto dentro do bloco-conteudo-editavel nem precisa
+     * ser tocado.
+     */
+    function mudarTipoBloco(blocoEl, novoTipo, novoNivel) {
+        blocoEl.setAttribute('data-type', novoTipo);
+        if (novoNivel) {
+            blocoEl.setAttribute('data-nivel', novoNivel);
+        } else {
+            blocoEl.removeAttribute('data-nivel');
+        }
+
+        var legendaExistente = blocoEl.querySelector('[data-legenda]');
+        if (novoTipo === 'quote' && !legendaExistente) {
+            var legenda = document.createElement('input');
+            legenda.type = 'text';
+            legenda.className = 'bloco-legenda-input';
+            legenda.placeholder = 'Legenda da citação (opcional)';
+            legenda.setAttribute('data-legenda', '1');
+            blocoEl.appendChild(legenda);
+        } else if (novoTipo !== 'quote' && legendaExistente) {
+            legendaExistente.remove();
+        }
+
+        var editavel = blocoEl.querySelector('.bloco-conteudo-editavel');
+        if (editavel) {
+            editavel.focus();
+        }
+    }
+
     // adiciona um pequeno "+" quando o mouse passa entre blocos seria ideal,
     // mas pra manter simples: clique com botão direito no bloco (ou o "+"
     // do rodapé) já cobre o fluxo principal. Também oferecemos um atalho:
@@ -317,6 +415,40 @@
         editavel.addEventListener('mouseup', mostrarBarraSeTiverSelecao);
         editavel.addEventListener('keyup', mostrarBarraSeTiverSelecao);
         editavel.addEventListener('paste', colarComoTextoSimples);
+        editavel.addEventListener('focus', function () {
+            manterCursorConfortavel(editavel);
+        });
+        editavel.addEventListener('input', function () {
+            manterCursorConfortavel(editavel);
+        });
+    }
+
+    /**
+     * Evita ter que curvar o pescoço pra baixo pra ver o que está digitando.
+     * Por padrão o navegador só rola a página o mínimo necessário pra
+     * mostrar o cursor — isso faz o cursor quase sempre acabar bem no
+     * rodapé da tela. Aqui a gente rola um pouco mais, deixando o cursor
+     * perto do topo (não colado nele, nem no centro).
+     */
+    function manterCursorConfortavel(editavel) {
+        var rect = null;
+        var selecao = window.getSelection();
+        if (selecao && selecao.rangeCount > 0) {
+            var range = selecao.getRangeAt(0).cloneRange();
+            range.collapse(true);
+            var rects = range.getClientRects();
+            rect = rects[0];
+        }
+        if (!rect) {
+            rect = editavel.getBoundingClientRect();
+        }
+
+        var alvoTopo = window.innerHeight * 0.25;
+        var limiteBaixo = window.innerHeight * 0.7;
+
+        if (rect.top < 90 || rect.top > limiteBaixo) {
+            window.scrollBy({ top: rect.top - alvoTopo, behavior: 'smooth' });
+        }
     }
 
     /**
@@ -353,6 +485,23 @@
         }
     });
 
+    /**
+     * Transforma a seleção de texto atual em link. Usado tanto pelo botão
+     * "Link" da barra flutuante quanto pelo atalho Ctrl+K.
+     */
+    function inserirLinkNaSelecao() {
+        var url = prompt('Cole o link (comece com https://)');
+        if (!url) {
+            return;
+        }
+        url = url.trim();
+        if (!/^(https?:\/\/|mailto:|tel:|\/)/i.test(url)) {
+            alert('Link inválido. Use um endereço começando com https://');
+            return;
+        }
+        document.execCommand('createLink', false, url);
+    }
+
     barraFormatacao.querySelectorAll('button').forEach(function (botao) {
         botao.addEventListener('mousedown', function (ev) {
             ev.preventDefault(); // não perde a seleção de texto
@@ -360,20 +509,30 @@
         botao.addEventListener('click', function () {
             var comando = botao.getAttribute('data-cmd');
             if (comando === 'link') {
-                var url = prompt('Cole o link (comece com https://)');
-                if (!url) {
-                    return;
-                }
-                url = url.trim();
-                if (!/^(https?:\/\/|mailto:|tel:|\/)/i.test(url)) {
-                    alert('Link inválido. Use um endereço começando com https://');
-                    return;
-                }
-                document.execCommand('createLink', false, url);
+                inserirLinkNaSelecao();
             } else {
                 document.execCommand(comando, false, null);
             }
         });
+    });
+
+    // Atalho Ctrl+K (ou Cmd+K no Mac) pra criar link sem precisar abrir a
+    // barra flutuante e clicar no botão. Negrito/itálico/sublinhado (Ctrl+B,
+    // Ctrl+I, Ctrl+U) já funcionam sozinhos em qualquer campo editável do
+    // navegador, então só o link precisava de atalho próprio.
+    container.addEventListener('keydown', function (ev) {
+        var alvo = ev.target;
+        if (!alvo.classList || !alvo.classList.contains('bloco-conteudo-editavel')) {
+            return;
+        }
+        if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
+            ev.preventDefault();
+            var selecao = window.getSelection();
+            if (!selecao || selecao.isCollapsed) {
+                return; // precisa ter texto selecionado pra virar link
+            }
+            inserirLinkNaSelecao();
+        }
     });
 
     // ---------------------------------------------------------------
