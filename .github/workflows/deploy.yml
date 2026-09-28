@@ -29,3 +29,5 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
         server-dir: ""
+        exclude: |
+          **/blog/admin/_config.php
