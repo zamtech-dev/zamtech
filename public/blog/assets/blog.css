@@ -133,9 +133,55 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .sidebar-card {
     background-color: var(--color-white);
     border: 1px solid var(--color-gray-light);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: var(--space-24);
     box-shadow: var(--elevation-1);
+}
+
+/* Cards institucionais com foto real + selo de ícone (Quem é a Zamtech,
+   Pra sua casa, Pra sua empresa). A "Indique e Ganhe" fica de fora
+   desse padrão de propósito: segue o mesmo estilo do emoji que o menu
+   real do site (Header.astro) já usa pra ela, sem foto/ícone. */
+.sidebar-card-com-imagem {
+    padding: 0;
+    overflow: visible;
+}
+
+.sidebar-card-banner {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    overflow: hidden;
+}
+
+.sidebar-card-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-card-icone-badge {
+    position: absolute;
+    left: var(--space-16);
+    bottom: -18px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    box-shadow: var(--elevation-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-card-icone-badge img {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar-card-com-imagem .sidebar-card-corpo {
+    padding: 26px var(--space-24) var(--space-24);
 }
 
 .sidebar-card-titulo {
@@ -289,6 +335,18 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     transition: var(--transition-default);
 }
 
+.categoria-nome {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.categoria-icone {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
 .categoria-lista a:hover,
 .categoria-lista a.ativo {
     background-color: var(--color-gray-light);
@@ -311,6 +369,18 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 }
 
 /* Artigos populares / recentes */
+.sidebar-card-titulo-com-icone {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.sidebar-card-titulo-com-icone .titulo-icone {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
 .sidebar-vazio { font-size: var(--fs-sm); color: var(--color-gray-medium); }
 
 .sidebar-lista-artigos { list-style: none; display: flex; flex-direction: column; gap: var(--space-12); }
@@ -365,7 +435,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 @media (max-width: 640px) { .blog-grid { grid-template-columns: 1fr; } }
 
 .blog-card {
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     overflow: hidden;
     background-color: var(--color-white);
     box-shadow: var(--elevation-1);
@@ -386,6 +456,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .blog-card-data { font-size: var(--fs-caption); color: var(--color-gray-low); font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
 
 .blog-card-categoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: var(--fs-caption);
     font-weight: 700;
     color: var(--color-primary);
@@ -393,6 +466,12 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     padding: 1px var(--space-8);
     border-radius: var(--radius-full);
     white-space: nowrap;
+}
+
+.blog-card-categoria-icone {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
 }
 
 .blog-card-titulo { font-size: var(--fs-h4); color: var(--color-gray-dark); }

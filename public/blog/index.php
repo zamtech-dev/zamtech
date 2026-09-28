@@ -50,6 +50,22 @@ function linkComFiltros(array $sobrescreve = []): string
     return $query === '' ? '/blog' : ('/blog?' . $query);
 }
 
+/**
+ * Ícone (dos assets do próprio site) pra identificar cada categoria
+ * visualmente. Se um dia adicionar categoria nova em CATEGORIAS_BLOG e
+ * esquecer de mapear aqui, cai num ícone genérico — não quebra nada.
+ */
+function iconeCategoria(string $categoria): string
+{
+    $mapa = [
+        'Residencial' => '/assets/icons/others-icons/casa-house.svg',
+        'Empresarial' => '/assets/icons/others-icons/empresarial.svg',
+        'Dicas' => '/assets/icons/tech-icon.svg',
+        'Novidades' => '/assets/icons/star.svg',
+    ];
+    return $mapa[$categoria] ?? '/assets/icons/others-icons/casa-house.svg';
+}
+
 function formatarDataBr(?string $data): string
 {
     if (!$data) {
@@ -222,7 +238,10 @@ $conn->close();
                         <?php foreach ($categorias as $cat): ?>
                             <li>
                                 <a href="<?= htmlspecialchars(linkComFiltros(['categoria' => $cat['categoria'], 'pagina' => null]), ENT_QUOTES) ?>" class="<?= $categoriaFiltro === $cat['categoria'] ? 'ativo' : '' ?>">
-                                    <span><?= htmlspecialchars($cat['categoria'], ENT_QUOTES) ?></span>
+                                    <span class="categoria-nome">
+                                        <img src="<?= iconeCategoria($cat['categoria']) ?>" alt="" class="categoria-icone" />
+                                        <?= htmlspecialchars($cat['categoria'], ENT_QUOTES) ?>
+                                    </span>
                                     <span class="categoria-contagem"><?= (int) $cat['total'] ?></span>
                                 </a>
                             </li>
@@ -231,36 +250,63 @@ $conn->close();
                 </div>
 
                 <!-- 4. Quem é a Zamtech -->
-                <div class="sidebar-card sidebar-card-destaque">
-                    <h2 class="sidebar-card-titulo">Quem é a Zamtech?</h2>
-                    <p>Internet fibra óptica de verdade, com suporte que responde e planos pensados pra sua casa ou pra sua empresa.</p>
-                    <a href="/sobre" class="sidebar-card-link">Conhecer a Zamtech &rarr;</a>
+                <div class="sidebar-card sidebar-card-destaque sidebar-card-com-imagem">
+                    <div class="sidebar-card-banner">
+                        <img src="/assets/img/sobre-imgs/01-conheca-a-zamtech-fibra-optica.webp" alt="" loading="lazy" />
+                        <span class="sidebar-card-icone-badge">
+                            <img src="/assets/icons/sobre.svg" alt="" />
+                        </span>
+                    </div>
+                    <div class="sidebar-card-corpo">
+                        <h2 class="sidebar-card-titulo">Quem é a Zamtech?</h2>
+                        <p>Internet fibra óptica de verdade, com suporte que responde e planos pensados pra sua casa ou pra sua empresa.</p>
+                        <a href="/sobre" class="sidebar-card-link">Conhecer a Zamtech &rarr;</a>
+                    </div>
                 </div>
 
                 <!-- Conheça produtos residenciais -->
-                <div class="sidebar-card">
-                    <h2 class="sidebar-card-titulo">Pra sua casa</h2>
-                    <p>Planos de internet residencial com Wi-Fi de verdade em todo cômodo.</p>
-                    <a href="/planos-residenciais" class="sidebar-card-link">Ver planos residenciais &rarr;</a>
+                <div class="sidebar-card sidebar-card-com-imagem">
+                    <div class="sidebar-card-banner">
+                        <img src="/assets/img/backgrounds/wallpaper-planos-residenciais.webp" alt="" loading="lazy" />
+                        <span class="sidebar-card-icone-badge">
+                            <img src="/assets/icons/others-icons/casa-house.svg" alt="" />
+                        </span>
+                    </div>
+                    <div class="sidebar-card-corpo">
+                        <h2 class="sidebar-card-titulo">Pra sua casa</h2>
+                        <p>Planos de internet residencial com Wi-Fi de verdade em todo cômodo.</p>
+                        <a href="/planos-residenciais" class="sidebar-card-link">Ver planos residenciais &rarr;</a>
+                    </div>
                 </div>
 
                 <!-- Conheça produtos empresariais -->
-                <div class="sidebar-card sidebar-card-escura">
-                    <h2 class="sidebar-card-titulo">Pra sua empresa</h2>
-                    <p>Link dedicado, estabilidade e suporte prioritário pro seu negócio não parar.</p>
-                    <a href="/planos-empresariais" class="sidebar-card-link">Ver planos empresariais &rarr;</a>
+                <div class="sidebar-card sidebar-card-escura sidebar-card-com-imagem">
+                    <div class="sidebar-card-banner">
+                        <img src="/assets/img/backgrounds/background-planos-empresariais.jpg" alt="" loading="lazy" />
+                        <span class="sidebar-card-icone-badge">
+                            <img src="/assets/icons/others-icons/empresarial.svg" alt="" />
+                        </span>
+                    </div>
+                    <div class="sidebar-card-corpo">
+                        <h2 class="sidebar-card-titulo">Pra sua empresa</h2>
+                        <p>Link dedicado, estabilidade e suporte prioritário pro seu negócio não parar.</p>
+                        <a href="/planos-empresariais" class="sidebar-card-link">Ver planos empresariais &rarr;</a>
+                    </div>
                 </div>
 
-                <!-- Botão indique e ganhe -->
+                <!-- Botão indique e ganhe (mesmo padrão de emoji que o menu real do site já usa aqui) -->
                 <div class="sidebar-card sidebar-card-indique">
-                    <h2 class="sidebar-card-titulo">Indique e Ganhe</h2>
+                    <h2 class="sidebar-card-titulo">🎁 Indique e Ganhe</h2>
                     <p>Indique a Zamtech pra um amigo e ganhe desconto na sua fatura quando ele contratar.</p>
                     <a href="/indique" class="btn-indique">Quero indicar</a>
                 </div>
 
                 <!-- Artigos populares -->
                 <div class="sidebar-card">
-                    <h2 class="sidebar-card-titulo">Artigos populares</h2>
+                    <h2 class="sidebar-card-titulo sidebar-card-titulo-com-icone">
+                        <img src="/assets/icons/star.svg" alt="" class="titulo-icone" />
+                        Artigos populares
+                    </h2>
                     <?php if (empty($populares)): ?>
                         <p class="sidebar-vazio">Ainda não tem artigo publicado.</p>
                     <?php else: ?>
@@ -283,7 +329,10 @@ $conn->close();
 
                 <!-- Artigos recentes -->
                 <div class="sidebar-card">
-                    <h2 class="sidebar-card-titulo">Artigos recentes</h2>
+                    <h2 class="sidebar-card-titulo sidebar-card-titulo-com-icone">
+                        <img src="/assets/icons/others-icons/relogio-disponibilidade.svg" alt="" class="titulo-icone" />
+                        Artigos recentes
+                    </h2>
                     <?php if (empty($recentes)): ?>
                         <p class="sidebar-vazio">Ainda não tem artigo publicado.</p>
                     <?php else: ?>
@@ -336,7 +385,10 @@ $conn->close();
                                     <div class="blog-card-topo">
                                         <span class="blog-card-data"><?= formatarDataBr($artigo['publicado_em']) ?></span>
                                         <?php if ($artigo['categoria']): ?>
-                                            <span class="blog-card-categoria"><?= htmlspecialchars($artigo['categoria'], ENT_QUOTES) ?></span>
+                                            <span class="blog-card-categoria">
+                                                <img src="<?= iconeCategoria($artigo['categoria']) ?>" alt="" class="blog-card-categoria-icone" />
+                                                <?= htmlspecialchars($artigo['categoria'], ENT_QUOTES) ?>
+                                            </span>
                                         <?php endif; ?>
                                     </div>
                                     <h2 class="blog-card-titulo"><?= htmlspecialchars($artigo['titulo'], ENT_QUOTES) ?></h2>
