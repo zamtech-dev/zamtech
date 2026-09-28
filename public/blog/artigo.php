@@ -93,6 +93,8 @@ if ($artigo['imagem_capa']) {
     <meta property="og:description" content="<?= htmlspecialchars($descricaoSeo, ENT_QUOTES) ?>" />
     <meta property="og:url" content="<?= htmlspecialchars($urlCanonica, ENT_QUOTES) ?>" />
     <meta property="og:image" content="<?= htmlspecialchars($imagemSeo, ENT_QUOTES) ?>" />
+    <meta property="og:image:secure_url" content="<?= htmlspecialchars($imagemSeo, ENT_QUOTES) ?>" />
+    <meta property="og:image:type" content="<?= $artigo['imagem_capa'] ? 'image/webp' : 'image/svg+xml' ?>" />
     <meta property="article:published_time" content="<?= formatarDataIso($artigo['publicado_em']) ?>" />
     <meta property="article:modified_time" content="<?= formatarDataIso($artigo['atualizado_em']) ?>" />
 

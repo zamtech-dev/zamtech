@@ -63,32 +63,17 @@ if (!$imagemOrigem) {
     exit;
 }
 
-// PNG pode ter transparência — preserva ao converter pra WebP.
-imagepalettetotruecolor($imagemOrigem);
-imagealphablending($imagemOrigem, true);
-imagesavealpha($imagemOrigem, true);
+// PNG pode ter transparência — preserva ao converter pra WebP (a função
+// salvarImagemComoWebp, em _config.php, cuida disso e do resto do salvamento).
+$url = salvarImagemComoWebp($imagemOrigem);
 
-if (!is_dir(BLOG_UPLOAD_DIR)) {
-    mkdir(BLOG_UPLOAD_DIR, 0755, true);
-}
-
-$nomeArquivo = date('Y-m') . '/' . bin2hex(random_bytes(8)) . '.webp';
-$caminhoCompleto = BLOG_UPLOAD_DIR . '/' . $nomeArquivo;
-$pastaDestino = dirname($caminhoCompleto);
-if (!is_dir($pastaDestino)) {
-    mkdir($pastaDestino, 0755, true);
-}
-
-$salvou = imagewebp($imagemOrigem, $caminhoCompleto, 82);
-imagedestroy($imagemOrigem);
-
-if (!$salvou) {
+if (!$url) {
     echo json_encode(['sucesso' => false, 'mensagem' => 'Falha ao salvar a imagem convertida.']);
     exit;
 }
 
 echo json_encode([
     'sucesso' => true,
-    'url' => BLOG_UPLOAD_URL . '/' . $nomeArquivo,
+    'url' => $url,
     'alt' => $alt,
 ]);

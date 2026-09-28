@@ -48,6 +48,20 @@ CREATE TABLE IF NOT EXISTS blog_artigos (
     INDEX idx_categoria (categoria)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tabela de categorias (editável pelo painel admin, em /blog/admin/categorias.php)
+CREATE TABLE IF NOT EXISTS blog_categorias (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(60) NOT NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY idx_nome (nome)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO blog_categorias (nome) VALUES
+    ('Residencial'),
+    ('Empresarial'),
+    ('Dicas'),
+    ('Novidades');
+
 -- Tabela de tentativas de login (pra bloquear ataques de forca bruta no admin)
 CREATE TABLE IF NOT EXISTS blog_login_tentativas (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

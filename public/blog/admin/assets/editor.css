@@ -70,7 +70,11 @@
 
 .bloco {
     position: relative;
-    padding: var(--space-8) var(--space-12) var(--space-8) 44px;
+    /* 56px (não 44px): sobra uns 12px de folga entre os botões de mover/
+       excluir e o começo do texto, pra clicar perto do início de uma
+       linha (pra posicionar o cursor) não correr o risco de acertar um
+       botão sem querer. */
+    padding: var(--space-8) var(--space-12) var(--space-8) 56px;
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-4);
 }
@@ -156,8 +160,11 @@
        hover. Deixar como "none" quando invisível parece mais limpo, mas
        quebra em touch (tablet) e em cliques rápidos, porque o :hover
        real do navegador só é aplicado depois que o mouse já está em
-       cima — então o clique inicial "esbarra" no bloco de trás. */
-    opacity: 0.3;
+       cima — então o clique inicial "esbarra" no bloco de trás.
+       Opacidade parada em 0.15 (não 0.3): só uma sombra discreta pra
+       avisar que os botões existem, sem ficar piscando/chamando atenção
+       toda hora que você passa o mouse pra digitar. */
+    opacity: 0.15;
     pointer-events: auto;
     transition: opacity 0.15s ease;
 }
@@ -333,6 +340,88 @@
 }
 
 .grade-banco-imagens img.selecionada { border-color: var(--color-primary); }
+
+/* --- Banco de imagens externo (Unsplash / Pexels) --- */
+.busca-imagem-externa {
+    display: flex;
+    gap: var(--space-8);
+    margin-bottom: var(--space-12);
+}
+
+.busca-imagem-externa input {
+    flex: 1;
+    padding: var(--space-8) var(--space-12);
+    border: 1.5px solid var(--color-gray-low);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-sm);
+    font-family: inherit;
+}
+
+.busca-imagem-externa input:focus { outline: none; border-color: var(--color-primary); }
+
+.grade-imagens-externas { grid-template-columns: repeat(3, 1fr); }
+
+.item-imagem-externa {
+    position: relative;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 2px solid transparent;
+    aspect-ratio: 1;
+}
+
+.item-imagem-externa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.item-imagem-externa.selecionada { border-color: var(--color-primary); }
+
+.credito-imagem-externa {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+    color: #fff;
+    font-size: 10px;
+    line-height: 1.2;
+    padding: 14px 6px 4px;
+}
+
+/* --- Preview de como o artigo aparece no Google --- */
+.preview-google {
+    border: 1px solid var(--color-gray-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
+    background-color: var(--color-white);
+    font-family: arial, sans-serif;
+}
+
+.preview-google-site { display: flex; align-items: center; gap: var(--space-8); }
+
+.preview-google-favicon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--gradient-brand, var(--color-primary));
+    flex-shrink: 0;
+}
+
+.preview-google-nome-site { font-size: 13px; color: var(--color-gray-dark); }
+.preview-google-url { font-size: 12px; color: var(--color-gray-medium); }
+
+.preview-google-titulo {
+    color: #1a0dab;
+    font-size: 18px;
+    line-height: 1.3;
+    margin-top: 4px;
+    overflow-wrap: break-word;
+}
+
+.preview-google-descricao {
+    color: #4d5156;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-top: 2px;
+}
 
 #preview-embed { margin-top: var(--space-16); }
 #preview-embed iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: var(--radius-md); }

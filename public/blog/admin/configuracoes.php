@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <nav class="admin-topbar-nav">
                 <a href="/blog/admin/">Artigos</a>
                 <a href="/blog/admin/editor.php">Novo artigo</a>
+                <a href="/blog/admin/categorias.php">Categorias</a>
                 <a href="/blog/admin/configuracoes.php" class="ativo">Configurações</a>
                 <a href="/blog" target="_blank">Ver blog</a>
                 <a href="/blog/admin/logout.php" class="btn-sair">Sair</a>

@@ -6,10 +6,7 @@ $pagina = max(1, (int) ($_GET['pagina'] ?? 1));
 $offset = ($pagina - 1) * $porPagina;
 
 $busca = trim((string) ($_GET['busca'] ?? ''));
-$categoriaFiltro = trim((string) ($_GET['categoria'] ?? ''));
-if (!in_array($categoriaFiltro, CATEGORIAS_BLOG, true)) {
-    $categoriaFiltro = '';
-}
+$categoriaFiltroBruta = trim((string) ($_GET['categoria'] ?? ''));
 $ordenar = ($_GET['ordenar'] ?? '') === 'populares' ? 'populares' : 'recentes';
 
 /**
@@ -52,8 +49,8 @@ function linkComFiltros(array $sobrescreve = []): string
 
 /**
  * Ícone (dos assets do próprio site) pra identificar cada categoria
- * visualmente. Se um dia adicionar categoria nova em CATEGORIAS_BLOG e
- * esquecer de mapear aqui, cai num ícone genérico — não quebra nada.
+ * visualmente. Se um dia criar uma categoria nova pelo painel e esquecer
+ * de mapear aqui, cai num ícone genérico — não quebra nada.
  */
 function iconeCategoria(string $categoria): string
 {
@@ -77,6 +74,10 @@ function formatarDataBr(?string $data): string
 }
 
 $conn = conectarBanco();
+
+// só aceita uma categoria que realmente existe na tabela blog_categorias —
+// qualquer outra coisa na URL vira "sem filtro", não confia em texto livre.
+$categoriaFiltro = in_array($categoriaFiltroBruta, listarCategorias($conn), true) ? $categoriaFiltroBruta : '';
 
 // --- filtro (busca + categoria), reaproveitado na contagem e na listagem ---
 $condicoes = ["status = 'publicado'"];

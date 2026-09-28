@@ -22,10 +22,7 @@ $id = isset($dados['id']) ? (int) $dados['id'] : 0;
 $titulo = trim((string) ($dados['titulo'] ?? ''));
 $blocosRecebidos = is_array($dados['blocks'] ?? null) ? $dados['blocks'] : [];
 $statusPedido = ($dados['status'] ?? 'rascunho') === 'publicado' ? 'publicado' : 'rascunho';
-// só aceita uma categoria da lista oficial (CATEGORIAS_BLOG) — qualquer
-// outra coisa vira "sem categoria", não confia em texto livre vindo do JS.
 $categoriaRecebida = trim((string) ($dados['categoria'] ?? ''));
-$categoria = in_array($categoriaRecebida, CATEGORIAS_BLOG, true) ? $categoriaRecebida : null;
 $imagemCapa = trim((string) ($dados['imagem_capa'] ?? ''));
 $imagemCapaAlt = trim((string) ($dados['imagem_capa_alt'] ?? ''));
 $resumo = trim((string) ($dados['resumo'] ?? ''));
@@ -88,6 +85,11 @@ if ($metaDescricao === '') {
 
 $conn = conectarBanco();
 $autorId = (int) $_SESSION['blog_admin_id'];
+
+// só aceita uma categoria que realmente existe na tabela blog_categorias —
+// qualquer outra coisa vira "sem categoria", não confia em texto livre
+// vindo do JS.
+$categoria = in_array($categoriaRecebida, listarCategorias($conn), true) ? $categoriaRecebida : null;
 
 if ($id > 0) {
     // edição — busca o artigo atual pra saber o slug e se já foi publicado antes

@@ -22,9 +22,17 @@ define('BLOG_UPLOAD_URL', '/assets/img/blog');
 // --- Nome do cookie de sessão do admin (separado do resto do site) ---
 define('BLOG_SESSION_NAME', 'zamtech_blog_admin');
 
-// --- Categorias do blog (lista única, usada no editor e na página pública).
-// Pra adicionar/remover uma categoria, mexe só aqui. ---
-define('CATEGORIAS_BLOG', ['Residencial', 'Empresarial', 'Dicas', 'Novidades']);
+// --- Categorias do blog agora ficam na tabela `blog_categorias` (veja
+// listarCategorias() mais abaixo) — dá pra criar/excluir pelo painel em
+// /blog/admin/categorias.php, sem precisar mexer em código nem esperar
+// deploy. ---
+
+// --- Chaves de API pra buscar imagem de banco (Unsplash e Pexels) direto
+// no editor. As duas são gratuitas — veja o passo a passo que te mandei
+// pra criar a conta e pegar a chave. Deixando em branco, a aba
+// correspondente no editor só avisa "não configurado" (não quebra nada). ---
+define('UNSPLASH_ACCESS_KEY', '');
+define('PEXELS_API_KEY', '');
 
 // --- Limite de tentativas de login (rate limiting) ---
 define('LOGIN_MAX_TENTATIVAS', 5);
@@ -100,4 +108,53 @@ function gerarSlugUnico(mysqli $conn, string $slugBase, ?int $idIgnorar = null):
         $slug = $slugBase . '-' . $contador;
         $contador++;
     }
+}
+
+/**
+ * Lista os nomes das categorias cadastradas (tabela blog_categorias),
+ * em ordem alfabética. Usado no editor (select), na validação de quem
+ * salva um artigo, e no filtro público do blog.
+ *
+ * @return string[]
+ */
+function listarCategorias(mysqli $conn): array
+{
+    $resultado = $conn->query('SELECT nome FROM blog_categorias ORDER BY nome');
+    if (!$resultado) {
+        return [];
+    }
+    return array_column($resultado->fetch_all(MYSQLI_ASSOC), 'nome');
+}
+
+/**
+ * Salva um recurso de imagem GD como WebP dentro da pasta de uploads do
+ * blog (organizada por mês) e devolve a URL pública, ou null se falhar.
+ * Usado tanto no upload direto quanto na importação de banco de imagens
+ * externo (Unsplash/Pexels) — assim toda imagem do blog acaba no mesmo
+ * formato e vive no nosso próprio servidor, sem depender do site externo
+ * continuar no ar.
+ *
+ * @param resource|\GdImage $imagemOrigem
+ */
+function salvarImagemComoWebp($imagemOrigem): ?string
+{
+    imagepalettetotruecolor($imagemOrigem);
+    imagealphablending($imagemOrigem, true);
+    imagesavealpha($imagemOrigem, true);
+
+    if (!is_dir(BLOG_UPLOAD_DIR)) {
+        mkdir(BLOG_UPLOAD_DIR, 0755, true);
+    }
+
+    $nomeArquivo = date('Y-m') . '/' . bin2hex(random_bytes(8)) . '.webp';
+    $caminhoCompleto = BLOG_UPLOAD_DIR . '/' . $nomeArquivo;
+    $pastaDestino = dirname($caminhoCompleto);
+    if (!is_dir($pastaDestino)) {
+        mkdir($pastaDestino, 0755, true);
+    }
+
+    $salvou = imagewebp($imagemOrigem, $caminhoCompleto, 82);
+    imagedestroy($imagemOrigem);
+
+    return $salvou ? (BLOG_UPLOAD_URL . '/' . $nomeArquivo) : null;
 }

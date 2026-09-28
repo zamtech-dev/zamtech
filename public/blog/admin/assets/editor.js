@@ -372,6 +372,7 @@
     var arquivoSelecionadoBase64 = null;
     var cropEstado = { escala: 1, x: 0, y: 0, arrastando: false, inicioX: 0, inicioY: 0 };
     var urlBancoSelecionada = null;
+    var imagemExternaSelecionada = null; // { completa, download_location, credito } — Unsplash/Pexels
 
     function resetarModalImagem() {
         areaSelecionarArquivo.hidden = false;
@@ -381,6 +382,7 @@
         campoLegendaImagem.value = '';
         arquivoSelecionadoBase64 = null;
         urlBancoSelecionada = null;
+        imagemExternaSelecionada = null;
         cropEstado = { escala: 1, x: 0, y: 0, arrastando: false, inicioX: 0, inicioY: 0 };
         cropZoom.value = 100;
         document.querySelectorAll('.aba-btn').forEach(function (b) { b.classList.remove('ativa'); });
@@ -430,6 +432,7 @@
                         el.classList.add('selecionada');
                         urlBancoSelecionada = img.url;
                         arquivoSelecionadoBase64 = null;
+                        imagemExternaSelecionada = null;
                     });
                     gradeBancoImagens.appendChild(el);
                 });
@@ -438,6 +441,81 @@
                 gradeBancoImagens.innerHTML = '<p class="dica-upload">Erro ao carregar as imagens.</p>';
             });
     }
+
+    // ---------------------------------------------------------------
+    // Banco de imagens externo (Unsplash / Pexels) — busca no servidor
+    // (que fala com a API deles) e, se escolher uma, baixa e converte
+    // pra WebP no nosso próprio servidor (não fica "pendurado" na URL
+    // externa).
+    // ---------------------------------------------------------------
+
+    function buscarImagensExternas(fonte, termo, grade) {
+        grade.innerHTML = '<p class="dica-upload">Buscando...</p>';
+        fetch('/blog/admin/ajax/buscar-imagens-externas.php?fonte=' + fonte + '&q=' + encodeURIComponent(termo), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (dados) {
+                if (!dados.sucesso) {
+                    grade.innerHTML = '<p class="dica-upload">' + escaparHtml(dados.mensagem || 'Erro na busca.') + '</p>';
+                    return;
+                }
+                if (!dados.imagens.length) {
+                    grade.innerHTML = '<p class="dica-upload">Nada encontrado. Tenta outra palavra.</p>';
+                    return;
+                }
+                grade.innerHTML = '';
+                dados.imagens.forEach(function (img) {
+                    var item = document.createElement('div');
+                    item.className = 'item-imagem-externa';
+                    item.innerHTML =
+                        '<img src="' + img.miniatura + '" alt="" />' +
+                        '<span class="credito-imagem-externa">' + escaparHtml(img.credito) + '</span>';
+                    item.addEventListener('click', function () {
+                        grade.querySelectorAll('.item-imagem-externa').forEach(function (i) { i.classList.remove('selecionada'); });
+                        item.classList.add('selecionada');
+                        imagemExternaSelecionada = {
+                            completa: img.completa,
+                            download_location: img.download_location,
+                            credito: img.credito,
+                        };
+                        urlBancoSelecionada = null;
+                        arquivoSelecionadoBase64 = null;
+                        if (!campoLegendaImagem.value.trim()) {
+                            campoLegendaImagem.value = img.credito;
+                        }
+                    });
+                    grade.appendChild(item);
+                });
+            })
+            .catch(function () {
+                grade.innerHTML = '<p class="dica-upload">Erro de conexão na busca.</p>';
+            });
+    }
+
+    function ativarBuscaExterna(fonte, idInput, idBotao, idGrade) {
+        var input = document.getElementById(idInput);
+        var botao = document.getElementById(idBotao);
+        var grade = document.getElementById(idGrade);
+
+        function dispararBusca() {
+            var termo = input.value.trim();
+            if (termo) {
+                buscarImagensExternas(fonte, termo, grade);
+            }
+        }
+
+        botao.addEventListener('click', dispararBusca);
+        input.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter') {
+                ev.preventDefault();
+                dispararBusca();
+            }
+        });
+    }
+
+    ativarBuscaExterna('unsplash', 'busca-unsplash', 'btn-buscar-unsplash', 'grade-unsplash');
+    ativarBuscaExterna('pexels', 'busca-pexels', 'btn-buscar-pexels', 'grade-pexels');
 
     inputArquivo.addEventListener('change', function () {
         var arquivo = inputArquivo.files[0];
@@ -553,6 +631,40 @@
         if (urlBancoSelecionada) {
             callbackImagemAtual({ url: urlBancoSelecionada, alt: alt, legenda: campoLegendaImagem.value.trim() });
             fecharTodosOsModais();
+            return;
+        }
+
+        if (imagemExternaSelecionada) {
+            var botaoExterna = document.getElementById('btn-confirmar-imagem');
+            botaoExterna.disabled = true;
+            botaoExterna.textContent = 'Baixando...';
+
+            fetch('/blog/admin/ajax/importar-imagem-externa.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                body: JSON.stringify({
+                    url: imagemExternaSelecionada.completa,
+                    download_location: imagemExternaSelecionada.download_location,
+                    alt: alt,
+                    csrf: window.CSRF_TOKEN,
+                }),
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (dados) {
+                    botaoExterna.disabled = false;
+                    botaoExterna.textContent = 'Usar esta imagem';
+                    if (dados.sucesso) {
+                        callbackImagemAtual({ url: dados.url, alt: alt, legenda: campoLegendaImagem.value.trim() });
+                        fecharTodosOsModais();
+                    } else {
+                        alert(dados.mensagem || 'Não deu pra baixar essa imagem.');
+                    }
+                })
+                .catch(function () {
+                    botaoExterna.disabled = false;
+                    botaoExterna.textContent = 'Usar esta imagem';
+                    alert('Erro de conexão ao baixar a imagem.');
+                });
             return;
         }
 
@@ -722,6 +834,51 @@
     });
 
     // ---------------------------------------------------------------
+    // Preview de como o artigo aparece no Google (tipo o Yoast) +
+    // contador de caracteres do título/descrição de SEO
+    // ---------------------------------------------------------------
+
+    var previewGoogleUrl = document.getElementById('preview-google-url');
+    var previewGoogleTitulo = document.getElementById('preview-google-titulo');
+    var previewGoogleDescricao = document.getElementById('preview-google-descricao');
+    var contadorMetaTitulo = document.getElementById('contador-meta-titulo');
+    var contadorMetaDescricao = document.getElementById('contador-meta-descricao');
+
+    // Aproximação só pra pré-visualização — o slug de verdade é gerado no
+    // servidor (e pode ganhar um "-2" no fim se já existir um artigo com
+    // o mesmo nome), mas isso aqui já dá uma ideia bem próxima.
+    function slugPreview(texto) {
+        return (
+            (texto || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[̀-ͯ]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+        ) || 'artigo';
+    }
+
+    function atualizarPreviewGoogle() {
+        var tituloSeo = campoMetaTitulo.value.trim() || campoTitulo.value.trim() || 'Título do artigo';
+        var descricaoSeo = campoMetaDescricao.value.trim() || campoResumo.value.trim() || 'A descrição do artigo aparece aqui conforme você escreve.';
+        var slugAtual = window.ARTIGO_INICIAL.slug || slugPreview(campoTitulo.value.trim());
+
+        previewGoogleUrl.textContent = 'zamtech.com.br › blog › ' + slugAtual;
+        previewGoogleTitulo.textContent = tituloSeo.length > 60 ? tituloSeo.slice(0, 60) + '…' : tituloSeo;
+        previewGoogleDescricao.textContent = descricaoSeo.length > 160 ? descricaoSeo.slice(0, 160) + '…' : descricaoSeo;
+
+        contadorMetaTitulo.textContent = campoMetaTitulo.value.length + '/70';
+        contadorMetaTitulo.style.color = campoMetaTitulo.value.length > 60 ? 'var(--color-danger)' : 'var(--color-gray-medium)';
+        contadorMetaDescricao.textContent = campoMetaDescricao.value.length + '/160';
+        contadorMetaDescricao.style.color = campoMetaDescricao.value.length > 155 ? 'var(--color-danger)' : 'var(--color-gray-medium)';
+    }
+
+    campoMetaTitulo.addEventListener('input', atualizarPreviewGoogle);
+    campoMetaDescricao.addEventListener('input', atualizarPreviewGoogle);
+    campoTitulo.addEventListener('input', atualizarPreviewGoogle);
+    campoResumo.addEventListener('input', atualizarPreviewGoogle);
+
+    // ---------------------------------------------------------------
     // Carregar dados iniciais (edição de artigo existente)
     // ---------------------------------------------------------------
 
@@ -734,6 +891,7 @@
         campoMetaTitulo.value = dados.meta_titulo || '';
         campoMetaDescricao.value = dados.meta_descricao || '';
         renderizarCapa();
+        atualizarPreviewGoogle();
 
         (dados.blocks || []).forEach(function (bloco) {
             var el = null;

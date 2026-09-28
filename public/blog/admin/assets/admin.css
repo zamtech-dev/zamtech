@@ -247,6 +247,28 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     color: var(--color-gray-medium);
 }
 
+/* --- Categorias --- */
+.form-categoria-nova {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.form-categoria-nova input[type="text"] {
+    flex: 1;
+    padding: var(--space-12) var(--space-16);
+    border: 1.5px solid var(--color-gray-low);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-sm);
+    font-family: inherit;
+}
+
+.form-categoria-nova input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.item-categoria .item-artigo-info { padding: 4px 0; }
+
 /* --- Formulários (login, configurações) --- */
 .form-card {
     max-width: 420px;

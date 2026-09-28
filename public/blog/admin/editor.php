@@ -5,8 +5,9 @@ exigirLogin();
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $artigo = null;
 
+$conn = conectarBanco();
+
 if ($id > 0) {
-    $conn = conectarBanco();
     $stmt = $conn->prepare(
         'SELECT id, titulo, slug, categoria, resumo, conteudo_json, imagem_capa, imagem_capa_alt,
                 meta_titulo, meta_descricao, status
@@ -16,17 +17,21 @@ if ($id > 0) {
     $stmt->execute();
     $artigo = $stmt->get_result()->fetch_assoc();
     $stmt->close();
-    $conn->close();
 
     if (!$artigo) {
+        $conn->close();
         header('Location: /blog/admin/');
         exit;
     }
 }
 
+$categoriasDisponiveis = listarCategorias($conn);
+$conn->close();
+
 $dadosIniciais = [
     'id' => $artigo['id'] ?? null,
     'titulo' => $artigo['titulo'] ?? '',
+    'slug' => $artigo['slug'] ?? '',
     'blocks' => $artigo ? (json_decode($artigo['conteudo_json'], true) ?: []) : [],
     'categoria' => $artigo['categoria'] ?? '',
     'imagem_capa' => $artigo['imagem_capa'] ?? '',
@@ -86,12 +91,13 @@ $dadosIniciais = [
                     <label for="campo-categoria">Categoria</label>
                     <select id="campo-categoria">
                         <option value="">Sem categoria</option>
-                        <?php foreach (CATEGORIAS_BLOG as $cat): ?>
+                        <?php foreach ($categoriasDisponiveis as $cat): ?>
                             <option value="<?= htmlspecialchars($cat, ENT_QUOTES) ?>" <?= ($dadosIniciais['categoria'] ?? '') === $cat ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($cat, ENT_QUOTES) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="dica-upload">Pra criar ou excluir categorias, use a página <a href="/blog/admin/categorias.php" style="color: var(--color-primary);">Categorias</a>.</p>
                 </div>
 
                 <h3>SEO</h3>
@@ -102,10 +108,26 @@ $dadosIniciais = [
                 <div class="campo">
                     <label for="campo-meta-titulo">Título para o Google (até 70 caracteres)</label>
                     <input type="text" id="campo-meta-titulo" maxlength="70" />
+                    <p class="dica-upload" id="contador-meta-titulo">0/70</p>
                 </div>
                 <div class="campo">
                     <label for="campo-meta-descricao">Descrição para o Google (até 160 caracteres)</label>
                     <textarea id="campo-meta-descricao" rows="3" maxlength="160"></textarea>
+                    <p class="dica-upload" id="contador-meta-descricao">0/160</p>
+                </div>
+                <div class="campo">
+                    <label>Como vai aparecer no Google</label>
+                    <div class="preview-google" id="preview-google">
+                        <div class="preview-google-site">
+                            <span class="preview-google-favicon"></span>
+                            <span>
+                                <span class="preview-google-nome-site">Zamtech</span><br />
+                                <span class="preview-google-url" id="preview-google-url">zamtech.com.br › blog</span>
+                            </span>
+                        </div>
+                        <div class="preview-google-titulo" id="preview-google-titulo">Título do artigo</div>
+                        <div class="preview-google-descricao" id="preview-google-descricao">A descrição do artigo aparece aqui conforme você escreve.</div>
+                    </div>
                 </div>
                 <?php if ($artigo && $artigo['status'] === 'publicado'): ?>
                     <div class="campo">
@@ -144,7 +166,9 @@ $dadosIniciais = [
             <div class="modal-cabecalho">
                 <div class="modal-abas">
                     <button type="button" class="aba-btn ativa" data-aba="enviar">Enviar imagem</button>
-                    <button type="button" class="aba-btn" data-aba="banco">Banco de imagens</button>
+                    <button type="button" class="aba-btn" data-aba="banco">Já usadas</button>
+                    <button type="button" class="aba-btn" data-aba="unsplash">Unsplash</button>
+                    <button type="button" class="aba-btn" data-aba="pexels">Pexels</button>
                 </div>
                 <button type="button" class="modal-fechar" data-fechar-modal>&times;</button>
             </div>
@@ -168,6 +192,22 @@ $dadosIniciais = [
                     <div class="grade-banco-imagens" id="grade-banco-imagens">
                         <p class="dica-upload">Carregando...</p>
                     </div>
+                </div>
+
+                <div class="aba-conteudo" data-aba-conteudo="unsplash" hidden>
+                    <div class="busca-imagem-externa">
+                        <input type="text" id="busca-unsplash" placeholder="Buscar no Unsplash (ex: fibra óptica, internet, família)" />
+                        <button type="button" class="btn btn-sm btn-outline" id="btn-buscar-unsplash">Buscar</button>
+                    </div>
+                    <div class="grade-banco-imagens grade-imagens-externas" id="grade-unsplash"></div>
+                </div>
+
+                <div class="aba-conteudo" data-aba-conteudo="pexels" hidden>
+                    <div class="busca-imagem-externa">
+                        <input type="text" id="busca-pexels" placeholder="Buscar no Pexels" />
+                        <button type="button" class="btn btn-sm btn-outline" id="btn-buscar-pexels">Buscar</button>
+                    </div>
+                    <div class="grade-banco-imagens grade-imagens-externas" id="grade-pexels"></div>
                 </div>
 
                 <div class="campo" style="margin-top: 16px;">

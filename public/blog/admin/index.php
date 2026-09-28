@@ -47,6 +47,7 @@ function formatarData(?string $data): string
             <nav class="admin-topbar-nav">
                 <a href="/blog/admin/" class="ativo">Artigos</a>
                 <a href="/blog/admin/editor.php">Novo artigo</a>
+                <a href="/blog/admin/categorias.php">Categorias</a>
                 <a href="/blog/admin/configuracoes.php">Configurações</a>
                 <a href="/blog" target="_blank">Ver blog</a>
                 <a href="/blog/admin/logout.php" class="btn-sair">Sair</a>
