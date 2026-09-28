@@ -1,16 +1,29 @@
 <?php
-// Transforma o JSON de blocos do editor em HTML pronto pra exibir no
-// artigo público. É usado tanto pelo artigo.php (público) quanto pelo
-// admin (pra pré-visualizar). Fica fora da pasta admin/ de propósito,
-// já que os dois lados precisam dele.
+// Transforma o JSON de blocos do editor (formato do Editor.js, biblioteca
+// pronta que substituiu nosso editor de blocos feito à mão) em HTML pronto
+// pra exibir no artigo público. É usado tanto pelo artigo.php (público)
+// quanto pelo admin (pra pré-visualizar). Fica fora da pasta admin/ de
+// propósito, já que os dois lados precisam dele.
 //
-// Formato de um bloco (array associativo), campo "type" define o resto:
-//   {"type":"paragraph","html":"texto com <b>, <i>, <a> permitidos"}
-//   {"type":"heading","level":2|3|4,"text":"..."}
-//   {"type":"quote","text":"...","legenda":"..."}
-//   {"type":"delimiter"}
-//   {"type":"image","src":"/assets/img/blog/x.webp","alt":"...","legenda":"..."}
-//   {"type":"embed","provider":"youtube|vimeo|codepen|instagram|twitter","url":"..."}
+// Formato de um bloco (é exatamente o que o método editor.save() do
+// Editor.js devolve, um por elemento do array "blocks"):
+//   {"type":"header","data":{"text":"...","level":2|3|4}}
+//   {"type":"paragraph","data":{"text":"texto com <b>, <i>, <a> permitidos"}}
+//   {"type":"list","data":{"style":"ordered|unordered","items":[...]}}
+//     — cada item pode ser uma string simples OU (na versão nova/aninhada
+//     do List tool) um objeto {"content":"...","items":[...]} pra suportar
+//     lista dentro de lista.
+//   {"type":"quote","data":{"text":"...","caption":"..."}}
+//   {"type":"delimiter","data":{}}
+//   {"type":"imagemZamtech","data":{"url":"...","alt":"...","legenda":"..."}}
+//     — essa é a NOSSA ferramenta customizada (não vem pronta no Editor.js),
+//     que reaproveita o modal de upload/Unsplash/Pexels/corte que já
+//     tínhamos.
+//   {"type":"embed","data":{"service":"youtube|vimeo|codepen|instagram|twitter","source":"URL original colada"}}
+//     — usa a ferramenta oficial @editorjs/embed. A gente ignora o iframe
+//     que ela monta no navegador e remonta o embed aqui no servidor a
+//     partir de "source" (a URL original), reaproveitando nossas próprias
+//     funções de validação — assim não confiamos em HTML vindo do cliente.
 
 /**
  * Permite só um punhado de tags inline seguras (negrito, itálico,
@@ -204,7 +217,8 @@ function gerarEmbedHtml(string $provider, string $url): string
 function artigoUsaEmbedSocial(array $blocks, string $provider): bool
 {
     foreach ($blocks as $bloco) {
-        if (($bloco['type'] ?? '') === 'embed' && ($bloco['provider'] ?? '') === $provider) {
+        $servico = strtolower((string) ($bloco['data']['service'] ?? ''));
+        if (($bloco['type'] ?? '') === 'embed' && str_contains($servico, $provider)) {
             return true;
         }
     }
@@ -212,8 +226,52 @@ function artigoUsaEmbedSocial(array $blocks, string $provider): bool
 }
 
 /**
- * Ponto de entrada: recebe o array de blocos (já decodificado do JSON) e
- * devolve o HTML completo do corpo do artigo.
+ * Renderiza um item de lista (e seus filhos aninhados, se houver) como
+ * <li>...</li>, recursivamente. Aceita tanto um item "simples" (string)
+ * quanto o formato novo do List tool ({"content":"...","items":[...]}).
+ */
+function renderizarItemLista($item): string
+{
+    if (is_array($item)) {
+        $conteudo = sanitizarHtmlInline((string) ($item['content'] ?? ''));
+        $filhos = $item['items'] ?? [];
+    } else {
+        $conteudo = sanitizarHtmlInline((string) $item);
+        $filhos = [];
+    }
+
+    $html = '<li>' . $conteudo;
+    if (is_array($filhos) && $filhos !== []) {
+        // detecta se os filhos são ordenados ou não olhando se o próprio
+        // item carrega essa info (o List tool aninhado não sempre repete o
+        // "style" em cada nível — quando não vier, assume igual ao pai,
+        // que é passado por parâmetro extra na chamada recursiva real).
+        $html .= renderizarListaHtml($filhos, is_array($item) ? ($item['style'] ?? null) : null);
+    }
+    $html .= '</li>';
+
+    return $html;
+}
+
+/**
+ * Monta o <ul> ou <ol> completo de uma lista (nível superior ou aninhado).
+ */
+function renderizarListaHtml(array $items, ?string $estilo = null): string
+{
+    $tag = $estilo === 'ordered' ? 'ol' : 'ul';
+    $html = "<{$tag}>";
+    foreach ($items as $item) {
+        $html .= renderizarItemLista($item);
+    }
+    $html .= "</{$tag}>";
+
+    return $html;
+}
+
+/**
+ * Ponto de entrada: recebe o array de blocos (já decodificado do JSON, no
+ * formato que o Editor.js gera) e devolve o HTML completo do corpo do
+ * artigo.
  */
 function renderizarBlocosParaHtml(array $blocks): string
 {
@@ -221,36 +279,38 @@ function renderizarBlocosParaHtml(array $blocks): string
 
     foreach ($blocks as $bloco) {
         $tipo = $bloco['type'] ?? '';
+        $dados = is_array($bloco['data'] ?? null) ? $bloco['data'] : [];
 
         switch ($tipo) {
             case 'paragraph':
-                $conteudo = sanitizarHtmlInline((string) ($bloco['html'] ?? ''));
+                $conteudo = sanitizarHtmlInline((string) ($dados['text'] ?? ''));
                 if ($conteudo !== '') {
-                    // se o bloco virou uma lista (bullet/numerada) não embrulha
-                    // em <p> — <ul>/<ol> dentro de <p> é HTML inválido e o
-                    // navegador fecha a tag sozinho de um jeito estranho.
-                    if (preg_match('/^<(ul|ol)[ >]/i', $conteudo) === 1) {
-                        $html .= $conteudo . "\n";
-                    } else {
-                        $html .= '<p>' . $conteudo . '</p>' . "\n";
-                    }
+                    $html .= '<p>' . $conteudo . '</p>' . "\n";
                 }
                 break;
 
-            case 'heading':
-                $nivel = (int) ($bloco['level'] ?? 2);
+            case 'header':
+                $nivel = (int) ($dados['level'] ?? 2);
                 $nivel = in_array($nivel, [2, 3, 4], true) ? $nivel : 2;
-                $texto = htmlspecialchars((string) ($bloco['text'] ?? ''), ENT_QUOTES);
+                $texto = sanitizarHtmlInline((string) ($dados['text'] ?? ''));
                 if ($texto !== '') {
                     $html .= "<h{$nivel}>{$texto}</h{$nivel}>\n";
                 }
                 break;
 
+            case 'list':
+                $items = is_array($dados['items'] ?? null) ? $dados['items'] : [];
+                if ($items !== []) {
+                    $estilo = ($dados['style'] ?? 'unordered') === 'ordered' ? 'ordered' : 'unordered';
+                    $html .= renderizarListaHtml($items, $estilo) . "\n";
+                }
+                break;
+
             case 'quote':
-                $texto = htmlspecialchars((string) ($bloco['text'] ?? ''), ENT_QUOTES);
-                $legenda = htmlspecialchars((string) ($bloco['legenda'] ?? ''), ENT_QUOTES);
+                $texto = sanitizarHtmlInline((string) ($dados['text'] ?? ''));
+                $legenda = sanitizarHtmlInline((string) ($dados['caption'] ?? ''));
                 if ($texto !== '') {
-                    $html .= '<blockquote class="blog-quote"><p>' . nl2br($texto) . '</p>';
+                    $html .= '<blockquote class="blog-quote"><p>' . $texto . '</p>';
                     if ($legenda !== '') {
                         $html .= '<cite>' . $legenda . '</cite>';
                     }
@@ -262,10 +322,10 @@ function renderizarBlocosParaHtml(array $blocks): string
                 $html .= '<hr class="blog-delimiter" />' . "\n";
                 break;
 
-            case 'image':
-                $src = htmlspecialchars((string) ($bloco['src'] ?? ''), ENT_QUOTES);
-                $alt = htmlspecialchars((string) ($bloco['alt'] ?? ''), ENT_QUOTES);
-                $legenda = htmlspecialchars((string) ($bloco['legenda'] ?? ''), ENT_QUOTES);
+            case 'imagemZamtech':
+                $src = htmlspecialchars((string) ($dados['url'] ?? ''), ENT_QUOTES);
+                $alt = htmlspecialchars((string) ($dados['alt'] ?? ''), ENT_QUOTES);
+                $legenda = htmlspecialchars((string) ($dados['legenda'] ?? ''), ENT_QUOTES);
                 if ($src !== '') {
                     $html .= '<figure class="blog-figure"><img src="' . $src . '" alt="' . $alt . '" loading="lazy" />';
                     if ($legenda !== '') {
@@ -276,9 +336,19 @@ function renderizarBlocosParaHtml(array $blocks): string
                 break;
 
             case 'embed':
-                $provider = (string) ($bloco['provider'] ?? '');
-                $url = (string) ($bloco['url'] ?? '');
-                $embedHtml = gerarEmbedHtml($provider, $url);
+                // Não confiamos no HTML/iframe que o Editor.js monta no
+                // navegador — remontamos aqui a partir da URL original
+                // ("source"), usando nossas próprias funções de validação.
+                $servico = strtolower((string) ($dados['service'] ?? ''));
+                $urlOriginal = (string) ($dados['source'] ?? '');
+                $provider = '';
+                foreach (['youtube', 'vimeo', 'codepen', 'instagram', 'twitter'] as $conhecido) {
+                    if (str_contains($servico, $conhecido) || ($conhecido === 'twitter' && str_contains($servico, 'x-'))) {
+                        $provider = $conhecido;
+                        break;
+                    }
+                }
+                $embedHtml = $provider !== '' ? gerarEmbedHtml($provider, $urlOriginal) : '';
                 if ($embedHtml !== '') {
                     $html .= $embedHtml . "\n";
                 }

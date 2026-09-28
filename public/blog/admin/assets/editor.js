@@ -1,7 +1,21 @@
 (function () {
     'use strict';
 
-    var container = document.getElementById('blocos-container');
+    // Este arquivo ficou bem mais curto do que era antes. O motivo: até a
+    // rodada passada, TUDO aqui era feito à mão — os blocos de texto, a
+    // barra de formatação flutuante, o menu de "+", o corte de imagem.
+    // Migramos o "corpo do artigo" pro Editor.js (editorjs.io), uma
+    // biblioteca pronta e testada por milhares de sites, que já resolve
+    // sozinha os problemas que a gente ficava caçando um por um (cursor
+    // pulando, lista com recuo errado, barra flutuante não aparecendo).
+    //
+    // O que continua sendo nosso, do jeito que sempre foi: a capa do
+    // artigo, os campos de SEO/categoria, o preview do Google, o
+    // autosave — e o modal de imagem (upload/"já usadas"/Unsplash/Pexels/
+    // corte), que agora é chamado de dentro de uma ferramenta customizada
+    // do Editor.js (a classe FerramentaImagem, mais abaixo) em vez de um
+    // clique no menu "+" do editor antigo.
+
     var campoTitulo = document.getElementById('campo-titulo');
     var campoCategoria = document.getElementById('campo-categoria');
     var campoResumo = document.getElementById('campo-resumo');
@@ -62,528 +76,11 @@
     }
 
     // ---------------------------------------------------------------
-    // Criação de blocos
-    // ---------------------------------------------------------------
-
-    var TIPOS_QUE_TROCAM = { paragraph: true, heading: true, quote: true };
-
-    function criarControlesBloco(blocoEl, tipo) {
-        var controles = document.createElement('div');
-        controles.className = 'bloco-controles';
-
-        var adicionar = document.createElement('button');
-        adicionar.type = 'button';
-        adicionar.title = 'Adicionar bloco depois deste';
-        adicionar.textContent = '+';
-        adicionar.addEventListener('click', function () {
-            var rect = adicionar.getBoundingClientRect();
-            abrirMenuAdd(rect.right + 6, rect.top, blocoEl);
-        });
-        controles.appendChild(adicionar);
-
-        // só bloco de texto (parágrafo, título, citação) pode trocar de
-        // tipo — imagem, divisor e embed não fazem sentido virar outra coisa
-        if (TIPOS_QUE_TROCAM[tipo]) {
-            // com 5 botões a grade vira 3 colunas em vez de 2, pra manter
-            // as mesmas 2 linhas de altura (ver comentário no CSS)
-            controles.classList.add('bloco-controles-5');
-            var mudarTipo = document.createElement('button');
-            mudarTipo.type = 'button';
-            mudarTipo.className = 'btn-mudar-tipo';
-            mudarTipo.addEventListener('click', function () {
-                var rect = mudarTipo.getBoundingClientRect();
-                abrirMenuMudarTipo(rect.right + 6, rect.top, blocoEl);
-            });
-            controles.appendChild(mudarTipo);
-        }
-
-        var subir = document.createElement('button');
-        subir.type = 'button';
-        subir.title = 'Mover pra cima';
-        subir.textContent = '↑';
-        subir.addEventListener('click', function () {
-            var anterior = blocoEl.previousElementSibling;
-            if (anterior) {
-                container.insertBefore(blocoEl, anterior);
-            }
-        });
-
-        var descer = document.createElement('button');
-        descer.type = 'button';
-        descer.title = 'Mover pra baixo';
-        descer.textContent = '↓';
-        descer.addEventListener('click', function () {
-            var proximo = blocoEl.nextElementSibling;
-            if (proximo) {
-                container.insertBefore(proximo, blocoEl);
-            }
-        });
-
-        var excluir = document.createElement('button');
-        excluir.type = 'button';
-        excluir.title = 'Excluir bloco';
-        excluir.className = 'btn-excluir-bloco';
-        excluir.textContent = '✕';
-        excluir.addEventListener('click', function () {
-            blocoEl.remove();
-        });
-
-        controles.appendChild(subir);
-        controles.appendChild(descer);
-        controles.appendChild(excluir);
-        blocoEl.appendChild(controles);
-    }
-
-    function criarBlocoBase(tipo) {
-        var el = document.createElement('div');
-        el.className = 'bloco';
-        el.setAttribute('data-type', tipo);
-        criarControlesBloco(el, tipo);
-        return el;
-    }
-
-    function criarBlocoTexto(tipo, htmlInicial, nivel) {
-        var el = criarBlocoBase(tipo);
-        if (nivel) {
-            el.setAttribute('data-nivel', nivel);
-        }
-        atualizarRotuloTipoBloco(el);
-
-        var editavel = document.createElement('div');
-        editavel.className = 'bloco-conteudo-editavel';
-        editavel.contentEditable = 'true';
-        editavel.innerHTML = htmlInicial || '';
-        el.appendChild(editavel);
-
-        if (tipo === 'quote') {
-            var legenda = document.createElement('input');
-            legenda.type = 'text';
-            legenda.className = 'bloco-legenda-input';
-            legenda.placeholder = 'Legenda da citação (opcional)';
-            legenda.setAttribute('data-legenda', '1');
-            el.appendChild(legenda);
-        }
-
-        ativarBarraFormatacao(editavel);
-        return el;
-    }
-
-    function criarBlocoDelimitador() {
-        var el = criarBlocoBase('delimiter');
-        var linha = document.createElement('div');
-        linha.className = 'bloco-conteudo-editavel';
-        el.appendChild(linha);
-        return el;
-    }
-
-    function criarBlocoImagem(src, alt, legenda) {
-        var el = criarBlocoBase('image');
-        el.setAttribute('data-src', src);
-        el.setAttribute('data-alt', alt || '');
-
-        var img = document.createElement('img');
-        img.src = src;
-        img.alt = alt || '';
-        el.appendChild(img);
-
-        var legendaInput = document.createElement('input');
-        legendaInput.type = 'text';
-        legendaInput.className = 'bloco-legenda-input';
-        legendaInput.placeholder = 'Legenda (opcional)';
-        legendaInput.value = legenda || '';
-        legendaInput.setAttribute('data-legenda', '1');
-        el.appendChild(legendaInput);
-
-        return el;
-    }
-
-    function criarBlocoEmbed(provider, url) {
-        var el = criarBlocoBase('embed');
-        el.setAttribute('data-provider', provider);
-        el.setAttribute('data-url', url);
-
-        var caixa = document.createElement('div');
-        caixa.className = 'embed-caixa';
-        caixa.innerHTML = gerarPreviewEmbed(provider, url) || ('Incorporação de ' + provider + ': ' + escaparHtml(url));
-        el.appendChild(caixa);
-
-        carregarScriptsEmbedSeNecessario(provider);
-        return el;
-    }
-
-    function inserirBlocoDepois(referencia, blocoEl) {
-        if (referencia && referencia.nextElementSibling) {
-            container.insertBefore(blocoEl, referencia.nextElementSibling);
-        } else if (referencia) {
-            container.appendChild(blocoEl);
-        } else {
-            container.appendChild(blocoEl);
-        }
-    }
-
-    // ---------------------------------------------------------------
-    // Menu "+"
-    // ---------------------------------------------------------------
-
-    var menuAddBloco = document.getElementById('menu-add-bloco');
-    var blocoReferenciaAtual = null;
-
-    function abrirMenuAdd(x, y, referencia) {
-        blocoReferenciaAtual = referencia;
-        menuAddBloco.hidden = false;
-
-        // mede o menu já visível e garante que ele não fique cortado fora
-        // da tela (isso acontecia perto do fim da página ou da borda direita)
-        var menuRect = menuAddBloco.getBoundingClientRect();
-        var maxLeft = Math.max(8, window.innerWidth - menuRect.width - 8);
-        var maxTop = Math.max(8, window.innerHeight - menuRect.height - 8);
-        x = Math.min(Math.max(8, x), maxLeft);
-        y = Math.min(Math.max(8, y), maxTop);
-
-        menuAddBloco.style.left = x + 'px';
-        menuAddBloco.style.top = y + 'px';
-    }
-
-    function fecharMenuAdd() {
-        menuAddBloco.hidden = true;
-        blocoReferenciaAtual = undefined;
-    }
-
-    document.addEventListener('click', function (ev) {
-        if (!menuAddBloco.hidden && !menuAddBloco.contains(ev.target) && ev.target.id !== 'btn-add-final') {
-            fecharMenuAdd();
-        }
-    });
-
-    menuAddBloco.querySelectorAll('button').forEach(function (botao) {
-        botao.addEventListener('click', function () {
-            var tipo = botao.getAttribute('data-tipo');
-            var referencia = blocoReferenciaAtual;
-            fecharMenuAdd();
-
-            if (tipo === 'paragraph') {
-                var novo = criarBlocoTexto('paragraph', '');
-                inserirBlocoDepois(referencia, novo);
-                novo.querySelector('.bloco-conteudo-editavel').focus();
-            } else if (tipo === 'heading') {
-                var nivel = botao.getAttribute('data-nivel');
-                var novoH = criarBlocoTexto('heading', '', nivel);
-                inserirBlocoDepois(referencia, novoH);
-                novoH.querySelector('.bloco-conteudo-editavel').focus();
-            } else if (tipo === 'quote') {
-                var novoQ = criarBlocoTexto('quote', '');
-                inserirBlocoDepois(referencia, novoQ);
-                novoQ.querySelector('.bloco-conteudo-editavel').focus();
-            } else if (tipo === 'delimiter') {
-                inserirBlocoDepois(referencia, criarBlocoDelimitador());
-            } else if (tipo === 'image') {
-                abrirModalImagem(function (dados) {
-                    inserirBlocoDepois(referencia, criarBlocoImagem(dados.url, dados.alt, dados.legenda));
-                });
-            } else if (tipo === 'embed') {
-                abrirModalEmbed(function (dados) {
-                    inserirBlocoDepois(referencia, criarBlocoEmbed(dados.provider, dados.url));
-                });
-            }
-        });
-    });
-
-    document.getElementById('btn-add-final').addEventListener('click', function (ev) {
-        var rect = ev.target.getBoundingClientRect();
-        abrirMenuAdd(rect.left, rect.bottom + 6, container.lastElementChild);
-    });
-
-    // ---------------------------------------------------------------
-    // Menu "Aa" — trocar o tipo de um bloco de texto já existente
-    // ---------------------------------------------------------------
-
-    var menuMudarTipo = document.getElementById('menu-mudar-tipo');
-    var blocoMudarTipoAtual = null;
-
-    function abrirMenuMudarTipo(x, y, blocoEl) {
-        blocoMudarTipoAtual = blocoEl;
-        menuMudarTipo.hidden = false;
-
-        // marca no menu qual é o tipo ATUAL do bloco, pra saber de cara
-        // (sem isso, tinha que adivinhar olhando o tamanho do texto)
-        var tipoAtual = blocoEl.getAttribute('data-type');
-        var nivelAtual = blocoEl.getAttribute('data-nivel');
-        menuMudarTipo.querySelectorAll('button').forEach(function (botao) {
-            var mesmoTipo = botao.getAttribute('data-tipo') === tipoAtual;
-            var mesmoNivel = (botao.getAttribute('data-nivel') || null) === (nivelAtual || null);
-            botao.classList.toggle('ativa', mesmoTipo && mesmoNivel);
-        });
-
-        var menuRect = menuMudarTipo.getBoundingClientRect();
-        var maxLeft = Math.max(8, window.innerWidth - menuRect.width - 8);
-        var maxTop = Math.max(8, window.innerHeight - menuRect.height - 8);
-        x = Math.min(Math.max(8, x), maxLeft);
-        y = Math.min(Math.max(8, y), maxTop);
-
-        menuMudarTipo.style.left = x + 'px';
-        menuMudarTipo.style.top = y + 'px';
-    }
-
-    function fecharMenuMudarTipo() {
-        menuMudarTipo.hidden = true;
-        blocoMudarTipoAtual = null;
-    }
-
-    document.addEventListener('click', function (ev) {
-        if (!menuMudarTipo.hidden && !menuMudarTipo.contains(ev.target) && !ev.target.classList.contains('btn-mudar-tipo')) {
-            fecharMenuMudarTipo();
-        }
-    });
-
-    menuMudarTipo.querySelectorAll('button').forEach(function (botao) {
-        botao.addEventListener('click', function () {
-            var tipo = botao.getAttribute('data-tipo');
-            var nivel = botao.getAttribute('data-nivel') || null;
-            var blocoEl = blocoMudarTipoAtual;
-            fecharMenuMudarTipo();
-            if (blocoEl) {
-                mudarTipoBloco(blocoEl, tipo, nivel);
-            }
-        });
-    });
-
-    /**
-     * Troca o tipo de um bloco de texto já existente (ex: H2 -> H3, ou
-     * parágrafo -> citação) mantendo o texto que já foi digitado. Como
-     * o CSS de título/parágrafo/citação lê o atributo data-type (e
-     * data-nivel pro tamanho do título), só precisamos trocar esses
-     * atributos — o texto dentro do bloco-conteudo-editavel nem precisa
-     * ser tocado.
-     */
-    function mudarTipoBloco(blocoEl, novoTipo, novoNivel) {
-        blocoEl.setAttribute('data-type', novoTipo);
-        if (novoNivel) {
-            blocoEl.setAttribute('data-nivel', novoNivel);
-        } else {
-            blocoEl.removeAttribute('data-nivel');
-        }
-
-        var legendaExistente = blocoEl.querySelector('[data-legenda]');
-        if (novoTipo === 'quote' && !legendaExistente) {
-            var legenda = document.createElement('input');
-            legenda.type = 'text';
-            legenda.className = 'bloco-legenda-input';
-            legenda.placeholder = 'Legenda da citação (opcional)';
-            legenda.setAttribute('data-legenda', '1');
-            blocoEl.appendChild(legenda);
-        } else if (novoTipo !== 'quote' && legendaExistente) {
-            legendaExistente.remove();
-        }
-
-        atualizarRotuloTipoBloco(blocoEl);
-
-        var editavel = blocoEl.querySelector('.bloco-conteudo-editavel');
-        if (editavel) {
-            editavel.focus();
-        }
-    }
-
-    /**
-     * Descreve o tipo de um bloco de texto: o rótulo curto que vai dentro
-     * do botão "trocar tipo" (só 19px de largura, por isso tem que ser
-     * bem curto) e a descrição completa pro title/tooltip.
-     */
-    function descreverTipoBloco(tipo, nivel) {
-        if (tipo === 'heading') {
-            return { rotulo: 'H' + (nivel || '2'), descricao: 'Título (H' + (nivel || '2') + ')' };
-        }
-        if (tipo === 'quote') {
-            return { rotulo: '❝', descricao: 'Citação' };
-        }
-        return { rotulo: '¶', descricao: 'Texto' };
-    }
-
-    /**
-     * Atualiza o botão "Aa" de um bloco pra mostrar o tipo ATUAL dele
-     * (P, H2, H3, H4 ou citação) — sem isso não dava pra saber, só de
-     * olhar o artigo, se um bloco virou H2 ou H3 sem querer.
-     */
-    function atualizarRotuloTipoBloco(blocoEl) {
-        var botao = blocoEl.querySelector('.btn-mudar-tipo');
-        if (!botao) {
-            return;
-        }
-        var info = descreverTipoBloco(blocoEl.getAttribute('data-type'), blocoEl.getAttribute('data-nivel'));
-        botao.textContent = info.rotulo;
-        botao.title = 'Este bloco é: ' + info.descricao + ' — clique pra mudar';
-    }
-
-    // adiciona um pequeno "+" quando o mouse passa entre blocos seria ideal,
-    // mas pra manter simples: clique com botão direito no bloco (ou o "+"
-    // do rodapé) já cobre o fluxo principal. Também oferecemos um atalho:
-    // Enter no fim de um parágrafo cria um novo parágrafo em seguida.
-    container.addEventListener('keydown', function (ev) {
-        if (ev.key !== 'Enter' || ev.shiftKey) {
-            return;
-        }
-        var alvo = ev.target;
-        if (!alvo.classList || !alvo.classList.contains('bloco-conteudo-editavel')) {
-            return;
-        }
-
-        // dentro de uma lista (bullet ou numerada), deixa o Enter criar um
-        // item novo normalmente — só cria um bloco novo fora de listas.
-        var selecao = window.getSelection();
-        if (selecao.anchorNode) {
-            var noAtual = selecao.anchorNode.nodeType === 3 ? selecao.anchorNode.parentElement : selecao.anchorNode;
-            if (noAtual && noAtual.closest('li')) {
-                return;
-            }
-        }
-
-        var blocoAtual = alvo.closest('.bloco');
-        if (blocoAtual.getAttribute('data-type') === 'quote') {
-            return; // deixa quebrar linha dentro da citação
-        }
-        ev.preventDefault();
-        var novo = criarBlocoTexto('paragraph', '');
-        inserirBlocoDepois(blocoAtual, novo);
-        novo.querySelector('.bloco-conteudo-editavel').focus();
-    });
-
-    // ---------------------------------------------------------------
-    // Barra de formatação (negrito, itálico, link)
-    // ---------------------------------------------------------------
-
-    var barraFormatacao = document.getElementById('barra-formatacao');
-
-    function ativarBarraFormatacao(editavel) {
-        editavel.addEventListener('mouseup', mostrarBarraSeTiverSelecao);
-        editavel.addEventListener('keyup', mostrarBarraSeTiverSelecao);
-        editavel.addEventListener('paste', colarComoTextoSimples);
-        editavel.addEventListener('focus', function () {
-            manterCursorConfortavel(editavel);
-        });
-        editavel.addEventListener('input', function () {
-            manterCursorConfortavel(editavel);
-        });
-    }
-
-    /**
-     * Evita ter que curvar o pescoço pra baixo pra ver o que está digitando.
-     * Por padrão o navegador só rola a página o mínimo necessário pra
-     * mostrar o cursor — isso faz o cursor quase sempre acabar bem no
-     * rodapé da tela. Aqui a gente rola um pouco mais, deixando o cursor
-     * perto do topo (não colado nele, nem no centro).
-     */
-    function manterCursorConfortavel(editavel) {
-        var rect = null;
-        var selecao = window.getSelection();
-        if (selecao && selecao.rangeCount > 0) {
-            var range = selecao.getRangeAt(0).cloneRange();
-            range.collapse(true);
-            var rects = range.getClientRects();
-            rect = rects[0];
-        }
-        if (!rect) {
-            rect = editavel.getBoundingClientRect();
-        }
-
-        var alvoTopo = window.innerHeight * 0.25;
-        var limiteBaixo = window.innerHeight * 0.7;
-
-        if (rect.top < 90 || rect.top > limiteBaixo) {
-            window.scrollBy({ top: rect.top - alvoTopo, behavior: 'smooth' });
-        }
-    }
-
-    /**
-     * Cola só o texto puro, sem a formatação de origem (fonte, cor, caixa
-     * branca de fundo etc. que vem colada de Word/Google Docs/sites). Evita
-     * o artigo herdar um visual estranho de fora do site.
-     */
-    function colarComoTextoSimples(ev) {
-        ev.preventDefault();
-        var texto = (ev.clipboardData || window.clipboardData).getData('text/plain');
-        document.execCommand('insertText', false, texto);
-    }
-
-    function mostrarBarraSeTiverSelecao() {
-        var selecao = window.getSelection();
-        if (!selecao || selecao.isCollapsed || selecao.rangeCount === 0) {
-            barraFormatacao.hidden = true;
-            return;
-        }
-        var range = selecao.getRangeAt(0);
-        var rect = range.getBoundingClientRect();
-        if (rect.width === 0 && rect.height === 0) {
-            barraFormatacao.hidden = true;
-            return;
-        }
-        // a barra é "position: fixed" (relativa à tela, não à página) —
-        // por isso NÃO soma window.scrollY aqui. Esse era o bug: com o
-        // scroll automático novo, a página fica com scrollY bem maior que
-        // antes, e a barra estava sendo empurrada pra muito mais embaixo
-        // da tela (quase sempre pra fora da área visível — por isso
-        // parecia que ela "não aparecia").
-        barraFormatacao.style.left = (rect.left + rect.width / 2 - 70) + 'px';
-        barraFormatacao.style.top = Math.max(8, rect.top - 44) + 'px';
-        barraFormatacao.hidden = false;
-    }
-
-    document.addEventListener('mousedown', function (ev) {
-        if (!barraFormatacao.contains(ev.target)) {
-            barraFormatacao.hidden = true;
-        }
-    });
-
-    /**
-     * Transforma a seleção de texto atual em link. Usado tanto pelo botão
-     * "Link" da barra flutuante quanto pelo atalho Ctrl+K.
-     */
-    function inserirLinkNaSelecao() {
-        var url = prompt('Cole o link (comece com https://)');
-        if (!url) {
-            return;
-        }
-        url = url.trim();
-        if (!/^(https?:\/\/|mailto:|tel:|\/)/i.test(url)) {
-            alert('Link inválido. Use um endereço começando com https://');
-            return;
-        }
-        document.execCommand('createLink', false, url);
-    }
-
-    barraFormatacao.querySelectorAll('button').forEach(function (botao) {
-        botao.addEventListener('mousedown', function (ev) {
-            ev.preventDefault(); // não perde a seleção de texto
-        });
-        botao.addEventListener('click', function () {
-            var comando = botao.getAttribute('data-cmd');
-            if (comando === 'link') {
-                inserirLinkNaSelecao();
-            } else {
-                document.execCommand(comando, false, null);
-            }
-        });
-    });
-
-    // Atalho Ctrl+K (ou Cmd+K no Mac) pra criar link sem precisar abrir a
-    // barra flutuante e clicar no botão. Negrito/itálico/sublinhado (Ctrl+B,
-    // Ctrl+I, Ctrl+U) já funcionam sozinhos em qualquer campo editável do
-    // navegador, então só o link precisava de atalho próprio.
-    container.addEventListener('keydown', function (ev) {
-        var alvo = ev.target;
-        if (!alvo.classList || !alvo.classList.contains('bloco-conteudo-editavel')) {
-            return;
-        }
-        if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
-            ev.preventDefault();
-            var selecao = window.getSelection();
-            if (!selecao || selecao.isCollapsed) {
-                return; // precisa ter texto selecionado pra virar link
-            }
-            inserirLinkNaSelecao();
-        }
-    });
-
-    // ---------------------------------------------------------------
-    // Modal de imagem (upload com corte/zoom, ou banco de imagens)
+    // Modal de imagem (upload com corte/zoom, banco já usado, ou
+    // Unsplash/Pexels) — o mesmo modal serve pra capa E pros blocos de
+    // imagem do corpo do artigo (ferramenta customizada mais abaixo).
+    // Chame abrirModalImagem(callback, altAtual?) de qualquer lugar; o
+    // callback recebe { url, alt, legenda }.
     // ---------------------------------------------------------------
 
     var modalImagem = document.getElementById('modal-imagem');
@@ -598,7 +95,6 @@
     var gradeBancoImagens = document.getElementById('grade-banco-imagens');
 
     var callbackImagemAtual = null;
-    var arquivoSelecionadoBase64 = null;
     var cropEstado = { escala: 1, x: 0, y: 0, arrastando: false, inicioX: 0, inicioY: 0 };
     var urlBancoSelecionada = null;
     var imagemExternaSelecionada = null; // { completa, download_location, credito } — Unsplash/Pexels
@@ -609,7 +105,6 @@
         inputArquivo.value = '';
         campoAltImagem.value = '';
         campoLegendaImagem.value = '';
-        arquivoSelecionadoBase64 = null;
         urlBancoSelecionada = null;
         imagemExternaSelecionada = null;
         cropEstado = { escala: 1, x: 0, y: 0, arrastando: false, inicioX: 0, inicioY: 0 };
@@ -631,6 +126,14 @@
         }
         modalImagem.hidden = false;
     }
+
+    function fecharTodosOsModais() {
+        modalImagem.hidden = true;
+    }
+
+    document.querySelectorAll('[data-fechar-modal]').forEach(function (botao) {
+        botao.addEventListener('click', fecharTodosOsModais);
+    });
 
     document.querySelectorAll('.aba-btn').forEach(function (aba) {
         aba.addEventListener('click', function () {
@@ -663,7 +166,6 @@
                         gradeBancoImagens.querySelectorAll('img').forEach(function (i) { i.classList.remove('selecionada'); });
                         el.classList.add('selecionada');
                         urlBancoSelecionada = img.url;
-                        arquivoSelecionadoBase64 = null;
                         imagemExternaSelecionada = null;
                     });
                     gradeBancoImagens.appendChild(el);
@@ -712,7 +214,6 @@
                             credito: img.credito,
                         };
                         urlBancoSelecionada = null;
-                        arquivoSelecionadoBase64 = null;
                         if (!campoLegendaImagem.value.trim()) {
                             campoLegendaImagem.value = img.credito;
                         }
@@ -786,10 +287,9 @@
     }
 
     cropZoom.addEventListener('input', function () {
-        // zoom a partir do CENTRO do viewport, não do canto superior
-        // esquerdo. A matemática: o ponto da imagem que está hoje embaixo
-        // do centro do viewport tem que continuar embaixo do centro depois
-        // de mudar a escala — por isso recalculamos x/y junto com a escala.
+        // zoom a partir do CENTRO do viewport (não do canto superior
+        // esquerdo): recalcula x/y junto com a escala pra manter o ponto
+        // que está embaixo do centro sempre no centro.
         var vpRect = cropViewport.getBoundingClientRect();
         var centroX = vpRect.width / 2;
         var centroY = vpRect.height / 2;
@@ -809,8 +309,6 @@
             botao.classList.add('ativa');
             cropViewport.style.aspectRatio = botao.getAttribute('data-proporcao');
             cropZoom.value = 100;
-            // espera o navegador recalcular o tamanho do viewport com a
-            // nova proporção antes de reposicionar/centralizar a imagem
             requestAnimationFrame(function () {
                 centralizarCrop();
             });
@@ -833,7 +331,6 @@
     window.addEventListener('mouseup', function () {
         cropEstado.arrastando = false;
     });
-    // toque (celular/tablet)
     cropViewport.addEventListener('touchstart', function (ev) {
         var t = ev.touches[0];
         cropEstado.arrastando = true;
@@ -967,132 +464,6 @@
     });
 
     // ---------------------------------------------------------------
-    // Modal de incorporar (embed)
-    // ---------------------------------------------------------------
-
-    var modalEmbed = document.getElementById('modal-embed');
-    var campoUrlEmbed = document.getElementById('campo-url-embed');
-    var previewEmbedEl = document.getElementById('preview-embed');
-    var erroEmbedEl = document.getElementById('erro-embed');
-    var callbackEmbedAtual = null;
-    var embedDetectado = null;
-
-    function detectarProvider(url) {
-        if (/youtu\.?be/.test(url)) return 'youtube';
-        if (/vimeo\.com/.test(url)) return 'vimeo';
-        if (/codepen\.io/.test(url)) return 'codepen';
-        if (/instagram\.com/.test(url)) return 'instagram';
-        if (/(twitter|x)\.com/.test(url)) return 'twitter';
-        return null;
-    }
-
-    function gerarPreviewEmbed(provider, url) {
-        if (provider === 'youtube') {
-            var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,})/);
-            if (!m) return null;
-            return '<iframe src="https://www.youtube-nocookie.com/embed/' + m[1] + '" allowfullscreen loading="lazy"></iframe>';
-        }
-        if (provider === 'vimeo') {
-            var mv = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-            if (!mv) return null;
-            return '<iframe src="https://player.vimeo.com/video/' + mv[1] + '" allowfullscreen loading="lazy"></iframe>';
-        }
-        if (provider === 'codepen') {
-            var mc = url.match(/codepen\.io\/([^\/]+)\/(?:pen|details|full)\/([A-Za-z0-9]+)/);
-            if (!mc) return null;
-            return '<iframe src="https://codepen.io/' + mc[1] + '/embed/' + mc[2] + '?default-tab=result" loading="lazy"></iframe>';
-        }
-        if (provider === 'instagram') {
-            if (!/instagram\.com\/(p|reel|tv)\//.test(url)) return null;
-            return '<blockquote class="instagram-media" data-instgrm-permalink="' + escaparHtml(url) + '"></blockquote>';
-        }
-        if (provider === 'twitter') {
-            if (!/\/status\/\d+/.test(url)) return null;
-            return '<blockquote class="twitter-tweet"><a href="' + escaparHtml(url) + '"></a></blockquote>';
-        }
-        return null;
-    }
-
-    function carregarScriptsEmbedSeNecessario(provider) {
-        if (provider === 'instagram' && !window.__instgrmCarregado) {
-            window.__instgrmCarregado = true;
-            var s = document.createElement('script');
-            s.async = true;
-            s.src = 'https://www.instagram.com/embed.js';
-            document.body.appendChild(s);
-        }
-        if (provider === 'twitter' && !window.__twttrCarregado) {
-            window.__twttrCarregado = true;
-            var s2 = document.createElement('script');
-            s2.async = true;
-            s2.src = 'https://platform.twitter.com/widgets.js';
-            document.body.appendChild(s2);
-        }
-        // reprocessa embeds sociais já existentes na página quando o script carrega
-        setTimeout(function () {
-            if (window.instgrm) { window.instgrm.Embeds.process(); }
-            if (window.twttr && window.twttr.widgets) { window.twttr.widgets.load(); }
-        }, 800);
-    }
-
-    function abrirModalEmbed(callback) {
-        callbackEmbedAtual = callback;
-        campoUrlEmbed.value = '';
-        previewEmbedEl.innerHTML = '';
-        erroEmbedEl.hidden = true;
-        embedDetectado = null;
-        modalEmbed.hidden = false;
-    }
-
-    campoUrlEmbed.addEventListener('input', function () {
-        var url = campoUrlEmbed.value.trim();
-        erroEmbedEl.hidden = true;
-        if (!url) {
-            previewEmbedEl.innerHTML = '';
-            embedDetectado = null;
-            return;
-        }
-        var provider = detectarProvider(url);
-        if (!provider) {
-            previewEmbedEl.innerHTML = '';
-            embedDetectado = null;
-            return;
-        }
-        var preview = gerarPreviewEmbed(provider, url);
-        if (preview) {
-            previewEmbedEl.innerHTML = preview;
-            embedDetectado = { provider: provider, url: url };
-            carregarScriptsEmbedSeNecessario(provider);
-        } else {
-            previewEmbedEl.innerHTML = '';
-            embedDetectado = null;
-        }
-    });
-
-    document.getElementById('btn-confirmar-embed').addEventListener('click', function () {
-        if (!embedDetectado) {
-            erroEmbedEl.textContent = 'Cole um link válido de YouTube, Instagram, X, Vimeo ou CodePen.';
-            erroEmbedEl.hidden = false;
-            return;
-        }
-        callbackEmbedAtual(embedDetectado);
-        fecharTodosOsModais();
-    });
-
-    // ---------------------------------------------------------------
-    // Fechar modais
-    // ---------------------------------------------------------------
-
-    function fecharTodosOsModais() {
-        modalImagem.hidden = true;
-        modalEmbed.hidden = true;
-    }
-
-    document.querySelectorAll('[data-fechar-modal]').forEach(function (botao) {
-        botao.addEventListener('click', fecharTodosOsModais);
-    });
-
-    // ---------------------------------------------------------------
     // Preview de como o artigo aparece no Google (tipo o Yoast) +
     // contador de caracteres do título/descrição de SEO
     // ---------------------------------------------------------------
@@ -1103,9 +474,6 @@
     var contadorMetaTitulo = document.getElementById('contador-meta-titulo');
     var contadorMetaDescricao = document.getElementById('contador-meta-descricao');
 
-    // Aproximação só pra pré-visualização — o slug de verdade é gerado no
-    // servidor (e pode ganhar um "-2" no fim se já existir um artigo com
-    // o mesmo nome), mas isso aqui já dá uma ideia bem próxima.
     function slugPreview(texto) {
         return (
             (texto || '')
@@ -1138,10 +506,104 @@
     campoResumo.addEventListener('input', atualizarPreviewGoogle);
 
     // ---------------------------------------------------------------
-    // Carregar dados iniciais (edição de artigo existente)
+    // Ferramenta customizada de imagem pro Editor.js. É a ponte entre o
+    // Editor.js (que só sabe desenhar blocos e chamar render()/save()) e
+    // o nosso modal de imagem de sempre (upload/banco/Unsplash/Pexels/
+    // corte), que continua sendo 100% nosso código.
     // ---------------------------------------------------------------
 
-    function carregarDadosIniciais() {
+    function FerramentaImagem(opcoes) {
+        this.data = {
+            url: (opcoes.data && opcoes.data.url) || '',
+            alt: (opcoes.data && opcoes.data.alt) || '',
+            legenda: (opcoes.data && opcoes.data.legenda) || '',
+        };
+        this.wrapper = null;
+    }
+
+    FerramentaImagem.toolbox = {
+        title: 'Imagem',
+        icon: '<svg width="17" height="15" viewBox="0 0 17 15" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 1.5h-12a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-10a1 1 0 0 0-1-1zm-9 2.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM3 12l3.25-3.5L8.5 11l3.75-4.25L14 12H3z" fill="currentColor"/></svg>',
+    };
+
+    FerramentaImagem.prototype.render = function () {
+        this.wrapper = document.createElement('div');
+        this.wrapper.className = 'ce-imagem-zamtech';
+        this._desenhar();
+        return this.wrapper;
+    };
+
+    FerramentaImagem.prototype._desenhar = function () {
+        var self = this;
+        this.wrapper.innerHTML = '';
+
+        if (this.data.url) {
+            var img = document.createElement('img');
+            img.src = this.data.url;
+            img.alt = this.data.alt || '';
+            img.className = 'ce-imagem-zamtech-img';
+
+            var legenda = document.createElement('input');
+            legenda.type = 'text';
+            legenda.placeholder = 'Legenda (opcional)';
+            legenda.value = this.data.legenda || '';
+            legenda.className = 'ce-imagem-zamtech-legenda';
+            legenda.addEventListener('input', function () {
+                self.data.legenda = legenda.value;
+            });
+
+            var trocar = document.createElement('button');
+            trocar.type = 'button';
+            trocar.className = 'ce-imagem-zamtech-trocar btn btn-sm btn-outline';
+            trocar.textContent = 'Trocar imagem';
+            trocar.addEventListener('click', function () {
+                abrirModalImagem(function (dados) {
+                    self.data.url = dados.url;
+                    self.data.alt = dados.alt;
+                    self.data.legenda = dados.legenda || '';
+                    self._desenhar();
+                }, self.data.alt);
+            });
+
+            this.wrapper.appendChild(img);
+            this.wrapper.appendChild(legenda);
+            this.wrapper.appendChild(trocar);
+        } else {
+            var botaoVazio = document.createElement('button');
+            botaoVazio.type = 'button';
+            botaoVazio.className = 'ce-imagem-zamtech-vazio';
+            botaoVazio.textContent = '+ Adicionar imagem';
+            botaoVazio.addEventListener('click', function () {
+                abrirModalImagem(function (dados) {
+                    self.data.url = dados.url;
+                    self.data.alt = dados.alt;
+                    self.data.legenda = dados.legenda || '';
+                    self._desenhar();
+                });
+            });
+            this.wrapper.appendChild(botaoVazio);
+        }
+    };
+
+    FerramentaImagem.prototype.save = function () {
+        return this.data;
+    };
+
+    FerramentaImagem.prototype.validate = function (dadosSalvos) {
+        return !!dadosSalvos.url;
+    };
+
+    FerramentaImagem.sanitize = {
+        url: false,
+        alt: {},
+        legenda: {},
+    };
+
+    // ---------------------------------------------------------------
+    // Inicialização do Editor.js
+    // ---------------------------------------------------------------
+
+    function preencherCamposDoArtigo() {
         var dados = window.ARTIGO_INICIAL;
         campoTitulo.value = dados.titulo || '';
         ajustarAlturaTitulo();
@@ -1151,80 +613,71 @@
         campoMetaDescricao.value = dados.meta_descricao || '';
         renderizarCapa();
         atualizarPreviewGoogle();
+    }
 
-        (dados.blocks || []).forEach(function (bloco) {
-            var el = null;
-            if (bloco.type === 'paragraph') {
-                el = criarBlocoTexto('paragraph', bloco.html || '');
-            } else if (bloco.type === 'heading') {
-                el = criarBlocoTexto('heading', escaparHtml(bloco.text || ''), bloco.level || 2);
-            } else if (bloco.type === 'quote') {
-                el = criarBlocoTexto('quote', escaparHtml(bloco.text || ''));
-                if (bloco.legenda) {
-                    el.querySelector('[data-legenda]').value = bloco.legenda;
-                }
-            } else if (bloco.type === 'delimiter') {
-                el = criarBlocoDelimitador();
-            } else if (bloco.type === 'image') {
-                el = criarBlocoImagem(bloco.src, bloco.alt, bloco.legenda);
-            } else if (bloco.type === 'embed') {
-                el = criarBlocoEmbed(bloco.provider, bloco.url);
-            }
-            if (el) {
-                container.appendChild(el);
-            }
-        });
+    preencherCamposDoArtigo();
 
-        if (!container.children.length) {
-            container.appendChild(criarBlocoTexto('paragraph', ''));
+    /**
+     * Cada ferramenta vem de um <script> separado (ver editor.php) — se
+     * algum CDN falhar (rede instável, etc), o resto do editor continua
+     * funcionando sem aquela ferramenta específica em vez de travar a
+     * página inteira.
+     */
+    function seDisponivel(nome, Classe) {
+        if (typeof Classe === 'undefined') {
+            console.warn('Ferramenta "' + nome + '" do Editor.js não carregou — seguindo sem ela.');
+            return null;
         }
+        return Classe;
     }
 
-    // ---------------------------------------------------------------
-    // Serialização e salvamento
-    // ---------------------------------------------------------------
+    var ferramentas = { imagemZamtech: FerramentaImagem };
 
-    function serializarBlocos() {
-        var blocos = [];
-        Array.prototype.forEach.call(container.children, function (blocoEl) {
-            var tipo = blocoEl.getAttribute('data-type');
-            if (tipo === 'paragraph') {
-                var editavel = blocoEl.querySelector('.bloco-conteudo-editavel');
-                var html = editavel.innerHTML.trim();
-                if (html && html !== '<br>') {
-                    blocos.push({ type: 'paragraph', html: html });
-                }
-            } else if (tipo === 'heading') {
-                var texto = blocoEl.querySelector('.bloco-conteudo-editavel').innerText.trim();
-                if (texto) {
-                    blocos.push({ type: 'heading', level: parseInt(blocoEl.getAttribute('data-nivel'), 10) || 2, text: texto });
-                }
-            } else if (tipo === 'quote') {
-                var textoQ = blocoEl.querySelector('.bloco-conteudo-editavel').innerText.trim();
-                var legendaQ = blocoEl.querySelector('[data-legenda]');
-                if (textoQ) {
-                    blocos.push({ type: 'quote', text: textoQ, legenda: legendaQ ? legendaQ.value.trim() : '' });
-                }
-            } else if (tipo === 'delimiter') {
-                blocos.push({ type: 'delimiter' });
-            } else if (tipo === 'image') {
-                var legendaImg = blocoEl.querySelector('[data-legenda]');
-                blocos.push({
-                    type: 'image',
-                    src: blocoEl.getAttribute('data-src'),
-                    alt: blocoEl.getAttribute('data-alt') || '',
-                    legenda: legendaImg ? legendaImg.value.trim() : '',
-                });
-            } else if (tipo === 'embed') {
-                blocos.push({
-                    type: 'embed',
-                    provider: blocoEl.getAttribute('data-provider'),
-                    url: blocoEl.getAttribute('data-url'),
-                });
-            }
-        });
-        return blocos;
+    var HeaderTool = seDisponivel('header', window.Header);
+    if (HeaderTool) {
+        ferramentas.header = { class: HeaderTool, inlineToolbar: true, config: { levels: [2, 3, 4], defaultLevel: 2, placeholder: 'Título' } };
     }
+
+    var ListTool = seDisponivel('list', window.List || window.EditorjsList);
+    if (ListTool) {
+        ferramentas.list = { class: ListTool, inlineToolbar: true };
+    }
+
+    var QuoteTool = seDisponivel('quote', window.Quote);
+    if (QuoteTool) {
+        ferramentas.quote = { class: QuoteTool, inlineToolbar: true, config: { quotePlaceholder: 'Citação', captionPlaceholder: 'Legenda (opcional)' } };
+    }
+
+    var DelimiterTool = seDisponivel('delimiter', window.Delimiter);
+    if (DelimiterTool) {
+        ferramentas.delimiter = DelimiterTool;
+    }
+
+    var EmbedTool = seDisponivel('embed', window.Embed);
+    if (EmbedTool) {
+        ferramentas.embed = {
+            class: EmbedTool,
+            config: { services: { youtube: true, vimeo: true, codepen: true, instagram: true, twitter: true } },
+        };
+    }
+
+    if (typeof window.EditorJS === 'undefined') {
+        document.getElementById('editorjs').innerHTML =
+            '<p class="dica-upload">Não deu pra carregar o editor de texto (o script do Editor.js não chegou — provavelmente a internet caiu na hora). Recarregue a página.</p>';
+        return;
+    }
+
+    var editor = new window.EditorJS({
+        holder: 'editorjs',
+        placeholder: 'Escreva o conteúdo do artigo...',
+        tools: ferramentas,
+        data: { blocks: window.ARTIGO_INICIAL.blocks || [] },
+        minHeight: 200,
+    });
+
+    // ---------------------------------------------------------------
+    // Salvamento
+    // ---------------------------------------------------------------
 
     function salvar(status, callback) {
         var titulo = campoTitulo.value.trim();
@@ -1236,23 +689,26 @@
 
         statusSalvamento.textContent = 'Salvando...';
 
-        fetch('/blog/admin/ajax/salvar-artigo.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({
-                id: estado.artigoId,
-                titulo: titulo,
-                blocks: serializarBlocos(),
-                status: status,
-                categoria: campoCategoria.value,
-                imagem_capa: estado.imagemCapa,
-                imagem_capa_alt: estado.imagemCapaAlt,
-                resumo: campoResumo.value.trim(),
-                meta_titulo: campoMetaTitulo.value.trim(),
-                meta_descricao: campoMetaDescricao.value.trim(),
-                csrf: window.CSRF_TOKEN,
-            }),
-        })
+        editor.save()
+            .then(function (outputData) {
+                return fetch('/blog/admin/ajax/salvar-artigo.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify({
+                        id: estado.artigoId,
+                        titulo: titulo,
+                        blocks: outputData.blocks,
+                        status: status,
+                        categoria: campoCategoria.value,
+                        imagem_capa: estado.imagemCapa,
+                        imagem_capa_alt: estado.imagemCapaAlt,
+                        resumo: campoResumo.value.trim(),
+                        meta_titulo: campoMetaTitulo.value.trim(),
+                        meta_descricao: campoMetaDescricao.value.trim(),
+                        csrf: window.CSRF_TOKEN,
+                    }),
+                });
+            })
             .then(function (r) { return r.json(); })
             .then(function (dados) {
                 if (dados.sucesso) {
@@ -1293,6 +749,4 @@
             salvar(estado.statusAtual);
         }
     }, 30000);
-
-    carregarDadosIniciais();
 })();

@@ -41,7 +41,10 @@ if (empty($blocosRecebidos)) {
 
 // Só aceita blocos com um "type" que a gente realmente sabe renderizar —
 // qualquer coisa fora disso é ignorada silenciosamente, não quebra o save.
-$tiposValidos = ['paragraph', 'heading', 'quote', 'delimiter', 'image', 'embed'];
+// Esses nomes são os que o Editor.js usa (header/paragraph/list/quote/
+// delimiter/embed são as ferramentas oficiais dele; "imagemZamtech" é a
+// nossa ferramenta customizada de imagem).
+$tiposValidos = ['header', 'paragraph', 'list', 'quote', 'delimiter', 'imagemZamtech', 'embed'];
 $blocosLimpos = [];
 foreach ($blocosRecebidos as $bloco) {
     if (is_array($bloco) && in_array($bloco['type'] ?? '', $tiposValidos, true)) {
@@ -63,7 +66,8 @@ if ($statusPedido === 'publicado') {
         exit;
     }
     foreach ($blocosLimpos as $bloco) {
-        if ($bloco['type'] === 'image' && trim((string) ($bloco['alt'] ?? '')) === '') {
+        $dadosBloco = is_array($bloco['data'] ?? null) ? $bloco['data'] : [];
+        if ($bloco['type'] === 'imagemZamtech' && trim((string) ($dadosBloco['alt'] ?? '')) === '') {
             echo json_encode(['sucesso' => false, 'mensagem' => 'Tem uma imagem no artigo sem texto alternativo (alt). Preencha antes de publicar.']);
             exit;
         }
@@ -71,6 +75,16 @@ if ($statusPedido === 'publicado') {
 }
 
 $conteudoHtml = renderizarBlocosParaHtml($blocosLimpos);
+
+// O Editor.js sempre manda pelo menos um bloco de parágrafo, mesmo quando
+// a pessoa não escreveu nada nele — então "tem blocos" não é garantia de
+// "tem conteúdo". Confere de novo depois de renderizar: se não sobrou HTML
+// nenhum, é a mesma situação de artigo vazio.
+if (trim($conteudoHtml) === '') {
+    echo json_encode(['sucesso' => false, 'mensagem' => 'O artigo está vazio. Escreva algo antes de salvar.']);
+    exit;
+}
+
 $conteudoJson = json_encode($blocosLimpos, JSON_UNESCAPED_UNICODE);
 
 if ($resumo === '') {

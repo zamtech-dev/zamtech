@@ -85,9 +85,7 @@ $dadosIniciais = [
                     rows="1"
                 ></textarea>
 
-                <div id="blocos-container" class="blocos-container"></div>
-
-                <button type="button" class="btn-add-bloco-final" id="btn-add-final">+ Adicionar bloco</button>
+                <div id="editorjs"></div>
             </div>
 
             <aside class="editor-lateral">
@@ -144,38 +142,6 @@ $dadosIniciais = [
                 <?php endif; ?>
             </aside>
         </main>
-    </div>
-
-    <!-- Menu "+" pra escolher tipo de bloco -->
-    <div class="menu-flutuante" id="menu-add-bloco" hidden>
-        <button data-tipo="paragraph">Texto</button>
-        <button data-tipo="heading" data-nivel="2">Título (H2)</button>
-        <button data-tipo="heading" data-nivel="3">Subtítulo (H3)</button>
-        <button data-tipo="heading" data-nivel="4">Subtítulo menor (H4)</button>
-        <button data-tipo="quote">Citação</button>
-        <button data-tipo="delimiter">Divisor</button>
-        <button data-tipo="image">Imagem</button>
-        <button data-tipo="embed">Incorporar (YouTube, Instagram, X, Vimeo, CodePen)</button>
-    </div>
-
-    <!-- Menu pra TROCAR o tipo de um bloco de texto já existente (ex: virou
-         H2 sem querer, quer virar H3) -->
-    <div class="menu-flutuante" id="menu-mudar-tipo" hidden>
-        <button data-tipo="paragraph">Texto</button>
-        <button data-tipo="heading" data-nivel="2">Título (H2)</button>
-        <button data-tipo="heading" data-nivel="3">Subtítulo (H3)</button>
-        <button data-tipo="heading" data-nivel="4">Subtítulo menor (H4)</button>
-        <button data-tipo="quote">Citação</button>
-    </div>
-
-    <!-- Barra de formatação flutuante (negrito, itálico, sublinhado, link, listas) -->
-    <div class="barra-formatacao" id="barra-formatacao" hidden>
-        <button data-cmd="bold" title="Negrito"><b>B</b></button>
-        <button data-cmd="italic" title="Itálico"><i>I</i></button>
-        <button data-cmd="underline" title="Sublinhado"><u>S</u></button>
-        <button data-cmd="link" title="Link">Link</button>
-        <button data-cmd="insertUnorderedList" title="Lista com marcadores">&#8226; Lista</button>
-        <button data-cmd="insertOrderedList" title="Lista numerada">1. Lista</button>
     </div>
 
     <!-- Modal de imagem -->
@@ -251,32 +217,21 @@ $dadosIniciais = [
         </div>
     </div>
 
-    <!-- Modal de incorporar (embed) -->
-    <div class="modal-overlay" id="modal-embed" hidden>
-        <div class="modal-caixa">
-            <div class="modal-cabecalho">
-                <h3>Incorporar conteúdo</h3>
-                <button type="button" class="modal-fechar" data-fechar-modal>&times;</button>
-            </div>
-            <div class="modal-corpo">
-                <div class="campo">
-                    <label for="campo-url-embed">Cole o link do YouTube, Instagram, X (Twitter), Vimeo ou CodePen</label>
-                    <input type="text" id="campo-url-embed" placeholder="https://..." />
-                </div>
-                <div id="preview-embed"></div>
-                <p class="alerta alerta-erro" id="erro-embed" hidden></p>
-            </div>
-            <div class="modal-rodape">
-                <button type="button" class="btn btn-outline" data-fechar-modal>Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btn-confirmar-embed">Inserir</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         window.ARTIGO_INICIAL = <?= json_encode($dadosIniciais, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?>;
         window.CSRF_TOKEN = <?= json_encode(pegarTokenCsrf()) ?>;
     </script>
+
+    <!-- Editor.js: o "motor" do editor de texto. Cada <script> abaixo é uma
+         peça (ferramenta) dele — título, lista, citação, divisor, embed.
+         Se algum CDN cair, o editor.js tem uma checagem pra não quebrar tudo
+         por causa de uma peça faltando. -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.5/dist/editorjs.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.7/dist/header.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2.0.2/dist/list.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@2.7.2/dist/quote.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.6/dist/embed.umd.min.js"></script>
     <script src="/blog/admin/assets/editor.js"></script>
 </body>
 </html>

@@ -72,54 +72,32 @@
 .campo-titulo:focus { outline: none; }
 .campo-titulo::placeholder { color: var(--color-gray-low); }
 
-/* --- Blocos --- */
-.blocos-container { display: flex; flex-direction: column; }
-
-.bloco {
-    position: relative;
-    /* 72px: sobra folga entre os botões (mover/excluir/mudar tipo) e o
-       começo do texto, pra clicar perto do início de uma linha (pra
-       posicionar o cursor) não correr o risco de acertar um botão sem
-       querer. Blocos de texto (parágrafo/título/citação) têm 5 botões
-       numa grade mais larga (61px) — o valor aqui já conta com isso. */
-    padding: var(--space-8) var(--space-12) var(--space-8) 72px;
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--space-4);
-}
-
-.bloco:hover { background-color: rgba(3, 37, 208, 0.03); }
-
-.bloco-conteudo-editavel {
-    outline: none;
-    min-height: 1.6em;
+/* --- Editor.js: reskin pra combinar com a marca Zamtech --- */
+#editorjs {
+    font-family: var(--font-text);
     font-size: var(--fs-body);
+    color: var(--color-gray-dark);
     line-height: 1.7;
 }
 
-/* Listas dentro do editor: sem isso, o navegador usa o recuo padrão dele
-   (40px) e deixa a marcação (bolinha/número) longe do texto — incômodo
-   visual. Aqui o marcador fica bem mais colado na frase. */
-.bloco-conteudo-editavel ul,
-.bloco-conteudo-editavel ol {
-    margin: 0;
-    padding-left: 20px;
-}
-.bloco-conteudo-editavel li { margin-bottom: 4px; }
-
-.bloco[data-type="heading"] .bloco-conteudo-editavel {
+#editorjs h1, #editorjs h2, #editorjs h3, #editorjs h4 {
     font-family: var(--font-display);
     font-weight: 700;
+    color: var(--color-gray-dark);
 }
-.bloco[data-type="heading"][data-nivel="2"] .bloco-conteudo-editavel { font-size: var(--fs-h2); }
-.bloco[data-type="heading"][data-nivel="3"] .bloco-conteudo-editavel { font-size: var(--fs-h3); }
-.bloco[data-type="heading"][data-nivel="4"] .bloco-conteudo-editavel { font-size: var(--fs-h4); }
+#editorjs h2 { font-size: var(--fs-h2); }
+#editorjs h3 { font-size: var(--fs-h3); }
+#editorjs h4 { font-size: var(--fs-h4); }
 
-.bloco[data-type="paragraph"] .bloco-conteudo-editavel:empty::before {
-    content: "Escreva alguma coisa...";
-    color: var(--color-gray-low);
+/* Listas: mesmo ajuste de antes — marcador colado no texto, sem o recuo
+   enorme que o navegador usa por padrão. */
+#editorjs .cdx-list {
+    padding-left: 20px;
 }
+#editorjs .cdx-list__item { margin-bottom: 4px; }
 
-.bloco[data-type="quote"] .bloco-conteudo-editavel {
+#editorjs blockquote,
+#editorjs .cdx-quote {
     font-style: italic;
     font-size: var(--fs-h5);
     color: var(--color-gray-medium);
@@ -127,93 +105,30 @@
     padding-left: var(--space-16);
 }
 
-.bloco-legenda-input {
-    width: 100%;
-    border: none;
-    background: transparent;
+#editorjs .cdx-quote__caption {
     font-size: var(--fs-caption);
-    color: var(--color-gray-medium);
-    margin-top: var(--space-8);
-    padding-left: var(--space-16);
-}
-.bloco-legenda-input:focus { outline: none; }
-
-.bloco[data-type="delimiter"] .bloco-conteudo-editavel {
-    border-top: 2px solid var(--color-gray-light);
-    height: 1px;
-    margin: var(--space-16) 0;
-}
-
-.bloco[data-type="image"] img {
-    max-width: 100%;
-    border-radius: var(--radius-md);
-    display: block;
-}
-
-.bloco[data-type="embed"] .embed-caixa {
-    background-color: var(--color-gray-light);
-    border-radius: var(--radius-md);
-    padding: var(--space-16);
-    font-size: var(--fs-sm);
+    font-style: normal;
     color: var(--color-gray-medium);
 }
 
-.bloco[data-type="embed"] iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: var(--radius-md); }
-
-/* --- Controles do bloco (aparecem no hover) --- */
-.bloco-controles {
-    /* Grade 2x2 (em vez de coluna de 4) de propósito: uma coluna de 4
-       botões de 26px fica mais alta que blocos curtos (divisor, título),
-       e a parte que "vaza" pra fora do bloco acaba flutuando por cima do
-       bloco vizinho e roubando clique dele. Em grade 2x2 a altura total
-       fica baixa o bastante pra caber dentro de qualquer bloco. */
-    position: absolute;
-    left: 2px;
-    top: var(--space-8);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
-    width: 40px;
-    /* Sempre clicável (pointer-events: auto) — só muda a opacidade no
-       hover. Deixar como "none" quando invisível parece mais limpo, mas
-       quebra em touch (tablet) e em cliques rápidos, porque o :hover
-       real do navegador só é aplicado depois que o mouse já está em
-       cima — então o clique inicial "esbarra" no bloco de trás.
-       Opacidade parada em 0.15 (não 0.3): só uma sombra discreta pra
-       avisar que os botões existem, sem ficar piscando/chamando atenção
-       toda hora que você passa o mouse pra digitar. */
-    opacity: 0.15;
-    pointer-events: auto;
-    transition: opacity 0.15s ease;
+#editorjs .ce-delimiter::before {
+    color: var(--color-gray-light);
 }
 
-.bloco:hover .bloco-controles,
-.bloco-controles:focus-within { opacity: 1; }
-
-/* variante com 5 botões (blocos de texto, que ganham o botão "Aa" de
-   trocar tipo) — 3 colunas em vez de 2, mesmas 2 linhas de altura */
-.bloco-controles.bloco-controles-5 {
-    grid-template-columns: repeat(3, 1fr);
-    width: 61px;
+#editorjs .ce-paragraph[data-placeholder-active]:empty::before,
+#editorjs .ce-header[data-placeholder-active]:empty::before {
+    color: var(--color-gray-low);
 }
 
-.bloco-controles button {
-    width: 19px;
-    height: 19px;
-    border-radius: var(--radius-sm);
-    background-color: var(--color-white);
-    border: 1px solid var(--color-gray-light);
-    font-size: 10px;
+/* Botões de "+" e "arrastar" do Editor.js — mantém discretos, só aparecem
+   perto de onde o cursor está, igual o resto do editor sempre foi. */
+#editorjs .ce-toolbar__plus,
+#editorjs .ce-toolbar__settings-btn {
     color: var(--color-gray-medium);
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.bloco-controles button:hover { background-color: var(--color-gray-light); color: var(--color-gray-dark); }
-.bloco-controles .btn-excluir-bloco:hover { color: var(--color-danger); }
-
-.btn-add-bloco-final {
+/* --- Ferramenta de imagem customizada (FerramentaImagem) --- */
+.ce-imagem-zamtech-vazio {
     display: inline-flex;
     align-items: center;
     gap: var(--space-8);
@@ -223,61 +138,32 @@
     padding: var(--space-8) var(--space-12);
     border-radius: var(--radius-md);
     border: 1.5px dashed var(--color-gray-low);
-    margin-top: var(--space-16);
 }
-.btn-add-bloco-final:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.ce-imagem-zamtech-vazio:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
-/* --- Menu flutuante "+" --- */
-.menu-flutuante {
-    position: fixed;
-    background-color: var(--color-white);
+.ce-imagem-zamtech-img {
+    max-width: 100%;
     border-radius: var(--radius-md);
-    box-shadow: var(--elevation-3);
-    border: 1px solid var(--color-gray-light);
-    padding: var(--space-8);
-    display: flex;
-    flex-direction: column;
-    z-index: 200;
-    min-width: 220px;
+    display: block;
 }
 
-.menu-flutuante[hidden] { display: none; }
-
-.menu-flutuante button {
-    text-align: left;
-    padding: var(--space-8) var(--space-12);
-    border-radius: var(--radius-sm);
-    font-size: var(--fs-sm);
-    color: var(--color-gray-dark);
+.ce-imagem-zamtech-legenda {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: var(--fs-caption);
+    color: var(--color-gray-medium);
+    margin-top: var(--space-8);
+    text-align: center;
 }
-.menu-flutuante button:hover { background-color: var(--color-gray-light); }
+.ce-imagem-zamtech-legenda:focus { outline: none; }
 
-/* marca a opção que já é o tipo atual do bloco, no menu "trocar tipo" */
-.menu-flutuante button.ativa {
-    background-color: rgba(3, 37, 208, 0.08);
-    color: var(--color-primary);
+.ce-imagem-zamtech-trocar {
+    margin-top: var(--space-8);
+    font-size: var(--fs-caption);
     font-weight: 600;
+    color: var(--color-primary);
 }
-
-/* --- Barra de formatação flutuante --- */
-.barra-formatacao {
-    position: fixed;
-    background-color: var(--color-gray-dark);
-    border-radius: var(--radius-md);
-    display: flex;
-    z-index: 200;
-    box-shadow: var(--elevation-3);
-    overflow: hidden;
-}
-
-.barra-formatacao[hidden] { display: none; }
-
-.barra-formatacao button {
-    color: var(--color-white);
-    padding: var(--space-8) var(--space-16);
-    font-size: var(--fs-sm);
-}
-.barra-formatacao button:hover { background-color: rgba(255,255,255,0.15); }
 
 /* --- Modais --- */
 .modal-overlay {
@@ -477,9 +363,6 @@
     line-height: 1.4;
     margin-top: 2px;
 }
-
-#preview-embed { margin-top: var(--space-16); }
-#preview-embed iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: var(--radius-md); }
 
 @media (max-width: 860px) {
     .editor-shell { grid-template-columns: 1fr; }
