@@ -1,6 +1,10 @@
-/* Blog público Zamtech — usa os mesmos tokens visuais do site principal */
-
-@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap');
+/* Blog público Zamtech — usa os mesmos tokens visuais do site principal.
+   A fonte (Red Hat Display/Text) é carregada por <link> direto no <head>
+   de cada página (index.php, artigo.php, 404.php) — não mais por @import
+   aqui, porque @import dentro do CSS obriga o navegador a esperar esse
+   arquivo inteiro carregar antes de sequer descobrir que precisa buscar a
+   fonte em outro site, atrasando a primeira pintura da página. Esse atraso
+   era o "flash cinza" rápido que aparecia ao abrir o blog. */
 
 :root {
     --color-primary: #0325D0;

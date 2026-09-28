@@ -151,6 +151,14 @@ $conn->close();
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- preconnect + <link> pra fonte do Google em vez de @import dentro do
+         CSS: o @import obrigava o navegador a esperar blog.css inteiro
+         chegar pra só então descobrir que precisava buscar a fonte em outro
+         site, atrasando a primeira pintura da página — esse atraso é o
+         "flash cinza" rápido que aparece ao abrir o blog. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap" />
     <title>Blog Zamtech — Notícias, dicas e novidades sobre internet fibra</title>
     <meta name="description" content="Fique por dentro de dicas de internet, novidades da Zamtech e conteúdos sobre fibra óptica, Wi-Fi e conectividade." />
     <link rel="canonical" href="<?= SITE_URL ?>/blog" />

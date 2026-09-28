@@ -1,8 +1,9 @@
 /* Admin do Blog Zamtech — usa os mesmos tokens visuais do site
    (cores, tipografia, espaçamento, raio de borda) pra parecer parte do
-   mesmo produto, mesmo sendo uma área PHP separada do Astro. */
-
-@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap');
+   mesmo produto, mesmo sendo uma área PHP separada do Astro.
+   A fonte é carregada por <link> direto no <head> de cada página do
+   admin — não mais por @import aqui, que atrasava a primeira pintura da
+   página (mesmo problema corrigido no blog.css). */
 
 :root {
     --color-primary: #0325D0;

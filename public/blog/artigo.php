@@ -84,6 +84,11 @@ if ($artigo['imagem_capa']) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- fonte via <link> (não mais @import no CSS) — evita o atraso na
+         primeira pintura que causava o flash cinza rápido ao abrir a página -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;600&display=swap" />
     <title><?= htmlspecialchars($tituloSeo, ENT_QUOTES) ?> — Blog Zamtech</title>
     <meta name="description" content="<?= htmlspecialchars($descricaoSeo, ENT_QUOTES) ?>" />
     <link rel="canonical" href="<?= htmlspecialchars($urlCanonica, ENT_QUOTES) ?>" />
