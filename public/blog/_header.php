@@ -14,7 +14,7 @@
             <ul class="nav-menu-top">
                 <li><a href="/planos-residenciais">Planos Residenciais</a></li>
                 <li><a href="/planos-empresariais">Planos Empresariais</a></li>
-                <li><a href="/blog" class="ativo">Blog</a></li>
+                <li><a href="/blog">Blog</a></li>
             </ul>
             <button type="button" class="btn-menu-toggle" id="open-menu">
                 <img src="/assets/icons/listras-menu.svg" alt="Ícone de Menu" />
@@ -827,12 +827,6 @@
     .menu-overlay.active {
         opacity: 1;
         visibility: visible;
-    }
-
-    /* link "Blog" ativo no menu de topo, só nas páginas do próprio blog */
-    .nav-menu-top a.ativo {
-        text-decoration: underline;
-        text-underline-offset: 4px;
     }
 
     @media (max-width: 992px) {

@@ -32,7 +32,7 @@ function sanitizarHtmlInline(string $html): string
     );
     libxml_clear_errors();
 
-    $permitidas = ['b', 'strong', 'i', 'em', 'u', 'a', 'br'];
+    $permitidas = ['b', 'strong', 'i', 'em', 'u', 'a', 'br', 'ul', 'ol', 'li'];
 
     $limparNo = function (DOMNode $no) use (&$limparNo, $permitidas, $doc): void {
         $filhos = iterator_to_array($no->childNodes);
@@ -226,7 +226,14 @@ function renderizarBlocosParaHtml(array $blocks): string
             case 'paragraph':
                 $conteudo = sanitizarHtmlInline((string) ($bloco['html'] ?? ''));
                 if ($conteudo !== '') {
-                    $html .= '<p>' . $conteudo . '</p>' . "\n";
+                    // se o bloco virou uma lista (bullet/numerada) não embrulha
+                    // em <p> — <ul>/<ol> dentro de <p> é HTML inválido e o
+                    // navegador fecha a tag sozinho de um jeito estranho.
+                    if (preg_match('/^<(ul|ol)[ >]/i', $conteudo) === 1) {
+                        $html .= $conteudo . "\n";
+                    } else {
+                        $html .= '<p>' . $conteudo . '</p>' . "\n";
+                    }
                 }
                 break;
 

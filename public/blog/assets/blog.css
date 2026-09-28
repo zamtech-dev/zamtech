@@ -178,6 +178,10 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .sidebar-card-icone-badge img {
     width: 20px;
     height: 20px;
+    /* sem isso, o "object-fit: cover" da foto de fundo (.sidebar-card-banner
+       img) vaza pro ícone também — ele é filho do mesmo bloco — e corta o
+       ícone de um jeito estranho, porque a maioria não é quadrado. */
+    object-fit: contain;
 }
 
 .sidebar-card-com-imagem .sidebar-card-corpo {
@@ -522,10 +526,22 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .artigo-corpo { font-size: var(--fs-body); color: var(--color-gray-dark); }
 .artigo-corpo p { margin-bottom: var(--space-24); }
-.artigo-corpo h2 { font-size: var(--fs-h2); margin: var(--space-48) 0 var(--space-16); color: var(--color-primary); }
-.artigo-corpo h3 { font-size: var(--fs-h3); margin: var(--space-32) 0 var(--space-16); }
-.artigo-corpo h4 { font-size: var(--fs-h4); margin: var(--space-24) 0 var(--space-12); }
+/* Títulos do corpo do artigo: mesmo peso/cor dos textos institucionais do
+   site (ex: /termos-de-uso/) — texto escuro, peso 500, sem azul. O azul
+   forte funciona pra botão/link, mas em título de parágrafo grande fica
+   pesado demais pra leitura longa. */
+.artigo-corpo h2 { font-size: var(--fs-h2); margin: var(--space-48) 0 var(--space-16); color: var(--color-gray-dark); font-weight: 500; }
+.artigo-corpo h3 { font-size: var(--fs-h3); margin: var(--space-32) 0 var(--space-16); color: var(--color-gray-dark); font-weight: 500; }
+.artigo-corpo h4 { font-size: var(--fs-h4); margin: var(--space-24) 0 var(--space-12); color: var(--color-gray-dark); font-weight: 500; }
 .artigo-corpo a { color: var(--color-primary); text-decoration: underline; }
+
+.artigo-corpo ul,
+.artigo-corpo ol {
+    margin: 0 0 var(--space-24);
+    padding-left: 24px;
+}
+
+.artigo-corpo li { margin-bottom: var(--space-8); }
 
 .blog-quote {
     border-left: 4px solid var(--color-primary);

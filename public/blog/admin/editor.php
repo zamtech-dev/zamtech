@@ -153,11 +153,14 @@ $dadosIniciais = [
         <button data-tipo="embed">Incorporar (YouTube, Instagram, X, Vimeo, CodePen)</button>
     </div>
 
-    <!-- Barra de formatação flutuante (negrito, itálico, link) -->
+    <!-- Barra de formatação flutuante (negrito, itálico, sublinhado, link, listas) -->
     <div class="barra-formatacao" id="barra-formatacao" hidden>
-        <button data-cmd="bold"><b>B</b></button>
-        <button data-cmd="italic"><i>I</i></button>
-        <button data-cmd="link">Link</button>
+        <button data-cmd="bold" title="Negrito"><b>B</b></button>
+        <button data-cmd="italic" title="Itálico"><i>I</i></button>
+        <button data-cmd="underline" title="Sublinhado"><u>S</u></button>
+        <button data-cmd="link" title="Link">Link</button>
+        <button data-cmd="insertUnorderedList" title="Lista com marcadores">&#8226; Lista</button>
+        <button data-cmd="insertOrderedList" title="Lista numerada">1. Lista</button>
     </div>
 
     <!-- Modal de imagem -->
@@ -180,11 +183,17 @@ $dadosIniciais = [
                         <p class="dica-upload">PNG, JPEG ou WebP — até 12MB</p>
                     </div>
                     <div id="area-cortar-imagem" hidden>
+                        <div class="crop-proporcoes" id="crop-proporcoes">
+                            <button type="button" class="btn-proporcao ativa" data-proporcao="16/9">16:9</button>
+                            <button type="button" class="btn-proporcao" data-proporcao="1/1">1:1</button>
+                            <button type="button" class="btn-proporcao" data-proporcao="4/3">4:3</button>
+                            <button type="button" class="btn-proporcao" data-proporcao="3/4">3:4</button>
+                        </div>
                         <div class="crop-viewport" id="crop-viewport">
                             <img id="crop-imagem" alt="" />
                         </div>
                         <input type="range" id="crop-zoom" min="100" max="300" value="100" />
-                        <p class="dica-upload">Arraste a imagem pra posicionar e use o controle pra dar zoom</p>
+                        <p class="dica-upload">Arraste a imagem pra posicionar e use o controle pra dar zoom (a partir do centro)</p>
                     </div>
                 </div>
 

@@ -286,6 +286,17 @@
         if (!alvo.classList || !alvo.classList.contains('bloco-conteudo-editavel')) {
             return;
         }
+
+        // dentro de uma lista (bullet ou numerada), deixa o Enter criar um
+        // item novo normalmente — só cria um bloco novo fora de listas.
+        var selecao = window.getSelection();
+        if (selecao.anchorNode) {
+            var noAtual = selecao.anchorNode.nodeType === 3 ? selecao.anchorNode.parentElement : selecao.anchorNode;
+            if (noAtual && noAtual.closest('li')) {
+                return;
+            }
+        }
+
         var blocoAtual = alvo.closest('.bloco');
         if (blocoAtual.getAttribute('data-type') === 'quote') {
             return; // deixa quebrar linha dentro da citação
@@ -305,6 +316,18 @@
     function ativarBarraFormatacao(editavel) {
         editavel.addEventListener('mouseup', mostrarBarraSeTiverSelecao);
         editavel.addEventListener('keyup', mostrarBarraSeTiverSelecao);
+        editavel.addEventListener('paste', colarComoTextoSimples);
+    }
+
+    /**
+     * Cola só o texto puro, sem a formatação de origem (fonte, cor, caixa
+     * branca de fundo etc. que vem colada de Word/Google Docs/sites). Evita
+     * o artigo herdar um visual estranho de fora do site.
+     */
+    function colarComoTextoSimples(ev) {
+        ev.preventDefault();
+        var texto = (ev.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, texto);
     }
 
     function mostrarBarraSeTiverSelecao() {
@@ -385,6 +408,9 @@
         imagemExternaSelecionada = null;
         cropEstado = { escala: 1, x: 0, y: 0, arrastando: false, inicioX: 0, inicioY: 0 };
         cropZoom.value = 100;
+        cropViewport.style.aspectRatio = '16 / 9';
+        document.querySelectorAll('.btn-proporcao').forEach(function (b) { b.classList.remove('ativa'); });
+        document.querySelector('.btn-proporcao[data-proporcao="16/9"]').classList.add('ativa');
         document.querySelectorAll('.aba-btn').forEach(function (b) { b.classList.remove('ativa'); });
         document.querySelector('.aba-btn[data-aba="enviar"]').classList.add('ativa');
         document.querySelectorAll('.aba-conteudo').forEach(function (a) { a.hidden = true; });
@@ -554,8 +580,35 @@
     }
 
     cropZoom.addEventListener('input', function () {
-        cropEstado.escala = parseInt(cropZoom.value, 10) / 100;
+        // zoom a partir do CENTRO do viewport, não do canto superior
+        // esquerdo. A matemática: o ponto da imagem que está hoje embaixo
+        // do centro do viewport tem que continuar embaixo do centro depois
+        // de mudar a escala — por isso recalculamos x/y junto com a escala.
+        var vpRect = cropViewport.getBoundingClientRect();
+        var centroX = vpRect.width / 2;
+        var centroY = vpRect.height / 2;
+        var escalaAntiga = cropEstado.escala;
+        var escalaNova = parseInt(cropZoom.value, 10) / 100;
+
+        cropEstado.x = centroX - (centroX - cropEstado.x) * (escalaNova / escalaAntiga);
+        cropEstado.y = centroY - (centroY - cropEstado.y) * (escalaNova / escalaAntiga);
+        cropEstado.escala = escalaNova;
         aplicarTransformCrop();
+    });
+
+    // Botões de proporção (16:9, 1:1, 4:3, 3:4) do modal de corte.
+    document.querySelectorAll('.btn-proporcao').forEach(function (botao) {
+        botao.addEventListener('click', function () {
+            document.querySelectorAll('.btn-proporcao').forEach(function (b) { b.classList.remove('ativa'); });
+            botao.classList.add('ativa');
+            cropViewport.style.aspectRatio = botao.getAttribute('data-proporcao');
+            cropZoom.value = 100;
+            // espera o navegador recalcular o tamanho do viewport com a
+            // nova proporção antes de reposicionar/centralizar a imagem
+            requestAnimationFrame(function () {
+                centralizarCrop();
+            });
+        });
     });
 
     cropViewport.addEventListener('mousedown', function (ev) {
