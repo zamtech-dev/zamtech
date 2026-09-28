@@ -168,31 +168,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     object-fit: cover;
 }
 
-.sidebar-card-icone-badge {
-    position: absolute;
-    left: var(--space-16);
-    bottom: -18px;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    background-color: var(--color-white);
-    box-shadow: var(--elevation-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sidebar-card-icone-badge img {
-    width: 20px;
-    height: 20px;
-    /* sem isso, o "object-fit: cover" da foto de fundo (.sidebar-card-banner
-       img) vaza pro ícone também — ele é filho do mesmo bloco — e corta o
-       ícone de um jeito estranho, porque a maioria não é quadrado. */
-    object-fit: contain;
-}
-
 .sidebar-card-com-imagem .sidebar-card-corpo {
-    padding: 26px var(--space-24) var(--space-24);
+    padding: var(--space-24);
 }
 
 .sidebar-card-titulo {

@@ -262,9 +262,6 @@ $conn->close();
                 <div class="sidebar-card sidebar-card-destaque sidebar-card-com-imagem">
                     <div class="sidebar-card-banner">
                         <img src="/assets/img/sobre-imgs/01-conheca-a-zamtech-fibra-optica.webp" alt="" loading="lazy" />
-                        <span class="sidebar-card-icone-badge">
-                            <img src="/assets/icons/sobre.svg" alt="" />
-                        </span>
                     </div>
                     <div class="sidebar-card-corpo">
                         <h2 class="sidebar-card-titulo">Quem é a Zamtech?</h2>
@@ -277,9 +274,6 @@ $conn->close();
                 <div class="sidebar-card sidebar-card-com-imagem">
                     <div class="sidebar-card-banner">
                         <img src="/assets/img/backgrounds/wallpaper-planos-residenciais.webp" alt="" loading="lazy" />
-                        <span class="sidebar-card-icone-badge">
-                            <img src="/assets/icons/others-icons/casa-house.svg" alt="" />
-                        </span>
                     </div>
                     <div class="sidebar-card-corpo">
                         <h2 class="sidebar-card-titulo">Pra sua casa</h2>
@@ -292,9 +286,6 @@ $conn->close();
                 <div class="sidebar-card sidebar-card-escura sidebar-card-com-imagem">
                     <div class="sidebar-card-banner">
                         <img src="/assets/img/backgrounds/background-planos-empresariais.jpg" alt="" loading="lazy" />
-                        <span class="sidebar-card-icone-badge">
-                            <img src="/assets/icons/others-icons/empresarial.svg" alt="" />
-                        </span>
                     </div>
                     <div class="sidebar-card-corpo">
                         <h2 class="sidebar-card-titulo">Pra sua empresa</h2>
