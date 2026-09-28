@@ -11,7 +11,7 @@ if ($filtro === 'rascunho' || $filtro === 'publicado') {
 }
 
 $resultado = $conn->query(
-    "SELECT id, titulo, slug, status, imagem_capa, criado_em, publicado_em
+    "SELECT id, titulo, slug, categoria, status, imagem_capa, criado_em, publicado_em
      FROM blog_artigos
      {$where}
      ORDER BY atualizado_em DESC"
@@ -85,6 +85,9 @@ function formatarData(?string $data): string
                                         <span class="badge <?= $artigo['status'] === 'publicado' ? 'badge-publicado' : 'badge-rascunho' ?>">
                                             <?= $artigo['status'] === 'publicado' ? 'Publicado' : 'Rascunho' ?>
                                         </span>
+                                        <?php if ($artigo['categoria']): ?>
+                                            <span class="badge badge-categoria"><?= htmlspecialchars($artigo['categoria'], ENT_QUOTES) ?></span>
+                                        <?php endif; ?>
                                         <span>
                                             <?= $artigo['status'] === 'publicado'
                                                 ? 'em ' . formatarData($artigo['publicado_em'])

@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS blog_artigos (
     autor_id INT UNSIGNED NOT NULL,
     titulo VARCHAR(200) NOT NULL,
     slug VARCHAR(220) NOT NULL UNIQUE,
+    categoria VARCHAR(60) DEFAULT NULL,
     resumo VARCHAR(320) DEFAULT NULL,
     conteudo_json LONGTEXT NOT NULL COMMENT 'JSON bruto vindo do editor (Editor.js)',
     conteudo_html LONGTEXT NOT NULL COMMENT 'HTML ja renderizado, pronto pra exibir na pagina publica',
@@ -43,7 +44,8 @@ CREATE TABLE IF NOT EXISTS blog_artigos (
     publicado_em DATETIME DEFAULT NULL,
     FOREIGN KEY (autor_id) REFERENCES blog_admin_usuarios(id) ON DELETE RESTRICT,
     INDEX idx_status_publicado (status, publicado_em),
-    INDEX idx_slug (slug)
+    INDEX idx_slug (slug),
+    INDEX idx_categoria (categoria)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabela de tentativas de login (pra bloquear ataques de forca bruta no admin)

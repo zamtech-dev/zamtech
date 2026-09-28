@@ -5,24 +5,50 @@ $porPagina = 9;
 $pagina = max(1, (int) ($_GET['pagina'] ?? 1));
 $offset = ($pagina - 1) * $porPagina;
 
-$conn = conectarBanco();
+$busca = trim((string) ($_GET['busca'] ?? ''));
+$categoriaFiltro = trim((string) ($_GET['categoria'] ?? ''));
+if (!in_array($categoriaFiltro, CATEGORIAS_BLOG, true)) {
+    $categoriaFiltro = '';
+}
+$ordenar = ($_GET['ordenar'] ?? '') === 'populares' ? 'populares' : 'recentes';
 
-$totalResultado = $conn->query("SELECT COUNT(*) AS total FROM blog_artigos WHERE status = 'publicado'");
-$total = (int) ($totalResultado->fetch_assoc()['total'] ?? 0);
-$totalPaginas = max(1, (int) ceil($total / $porPagina));
+/**
+ * Faz bind_param com uma quantidade variável de parâmetros (a busca e o
+ * filtro de categoria são opcionais, então o número de "?" muda) e já
+ * executa a query.
+ */
+function bindEExecutar(mysqli_stmt $stmt, string $tipos, array $parametros): void
+{
+    if ($tipos === '') {
+        $stmt->execute();
+        return;
+    }
+    $referencias = [$tipos];
+    foreach ($parametros as $chave => $valor) {
+        $referencias[] = &$parametros[$chave];
+    }
+    call_user_func_array([$stmt, 'bind_param'], $referencias);
+    $stmt->execute();
+}
 
-$stmt = $conn->prepare(
-    "SELECT titulo, slug, resumo, imagem_capa, imagem_capa_alt, publicado_em
-     FROM blog_artigos
-     WHERE status = 'publicado'
-     ORDER BY publicado_em DESC
-     LIMIT ? OFFSET ?"
-);
-$stmt->bind_param('ii', $porPagina, $offset);
-$stmt->execute();
-$artigos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
-$conn->close();
+/**
+ * Monta um link de /blog preservando busca, categoria e ordenação atuais,
+ * sobrescrevendo só o que for passado em $sobrescreve. Usar null pra tirar
+ * um parâmetro da URL (ex: ao trocar de filtro, a página volta pra 1).
+ */
+function linkComFiltros(array $sobrescreve = []): string
+{
+    global $busca, $categoriaFiltro, $ordenar;
+    $params = [
+        'busca' => $busca !== '' ? $busca : null,
+        'categoria' => $categoriaFiltro !== '' ? $categoriaFiltro : null,
+        'ordenar' => $ordenar !== 'recentes' ? $ordenar : null,
+    ];
+    $params = array_merge($params, $sobrescreve);
+    $params = array_filter($params, static fn($v) => $v !== null && $v !== '');
+    $query = http_build_query($params);
+    return $query === '' ? '/blog' : ('/blog?' . $query);
+}
 
 function formatarDataBr(?string $data): string
 {
@@ -33,6 +59,75 @@ function formatarDataBr(?string $data): string
     $ts = strtotime($data);
     return (int) date('d', $ts) . ' de ' . $meses[(int) date('n', $ts) - 1] . ' de ' . date('Y', $ts);
 }
+
+$conn = conectarBanco();
+
+// --- filtro (busca + categoria), reaproveitado na contagem e na listagem ---
+$condicoes = ["status = 'publicado'"];
+$parametros = [];
+$tipos = '';
+
+if ($busca !== '') {
+    $condicoes[] = '(titulo LIKE ? OR resumo LIKE ?)';
+    $comCuringa = '%' . $busca . '%';
+    $parametros[] = $comCuringa;
+    $parametros[] = $comCuringa;
+    $tipos .= 'ss';
+}
+if ($categoriaFiltro !== '') {
+    $condicoes[] = 'categoria = ?';
+    $parametros[] = $categoriaFiltro;
+    $tipos .= 's';
+}
+$whereSql = implode(' AND ', $condicoes);
+$orderSql = $ordenar === 'populares' ? 'visualizacoes DESC, publicado_em DESC' : 'publicado_em DESC';
+
+$stmtTotal = $conn->prepare("SELECT COUNT(*) AS total FROM blog_artigos WHERE {$whereSql}");
+bindEExecutar($stmtTotal, $tipos, $parametros);
+$total = (int) ($stmtTotal->get_result()->fetch_assoc()['total'] ?? 0);
+$stmtTotal->close();
+$totalPaginas = max(1, (int) ceil($total / $porPagina));
+
+$stmt = $conn->prepare(
+    "SELECT titulo, slug, categoria, resumo, imagem_capa, imagem_capa_alt, publicado_em
+     FROM blog_artigos
+     WHERE {$whereSql}
+     ORDER BY {$orderSql}
+     LIMIT ? OFFSET ?"
+);
+$parametrosListagem = $parametros;
+$parametrosListagem[] = $porPagina;
+$parametrosListagem[] = $offset;
+bindEExecutar($stmt, $tipos . 'ii', $parametrosListagem);
+$artigos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// --- widgets da barra lateral: sempre olham pro blog inteiro, sem o filtro atual da busca ---
+$categorias = $conn->query(
+    "SELECT categoria, COUNT(*) AS total
+     FROM blog_artigos
+     WHERE status = 'publicado' AND categoria IS NOT NULL AND categoria <> ''
+     GROUP BY categoria
+     ORDER BY categoria"
+)->fetch_all(MYSQLI_ASSOC);
+
+$populares = $conn->query(
+    "SELECT titulo, slug, imagem_capa, imagem_capa_alt
+     FROM blog_artigos
+     WHERE status = 'publicado'
+     ORDER BY visualizacoes DESC, publicado_em DESC
+     LIMIT 3"
+)->fetch_all(MYSQLI_ASSOC);
+
+$recentes = $conn->query(
+    "SELECT titulo, slug, publicado_em
+     FROM blog_artigos
+     WHERE status = 'publicado'
+     ORDER BY publicado_em DESC
+     LIMIT 3"
+)->fetch_all(MYSQLI_ASSOC);
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -70,39 +165,197 @@ function formatarDataBr(?string $data): string
         <h1 class="blog-titulo-pagina">Blog Zamtech</h1>
         <p class="blog-subtitulo-pagina">Dicas, novidades e conteúdo sobre internet fibra óptica</p>
 
-        <?php if (empty($artigos)): ?>
-            <div class="blog-vazio">
-                <p>Ainda não publicamos nenhum artigo por aqui. Volte em breve!</p>
-            </div>
-        <?php else: ?>
-            <div class="blog-grid">
-                <?php foreach ($artigos as $artigo): ?>
-                    <a href="/blog/<?= htmlspecialchars($artigo['slug'], ENT_QUOTES) ?>" class="blog-card">
-                        <?php if ($artigo['imagem_capa']): ?>
-                            <img
-                                src="<?= htmlspecialchars($artigo['imagem_capa'], ENT_QUOTES) ?>"
-                                alt="<?= htmlspecialchars($artigo['imagem_capa_alt'] ?: '', ENT_QUOTES) ?>"
-                                class="blog-card-imagem"
-                                loading="lazy"
-                            />
-                        <?php endif; ?>
-                        <div class="blog-card-corpo">
-                            <span class="blog-card-data"><?= formatarDataBr($artigo['publicado_em']) ?></span>
-                            <h2 class="blog-card-titulo"><?= htmlspecialchars($artigo['titulo'], ENT_QUOTES) ?></h2>
-                            <p class="blog-card-resumo"><?= htmlspecialchars($artigo['resumo'], ENT_QUOTES) ?></p>
-                        </div>
-                    </a>
-                <?php endforeach; ?>
-            </div>
+        <div class="blog-layout">
+            <!-- Barra lateral esquerda -->
+            <aside class="blog-sidebar">
 
-            <?php if ($totalPaginas > 1): ?>
-                <nav class="blog-paginacao">
-                    <?php for ($p = 1; $p <= $totalPaginas; $p++): ?>
-                        <a href="?pagina=<?= $p ?>" class="<?= $p === $pagina ? 'ativa' : '' ?>"><?= $p ?></a>
-                    <?php endfor; ?>
-                </nav>
-            <?php endif; ?>
-        <?php endif; ?>
+                <!-- 1. Barra de pesquisa -->
+                <div class="sidebar-card">
+                    <h2 class="sidebar-card-titulo">Pesquisar</h2>
+                    <form method="get" action="/blog" class="busca-form">
+                        <?php if ($categoriaFiltro !== ''): ?>
+                            <input type="hidden" name="categoria" value="<?= htmlspecialchars($categoriaFiltro, ENT_QUOTES) ?>" />
+                        <?php endif; ?>
+                        <?php if ($ordenar !== 'recentes'): ?>
+                            <input type="hidden" name="ordenar" value="<?= htmlspecialchars($ordenar, ENT_QUOTES) ?>" />
+                        <?php endif; ?>
+                        <div class="busca-campo">
+                            <input
+                                type="search"
+                                name="busca"
+                                value="<?= htmlspecialchars($busca, ENT_QUOTES) ?>"
+                                placeholder="Buscar artigo..."
+                                class="busca-input"
+                                aria-label="Buscar artigo no blog"
+                            />
+                            <button type="submit" class="busca-botao" aria-label="Buscar">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                                    <circle cx="11" cy="11" r="7"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                    <?php if ($busca !== ''): ?>
+                        <a href="<?= htmlspecialchars(linkComFiltros(['busca' => null, 'pagina' => null]), ENT_QUOTES) ?>" class="busca-limpar">Limpar busca &times;</a>
+                    <?php endif; ?>
+                </div>
+
+                <!-- 2. Filtro de pesquisa (ordenação) -->
+                <div class="sidebar-card">
+                    <h2 class="sidebar-card-titulo">Ordenar por</h2>
+                    <div class="filtro-tabs">
+                        <a href="<?= htmlspecialchars(linkComFiltros(['ordenar' => null, 'pagina' => null]), ENT_QUOTES) ?>" class="filtro-tab <?= $ordenar === 'recentes' ? 'ativo' : '' ?>">Recentes</a>
+                        <a href="<?= htmlspecialchars(linkComFiltros(['ordenar' => 'populares', 'pagina' => null]), ENT_QUOTES) ?>" class="filtro-tab <?= $ordenar === 'populares' ? 'ativo' : '' ?>">Mais lidos</a>
+                    </div>
+                </div>
+
+                <!-- 3. Categoria -->
+                <div class="sidebar-card">
+                    <h2 class="sidebar-card-titulo">Categorias</h2>
+                    <ul class="categoria-lista">
+                        <li>
+                            <a href="<?= htmlspecialchars(linkComFiltros(['categoria' => null, 'pagina' => null]), ENT_QUOTES) ?>" class="<?= $categoriaFiltro === '' ? 'ativo' : '' ?>">
+                                Todas
+                            </a>
+                        </li>
+                        <?php foreach ($categorias as $cat): ?>
+                            <li>
+                                <a href="<?= htmlspecialchars(linkComFiltros(['categoria' => $cat['categoria'], 'pagina' => null]), ENT_QUOTES) ?>" class="<?= $categoriaFiltro === $cat['categoria'] ? 'ativo' : '' ?>">
+                                    <span><?= htmlspecialchars($cat['categoria'], ENT_QUOTES) ?></span>
+                                    <span class="categoria-contagem"><?= (int) $cat['total'] ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+
+                <!-- 4. Quem é a Zamtech -->
+                <div class="sidebar-card sidebar-card-destaque">
+                    <h2 class="sidebar-card-titulo">Quem é a Zamtech?</h2>
+                    <p>Internet fibra óptica de verdade, com suporte que responde e planos pensados pra sua casa ou pra sua empresa.</p>
+                    <a href="/sobre" class="sidebar-card-link">Conhecer a Zamtech &rarr;</a>
+                </div>
+
+                <!-- Conheça produtos residenciais -->
+                <div class="sidebar-card">
+                    <h2 class="sidebar-card-titulo">Pra sua casa</h2>
+                    <p>Planos de internet residencial com Wi-Fi de verdade em todo cômodo.</p>
+                    <a href="/planos-residenciais" class="sidebar-card-link">Ver planos residenciais &rarr;</a>
+                </div>
+
+                <!-- Conheça produtos empresariais -->
+                <div class="sidebar-card sidebar-card-escura">
+                    <h2 class="sidebar-card-titulo">Pra sua empresa</h2>
+                    <p>Link dedicado, estabilidade e suporte prioritário pro seu negócio não parar.</p>
+                    <a href="/planos-empresariais" class="sidebar-card-link">Ver planos empresariais &rarr;</a>
+                </div>
+
+                <!-- Botão indique e ganhe -->
+                <div class="sidebar-card sidebar-card-indique">
+                    <h2 class="sidebar-card-titulo">Indique e Ganhe</h2>
+                    <p>Indique a Zamtech pra um amigo e ganhe desconto na sua fatura quando ele contratar.</p>
+                    <a href="/indique" class="btn-indique">Quero indicar</a>
+                </div>
+
+                <!-- Artigos populares -->
+                <div class="sidebar-card">
+                    <h2 class="sidebar-card-titulo">Artigos populares</h2>
+                    <?php if (empty($populares)): ?>
+                        <p class="sidebar-vazio">Ainda não tem artigo publicado.</p>
+                    <?php else: ?>
+                        <ul class="sidebar-lista-artigos">
+                            <?php foreach ($populares as $pop): ?>
+                                <li>
+                                    <a href="/blog/<?= htmlspecialchars($pop['slug'], ENT_QUOTES) ?>">
+                                        <?php if ($pop['imagem_capa']): ?>
+                                            <img src="<?= htmlspecialchars($pop['imagem_capa'], ENT_QUOTES) ?>" alt="" loading="lazy" />
+                                        <?php else: ?>
+                                            <span class="sidebar-lista-sem-imagem" aria-hidden="true"></span>
+                                        <?php endif; ?>
+                                        <span><?= htmlspecialchars($pop['titulo'], ENT_QUOTES) ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Artigos recentes -->
+                <div class="sidebar-card">
+                    <h2 class="sidebar-card-titulo">Artigos recentes</h2>
+                    <?php if (empty($recentes)): ?>
+                        <p class="sidebar-vazio">Ainda não tem artigo publicado.</p>
+                    <?php else: ?>
+                        <ul class="sidebar-lista-artigos sidebar-lista-simples">
+                            <?php foreach ($recentes as $rec): ?>
+                                <li>
+                                    <a href="/blog/<?= htmlspecialchars($rec['slug'], ENT_QUOTES) ?>">
+                                        <span><?= htmlspecialchars($rec['titulo'], ENT_QUOTES) ?></span>
+                                        <span class="sidebar-lista-data"><?= formatarDataBr($rec['publicado_em']) ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </aside>
+
+            <!-- Conteúdo principal: resultado da busca/filtro + grid de artigos -->
+            <div class="blog-conteudo">
+                <?php if ($busca !== '' || $categoriaFiltro !== ''): ?>
+                    <p class="blog-resultado-info">
+                        <?= $total ?> artigo<?= $total === 1 ? '' : 's' ?> encontrado<?= $total === 1 ? '' : 's' ?>
+                        <?php if ($busca !== ''): ?> pra "<strong><?= htmlspecialchars($busca, ENT_QUOTES) ?></strong>"<?php endif; ?>
+                        <?php if ($categoriaFiltro !== ''): ?> em <strong><?= htmlspecialchars($categoriaFiltro, ENT_QUOTES) ?></strong><?php endif; ?>
+                        &middot; <a href="/blog">limpar filtros</a>
+                    </p>
+                <?php endif; ?>
+
+                <?php if (empty($artigos)): ?>
+                    <div class="blog-vazio">
+                        <p>
+                            <?= ($busca !== '' || $categoriaFiltro !== '')
+                                ? 'Nenhum artigo encontrado com esse filtro.'
+                                : 'Ainda não publicamos nenhum artigo por aqui. Volte em breve!' ?>
+                        </p>
+                    </div>
+                <?php else: ?>
+                    <div class="blog-grid">
+                        <?php foreach ($artigos as $artigo): ?>
+                            <a href="/blog/<?= htmlspecialchars($artigo['slug'], ENT_QUOTES) ?>" class="blog-card">
+                                <?php if ($artigo['imagem_capa']): ?>
+                                    <img
+                                        src="<?= htmlspecialchars($artigo['imagem_capa'], ENT_QUOTES) ?>"
+                                        alt="<?= htmlspecialchars($artigo['imagem_capa_alt'] ?: '', ENT_QUOTES) ?>"
+                                        class="blog-card-imagem"
+                                        loading="lazy"
+                                    />
+                                <?php endif; ?>
+                                <div class="blog-card-corpo">
+                                    <div class="blog-card-topo">
+                                        <span class="blog-card-data"><?= formatarDataBr($artigo['publicado_em']) ?></span>
+                                        <?php if ($artigo['categoria']): ?>
+                                            <span class="blog-card-categoria"><?= htmlspecialchars($artigo['categoria'], ENT_QUOTES) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h2 class="blog-card-titulo"><?= htmlspecialchars($artigo['titulo'], ENT_QUOTES) ?></h2>
+                                    <p class="blog-card-resumo"><?= htmlspecialchars($artigo['resumo'], ENT_QUOTES) ?></p>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <?php if ($totalPaginas > 1): ?>
+                        <nav class="blog-paginacao">
+                            <?php for ($p = 1; $p <= $totalPaginas; $p++): ?>
+                                <a href="<?= htmlspecialchars(linkComFiltros(['pagina' => $p]), ENT_QUOTES) ?>" class="<?= $p === $pagina ? 'ativa' : '' ?>"><?= $p ?></a>
+                            <?php endfor; ?>
+                        </nav>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </main>
 
     <?php require __DIR__ . '/_footer.php'; ?>

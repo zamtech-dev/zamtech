@@ -8,7 +8,7 @@ $artigo = null;
 if ($id > 0) {
     $conn = conectarBanco();
     $stmt = $conn->prepare(
-        'SELECT id, titulo, slug, resumo, conteudo_json, imagem_capa, imagem_capa_alt,
+        'SELECT id, titulo, slug, categoria, resumo, conteudo_json, imagem_capa, imagem_capa_alt,
                 meta_titulo, meta_descricao, status
          FROM blog_artigos WHERE id = ?'
     );
@@ -28,6 +28,7 @@ $dadosIniciais = [
     'id' => $artigo['id'] ?? null,
     'titulo' => $artigo['titulo'] ?? '',
     'blocks' => $artigo ? (json_decode($artigo['conteudo_json'], true) ?: []) : [],
+    'categoria' => $artigo['categoria'] ?? '',
     'imagem_capa' => $artigo['imagem_capa'] ?? '',
     'imagem_capa_alt' => $artigo['imagem_capa_alt'] ?? '',
     'resumo' => $artigo['resumo'] ?? '',
@@ -80,6 +81,19 @@ $dadosIniciais = [
             </div>
 
             <aside class="editor-lateral">
+                <h3>Organização</h3>
+                <div class="campo">
+                    <label for="campo-categoria">Categoria</label>
+                    <select id="campo-categoria">
+                        <option value="">Sem categoria</option>
+                        <?php foreach (CATEGORIAS_BLOG as $cat): ?>
+                            <option value="<?= htmlspecialchars($cat, ENT_QUOTES) ?>" <?= ($dadosIniciais['categoria'] ?? '') === $cat ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat, ENT_QUOTES) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <h3>SEO</h3>
                 <div class="campo">
                     <label for="campo-resumo">Resumo (aparece na listagem do blog)</label>

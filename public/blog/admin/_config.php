@@ -22,6 +22,10 @@ define('BLOG_UPLOAD_URL', '/assets/img/blog');
 // --- Nome do cookie de sessão do admin (separado do resto do site) ---
 define('BLOG_SESSION_NAME', 'zamtech_blog_admin');
 
+// --- Categorias do blog (lista única, usada no editor e na página pública).
+// Pra adicionar/remover uma categoria, mexe só aqui. ---
+define('CATEGORIAS_BLOG', ['Residencial', 'Empresarial', 'Dicas', 'Novidades']);
+
 // --- Limite de tentativas de login (rate limiting) ---
 define('LOGIN_MAX_TENTATIVAS', 5);
 define('LOGIN_JANELA_MINUTOS', 15);

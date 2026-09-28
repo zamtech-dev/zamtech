@@ -3,6 +3,7 @@
 
     var container = document.getElementById('blocos-container');
     var campoTitulo = document.getElementById('campo-titulo');
+    var campoCategoria = document.getElementById('campo-categoria');
     var campoResumo = document.getElementById('campo-resumo');
     var campoMetaTitulo = document.getElementById('campo-meta-titulo');
     var campoMetaDescricao = document.getElementById('campo-meta-descricao');
@@ -728,6 +729,7 @@
         var dados = window.ARTIGO_INICIAL;
         campoTitulo.value = dados.titulo || '';
         ajustarAlturaTitulo();
+        campoCategoria.value = dados.categoria || '';
         campoResumo.value = dados.resumo || '';
         campoMetaTitulo.value = dados.meta_titulo || '';
         campoMetaDescricao.value = dados.meta_descricao || '';
@@ -825,6 +827,7 @@
                 titulo: titulo,
                 blocks: serializarBlocos(),
                 status: status,
+                categoria: campoCategoria.value,
                 imagem_capa: estado.imagemCapa,
                 imagem_capa_alt: estado.imagemCapaAlt,
                 resumo: campoResumo.value.trim(),

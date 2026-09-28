@@ -237,6 +237,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .badge-rascunho { background-color: var(--color-gray-light); color: var(--color-gray-medium); }
 .badge-publicado { background-color: var(--color-success-bg); color: var(--color-success); }
+.badge-categoria { background-color: var(--color-border); color: var(--color-primary); }
 
 .item-artigo-acoes { display: flex; gap: var(--space-8); flex-shrink: 0; }
 
@@ -262,18 +263,22 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .campo input[type="text"],
 .campo input[type="email"],
 .campo input[type="password"],
-.campo textarea {
+.campo textarea,
+.campo select {
     width: 100%;
     padding: var(--space-12) var(--space-16);
     border: 1.5px solid var(--color-gray-low);
     border-radius: var(--radius-md);
     font-size: var(--fs-sm);
     font-family: inherit;
+    background-color: var(--color-white);
+    color: var(--color-gray-dark);
     transition: var(--transition-default);
 }
 
 .campo input:focus,
-.campo textarea:focus {
+.campo textarea:focus,
+.campo select:focus {
     outline: none;
     border-color: var(--color-primary);
 }

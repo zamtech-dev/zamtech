@@ -22,6 +22,10 @@ $id = isset($dados['id']) ? (int) $dados['id'] : 0;
 $titulo = trim((string) ($dados['titulo'] ?? ''));
 $blocosRecebidos = is_array($dados['blocks'] ?? null) ? $dados['blocks'] : [];
 $statusPedido = ($dados['status'] ?? 'rascunho') === 'publicado' ? 'publicado' : 'rascunho';
+// só aceita uma categoria da lista oficial (CATEGORIAS_BLOG) — qualquer
+// outra coisa vira "sem categoria", não confia em texto livre vindo do JS.
+$categoriaRecebida = trim((string) ($dados['categoria'] ?? ''));
+$categoria = in_array($categoriaRecebida, CATEGORIAS_BLOG, true) ? $categoriaRecebida : null;
 $imagemCapa = trim((string) ($dados['imagem_capa'] ?? ''));
 $imagemCapaAlt = trim((string) ($dados['imagem_capa_alt'] ?? ''));
 $resumo = trim((string) ($dados['resumo'] ?? ''));
@@ -106,14 +110,15 @@ if ($id > 0) {
 
     $stmt = $conn->prepare(
         'UPDATE blog_artigos SET
-            titulo = ?, resumo = ?, conteudo_json = ?, conteudo_html = ?,
+            titulo = ?, categoria = ?, resumo = ?, conteudo_json = ?, conteudo_html = ?,
             imagem_capa = ?, imagem_capa_alt = ?, meta_titulo = ?, meta_descricao = ?,
             status = ?, publicado_em = ?
          WHERE id = ?'
     );
     $stmt->bind_param(
-        'ssssssssssi',
+        'sssssssssssi',
         $titulo,
+        $categoria,
         $resumo,
         $conteudoJson,
         $conteudoHtml,
@@ -134,15 +139,16 @@ if ($id > 0) {
 
     $stmt = $conn->prepare(
         'INSERT INTO blog_artigos
-            (autor_id, titulo, slug, resumo, conteudo_json, conteudo_html,
+            (autor_id, titulo, slug, categoria, resumo, conteudo_json, conteudo_html,
              imagem_capa, imagem_capa_alt, meta_titulo, meta_descricao, status, publicado_em)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
     $stmt->bind_param(
-        'isssssssssss',
+        'issssssssssss',
         $autorId,
         $titulo,
         $slug,
+        $categoria,
         $resumo,
         $conteudoJson,
         $conteudoHtml,
