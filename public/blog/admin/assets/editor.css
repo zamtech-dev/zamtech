@@ -12,7 +12,14 @@
     align-items: start;
 }
 
-.editor-coluna { min-width: 0; }
+.editor-coluna {
+    min-width: 0;
+    /* espaço vazio embaixo do último bloco. Sem isso, quando o artigo
+       chega perto do fim, a página não tem "pra onde" rolar — e o bloco
+       que você está editando fica preso lá embaixo da tela, obrigando a
+       curvar o pescoço pra ver o que está digitando. */
+    padding-bottom: 45vh;
+}
 
 .status-salvamento {
     font-size: var(--fs-caption);
@@ -88,6 +95,16 @@
     font-size: var(--fs-body);
     line-height: 1.7;
 }
+
+/* Listas dentro do editor: sem isso, o navegador usa o recuo padrão dele
+   (40px) e deixa a marcação (bolinha/número) longe do texto — incômodo
+   visual. Aqui o marcador fica bem mais colado na frase. */
+.bloco-conteudo-editavel ul,
+.bloco-conteudo-editavel ol {
+    margin: 0;
+    padding-left: 20px;
+}
+.bloco-conteudo-editavel li { margin-bottom: 4px; }
 
 .bloco[data-type="heading"] .bloco-conteudo-editavel {
     font-family: var(--font-display);
@@ -234,6 +251,13 @@
     color: var(--color-gray-dark);
 }
 .menu-flutuante button:hover { background-color: var(--color-gray-light); }
+
+/* marca a opção que já é o tipo atual do bloco, no menu "trocar tipo" */
+.menu-flutuante button.ativa {
+    background-color: rgba(3, 37, 208, 0.08);
+    color: var(--color-primary);
+    font-weight: 600;
+}
 
 /* --- Barra de formatação flutuante --- */
 .barra-formatacao {

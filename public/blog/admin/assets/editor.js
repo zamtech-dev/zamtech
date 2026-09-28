@@ -90,8 +90,6 @@
             var mudarTipo = document.createElement('button');
             mudarTipo.type = 'button';
             mudarTipo.className = 'btn-mudar-tipo';
-            mudarTipo.title = 'Mudar tipo deste bloco (texto, H2, H3...)';
-            mudarTipo.textContent = 'Aa';
             mudarTipo.addEventListener('click', function () {
                 var rect = mudarTipo.getBoundingClientRect();
                 abrirMenuMudarTipo(rect.right + 6, rect.top, blocoEl);
@@ -149,6 +147,7 @@
         if (nivel) {
             el.setAttribute('data-nivel', nivel);
         }
+        atualizarRotuloTipoBloco(el);
 
         var editavel = document.createElement('div');
         editavel.className = 'bloco-conteudo-editavel';
@@ -305,6 +304,16 @@
         blocoMudarTipoAtual = blocoEl;
         menuMudarTipo.hidden = false;
 
+        // marca no menu qual é o tipo ATUAL do bloco, pra saber de cara
+        // (sem isso, tinha que adivinhar olhando o tamanho do texto)
+        var tipoAtual = blocoEl.getAttribute('data-type');
+        var nivelAtual = blocoEl.getAttribute('data-nivel');
+        menuMudarTipo.querySelectorAll('button').forEach(function (botao) {
+            var mesmoTipo = botao.getAttribute('data-tipo') === tipoAtual;
+            var mesmoNivel = (botao.getAttribute('data-nivel') || null) === (nivelAtual || null);
+            botao.classList.toggle('ativa', mesmoTipo && mesmoNivel);
+        });
+
         var menuRect = menuMudarTipo.getBoundingClientRect();
         var maxLeft = Math.max(8, window.innerWidth - menuRect.width - 8);
         var maxTop = Math.max(8, window.innerHeight - menuRect.height - 8);
@@ -366,10 +375,42 @@
             legendaExistente.remove();
         }
 
+        atualizarRotuloTipoBloco(blocoEl);
+
         var editavel = blocoEl.querySelector('.bloco-conteudo-editavel');
         if (editavel) {
             editavel.focus();
         }
+    }
+
+    /**
+     * Descreve o tipo de um bloco de texto: o rótulo curto que vai dentro
+     * do botão "trocar tipo" (só 19px de largura, por isso tem que ser
+     * bem curto) e a descrição completa pro title/tooltip.
+     */
+    function descreverTipoBloco(tipo, nivel) {
+        if (tipo === 'heading') {
+            return { rotulo: 'H' + (nivel || '2'), descricao: 'Título (H' + (nivel || '2') + ')' };
+        }
+        if (tipo === 'quote') {
+            return { rotulo: '❝', descricao: 'Citação' };
+        }
+        return { rotulo: '¶', descricao: 'Texto' };
+    }
+
+    /**
+     * Atualiza o botão "Aa" de um bloco pra mostrar o tipo ATUAL dele
+     * (P, H2, H3, H4 ou citação) — sem isso não dava pra saber, só de
+     * olhar o artigo, se um bloco virou H2 ou H3 sem querer.
+     */
+    function atualizarRotuloTipoBloco(blocoEl) {
+        var botao = blocoEl.querySelector('.btn-mudar-tipo');
+        if (!botao) {
+            return;
+        }
+        var info = descreverTipoBloco(blocoEl.getAttribute('data-type'), blocoEl.getAttribute('data-nivel'));
+        botao.textContent = info.rotulo;
+        botao.title = 'Este bloco é: ' + info.descricao + ' — clique pra mudar';
     }
 
     // adiciona um pequeno "+" quando o mouse passa entre blocos seria ideal,
@@ -474,8 +515,14 @@
             barraFormatacao.hidden = true;
             return;
         }
+        // a barra é "position: fixed" (relativa à tela, não à página) —
+        // por isso NÃO soma window.scrollY aqui. Esse era o bug: com o
+        // scroll automático novo, a página fica com scrollY bem maior que
+        // antes, e a barra estava sendo empurrada pra muito mais embaixo
+        // da tela (quase sempre pra fora da área visível — por isso
+        // parecia que ela "não aparecia").
         barraFormatacao.style.left = (rect.left + rect.width / 2 - 70) + 'px';
-        barraFormatacao.style.top = (rect.top - 44 + window.scrollY) + 'px';
+        barraFormatacao.style.top = Math.max(8, rect.top - 44) + 'px';
         barraFormatacao.hidden = false;
     }
 
