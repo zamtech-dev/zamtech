@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import CardArtigo from '../../components/blog/CardArtigo.astro';
 import {
     buscarTodosOsArtigos,
     buscarArtigoPorSlug,
@@ -51,6 +52,15 @@ const jsonLd = {
 
 const usaInstagram = artigo.conteudoHtml.includes('instagram.com');
 const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteudoHtml.includes('x.com');
+
+const todosOsArtigos = await buscarTodosOsArtigos();
+const mesmaCategoria = todosOsArtigos.filter(
+    (a) => a.slug !== artigo.slug && a.categorias.some((c) => artigo.categorias.some((c2) => c2.slug === c.slug))
+);
+const outrosArtigos = todosOsArtigos.filter(
+    (a) => a.slug !== artigo.slug && !mesmaCategoria.some((m) => m.slug === a.slug)
+);
+const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
 ---
 
 <Layout
@@ -93,29 +103,39 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                         <button type="button" id="btn-compartilhar" class="btn-compartilhar" aria-label="Compartilhar">
                             ↗ Compartilhar
                         </button>
-                        <div class="compartilhar-opcoes" id="compartilhar-opcoes" hidden>
-                            <a id="link-whatsapp" href="#" target="_blank" rel="noopener noreferrer">
-                                <img src="/assets/icons/social/whatsapp.svg" alt="" />
-                                WhatsApp
-                            </a>
-                            <a id="link-facebook" href="#" target="_blank" rel="noopener noreferrer">
-                                <img src="/assets/icons/social/facebook.svg" alt="" />
-                                Facebook
-                            </a>
-                            <button type="button" id="btn-copiar-link">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                </svg>
-                                <span id="btn-copiar-link-texto">Copiar link</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
 
+            <div class="compartilhar-opcoes" id="compartilhar-opcoes" hidden>
+                <a id="link-whatsapp" href="#" target="_blank" rel="noopener noreferrer">
+                    <img src="/assets/icons/social/whatsapp.svg" alt="" />
+                    WhatsApp
+                </a>
+                <a id="link-facebook" href="#" target="_blank" rel="noopener noreferrer">
+                    <img src="/assets/icons/social/facebook.svg" alt="" />
+                    Facebook
+                </a>
+                <button type="button" id="btn-copiar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <span id="btn-copiar-link-texto">Copiar link</span>
+                </button>
+            </div>
+
             <div class="artigo-corpo" set:html={artigo.conteudoHtml} />
         </article>
+
+        {recomendados.length > 0 && (
+            <section class="artigo-recomendados">
+                <h2>Continue lendo</h2>
+                <div class="blog-grid">
+                    {recomendados.map((r) => <CardArtigo artigo={r} />)}
+                </div>
+            </section>
+        )}
 
         <section class="comentarios" id="comentarios">
             <h2>Comentários {comentarios.length > 0 && `(${comentarios.length})`}</h2>
@@ -155,10 +175,27 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
         </div>
     </main>
 
+    <button type="button" id="btn-topo" class="btn-topo" aria-label="Voltar ao topo" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+    </button>
+
     {usaInstagram && <script async src="https://www.instagram.com/embed.js"></script>}
     {usaTwitter && <script async src="https://platform.twitter.com/widgets.js"></script>}
 
     <script define:vars={{ WORDPRESS_API_URL, urlCanonica, tituloArtigo: artigo.titulo }}>
+        const btnTopo = document.getElementById('btn-topo');
+        if (btnTopo) {
+            window.addEventListener('scroll', () => {
+                btnTopo.hidden = window.scrollY < 400;
+            });
+            btnTopo.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
         const CHAVE_CURTIDO = (id) => `zamtech-curtiu-${id}`;
         const btnCurtir = document.getElementById('btn-curtir');
         if (btnCurtir) {

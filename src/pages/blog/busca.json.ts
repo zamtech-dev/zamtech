@@ -9,6 +9,9 @@ export const GET: APIRoute = async () => {
         resumo: artigo.resumo,
         slug: artigo.slug,
         categoria: artigo.categorias[0]?.nome ?? '',
+        imagemCapa: artigo.imagemCapa,
+        imagemCapaAlt: artigo.imagemCapaAlt,
+        dataPublicacao: artigo.dataPublicacao,
     }));
 
     return new Response(JSON.stringify(indice), {

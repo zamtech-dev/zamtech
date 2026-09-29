@@ -619,38 +619,27 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .btn-compartilhar:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
 .compartilhar-opcoes {
-    position: absolute;
-    top: calc(100% + var(--space-8));
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
     display: flex;
-    flex-direction: column;
-    width: max-content;
-    min-width: 180px;
-    max-width: calc(100vw - var(--space-32));
-    background-color: var(--color-white);
-    border: 1px solid var(--color-gray-light);
-    border-radius: var(--radius-md);
-    box-shadow: var(--elevation-2);
-    overflow: hidden;
+    flex-wrap: wrap;
+    gap: var(--space-12);
+    margin-top: calc(-1 * var(--space-16));
+    margin-bottom: var(--space-32);
 }
 
 .compartilhar-opcoes a,
 .compartilhar-opcoes button {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-12);
-    padding: var(--space-12) var(--space-16);
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-16);
+    border: 1.5px solid var(--color-gray-low);
+    border-radius: var(--radius-full);
     text-align: left;
     font-size: var(--fs-sm);
     font-weight: 600;
     color: var(--color-gray-dark);
-    border-bottom: 1px solid var(--color-gray-light);
+    background-color: var(--color-white);
 }
-
-.compartilhar-opcoes a:last-child,
-.compartilhar-opcoes button:last-child { border-bottom: none; }
 
 .compartilhar-opcoes svg {
     width: 18px;
@@ -711,6 +700,28 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .artigo-voltar { margin-top: var(--space-64); text-align: center; }
 .btn-voltar-blog { display: inline-flex; padding: var(--space-12) var(--space-24); border: 1.5px solid var(--color-gray-low); border-radius: var(--radius-md); font-weight: 600; }
 .btn-voltar-blog:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.artigo-recomendados { margin-top: var(--space-64); }
+.artigo-recomendados h2 { font-size: var(--fs-h3); color: var(--color-gray-dark); margin-bottom: var(--space-24); }
+
+.btn-topo {
+    position: fixed;
+    bottom: var(--space-24);
+    left: var(--space-24);
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--elevation-2);
+    z-index: 50;
+    transition: var(--transition-default);
+}
+
+.btn-topo:hover { background-color: var(--color-secondary); }
 
 .comentarios { max-width: 760px; margin: var(--space-64) auto 0; padding-top: var(--space-48); border-top: 1px solid var(--color-gray-light); }
 .comentarios h2 { font-size: var(--fs-h3); color: var(--color-gray-dark); margin-bottom: var(--space-24); }

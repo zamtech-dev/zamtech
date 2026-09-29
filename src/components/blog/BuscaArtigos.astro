@@ -21,10 +21,28 @@
 </div>
 
 <script>
-    type ItemBusca = { titulo: string; resumo: string; slug: string; categoria: string };
+    type ItemBusca = {
+        titulo: string;
+        resumo: string;
+        slug: string;
+        categoria: string;
+        imagemCapa?: string;
+        imagemCapaAlt?: string;
+        dataPublicacao?: string;
+    };
 
     let indiceBusca: ItemBusca[] | null = null;
     let carregandoIndice: Promise<ItemBusca[]> | null = null;
+    let gradeOriginalHtml: string | null = null;
+    let paginacaoEl: HTMLElement | null = null;
+
+    const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+    function formatarDataBr(dataIso?: string): string {
+        if (!dataIso) return '';
+        const data = new Date(dataIso);
+        return `${data.getDate()} de ${MESES[data.getMonth()]} de ${data.getFullYear()}`;
+    }
 
     const REGEX_DIACRITICOS = new RegExp(
         `[${String.fromCharCode(0x0300)}-${String.fromCharCode(0x036f)}]`,
@@ -44,6 +62,70 @@
         }
         indiceBusca = await carregandoIndice;
         return indiceBusca;
+    }
+
+    function limparBuscaCompleta(): void {
+        const grade = document.querySelector<HTMLElement>('.blog-grid');
+        if (grade && gradeOriginalHtml !== null) grade.innerHTML = gradeOriginalHtml;
+        if (paginacaoEl) paginacaoEl.hidden = false;
+        const info = document.getElementById('busca-info-resultado');
+        if (info) info.remove();
+    }
+
+    function mostrarInfoBusca(termo: string, total: number): void {
+        const grade = document.querySelector<HTMLElement>('.blog-grid');
+        if (!grade || !grade.parentElement) return;
+
+        let info = document.getElementById('busca-info-resultado');
+        if (!info) {
+            info = document.createElement('p');
+            info.id = 'busca-info-resultado';
+            info.className = 'blog-resultado-info';
+            grade.parentElement.insertBefore(info, grade);
+        }
+        info.innerHTML = `${total} resultado${total === 1 ? '' : 's'} para "${termo}" &middot; <a href="#" id="busca-limpar-link">limpar pesquisa</a>`;
+
+        const linkLimpar = document.getElementById('busca-limpar-link');
+        if (linkLimpar) {
+            linkLimpar.addEventListener('click', (ev) => {
+                ev.preventDefault();
+                limparBuscaCompleta();
+                if (inputBusca) inputBusca.value = '';
+            });
+        }
+    }
+
+    function renderizarResultadosCompletos(termo: string, lista: ItemBusca[]): void {
+        const grade = document.querySelector<HTMLElement>('.blog-grid');
+        if (!grade) return;
+
+        if (gradeOriginalHtml === null) gradeOriginalHtml = grade.innerHTML;
+        if (!paginacaoEl) paginacaoEl = document.querySelector<HTMLElement>('.blog-paginacao');
+
+        if (lista.length === 0) {
+            grade.innerHTML = '<p class="blog-vazio">Nenhum artigo encontrado com esse termo.</p>';
+        } else {
+            grade.innerHTML = lista
+                .map(
+                    (item) => `
+                        <a href="/blog/${item.slug}/" class="blog-card">
+                            ${item.imagemCapa ? `<img src="${item.imagemCapa}" alt="${item.imagemCapaAlt || ''}" class="blog-card-imagem" loading="lazy" />` : ''}
+                            <div class="blog-card-corpo">
+                                <div class="blog-card-topo">
+                                    <span class="blog-card-data">${formatarDataBr(item.dataPublicacao)}</span>
+                                    ${item.categoria ? `<span class="blog-card-categoria">${item.categoria}</span>` : ''}
+                                </div>
+                                <h2 class="blog-card-titulo">${item.titulo}</h2>
+                                <p class="blog-card-resumo">${item.resumo}</p>
+                            </div>
+                        </a>
+                    `
+                )
+                .join('');
+        }
+
+        if (paginacaoEl) paginacaoEl.hidden = true;
+        mostrarInfoBusca(termo, lista.length);
     }
 
     const inputBusca = document.getElementById('blog-busca-input') as HTMLInputElement | null;
@@ -99,5 +181,40 @@
                 resultadosBusca.hidden = true;
             }
         });
+
+        async function pesquisarCompleto(): Promise<void> {
+            const termo = inputBusca!.value.trim();
+            resultadosBusca!.hidden = true;
+
+            if (termo.length === 0) {
+                limparBuscaCompleta();
+                return;
+            }
+
+            const itens = await carregarIndiceBusca();
+            const termoNormalizado = normalizar(termo);
+
+            const encontrados = itens.filter(
+                (item) =>
+                    normalizar(item.titulo).includes(termoNormalizado) ||
+                    normalizar(item.resumo).includes(termoNormalizado) ||
+                    normalizar(item.categoria).includes(termoNormalizado)
+            );
+
+            renderizarResultadosCompletos(termo, encontrados);
+        }
+
+        inputBusca.addEventListener('keydown', (ev) => {
+            if (ev.key !== 'Enter') return;
+            ev.preventDefault();
+            pesquisarCompleto();
+        });
+
+        const botaoBusca = document.querySelector<HTMLButtonElement>('.busca-botao');
+        if (botaoBusca) {
+            botaoBusca.addEventListener('click', () => {
+                pesquisarCompleto();
+            });
+        }
     }
 </script>
