@@ -159,7 +159,6 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
     {usaTwitter && <script async src="https://platform.twitter.com/widgets.js"></script>}
 
     <script define:vars={{ WORDPRESS_API_URL, urlCanonica, tituloArtigo: artigo.titulo }}>
-        // --- Curtir ---
         const CHAVE_CURTIDO = (id) => `zamtech-curtiu-${id}`;
         const btnCurtir = document.getElementById('btn-curtir');
         if (btnCurtir) {
@@ -192,7 +191,6 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
             });
         }
 
-
         const btnCompartilhar = document.getElementById('btn-compartilhar');
         const opcoesCompartilhar = document.getElementById('compartilhar-opcoes');
         const linkWhats = document.getElementById('link-whatsapp');
@@ -209,7 +207,6 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                         await navigator.share({ title: tituloArtigo, url: urlCanonica });
                         return;
                     } catch {
-
                     }
                 }
                 if (opcoesCompartilhar) opcoesCompartilhar.hidden = !opcoesCompartilhar.hidden;
@@ -275,7 +272,8 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                 }
             });
         }
-        const GOOGLE_CLIENT_ID = '560058085238-i188rurchh9iq8ul6nbovm785pv6aehm.apps.googleusercontent.com';
+
+        const GOOGLE_CLIENT_ID = 'COLOQUE_SEU_GOOGLE_CLIENT_ID_AQUI.apps.googleusercontent.com';
 
         function decodificarJwt(token) {
             try {

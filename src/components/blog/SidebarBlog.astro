@@ -112,16 +112,11 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
 </aside>
 
 <script>
-    // --- Pesquisa (busca no arquivo /blog/busca.json gerado no build) ---
     type ItemBusca = { titulo: string; resumo: string; slug: string; categoria: string };
 
     let indiceBusca: ItemBusca[] | null = null;
     let carregandoIndice: Promise<ItemBusca[]> | null = null;
 
-    // Tira acento pra comparação de busca (ex: "conexao" acha "conexão").
-    // Monta o intervalo de "marcas de acento combinando" por código, em vez
-    // de escrever o caractere Unicode direto no meio do regex — assim não
-    // tem risco de esse trecho ser salvo/exibido errado em algum editor.
     const REGEX_DIACRITICOS = new RegExp(
         `[${String.fromCharCode(0x0300)}-${String.fromCharCode(0x036f)}]`,
         'g'
@@ -197,9 +192,6 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
         });
     }
 
-    // --- Ordenar (Mais recentes / Mais populares) ---
-    // Reordena os cards que já estão na página (não busca nada de novo) —
-    // "populares" aqui é curtidas + comentários somados.
     const tabsOrdem = document.getElementById('blog-filtro-tabs');
     const grade = document.querySelector<HTMLElement>('.blog-grid');
 
