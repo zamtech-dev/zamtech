@@ -706,7 +706,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .btn-topo {
     position: fixed;
-    bottom: var(--space-24);
+    bottom: 90px;
     left: var(--space-24);
     width: 48px;
     height: 48px;
@@ -717,7 +717,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     align-items: center;
     justify-content: center;
     box-shadow: var(--elevation-2);
-    z-index: 50;
+    z-index: 200;
     transition: var(--transition-default);
 }
 
