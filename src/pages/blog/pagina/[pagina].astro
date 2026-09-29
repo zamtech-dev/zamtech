@@ -8,8 +8,6 @@ export async function getStaticPaths() {
     const todosOsArtigos = await buscarTodosOsArtigos();
     const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
 
-    // página 1 já é o /blog/ normal (src/pages/blog/index.astro) — aqui só
-    // geramos a 2 em diante.
     return Array.from({ length: Math.max(0, totalPaginas - 1) }).map((_, i) => ({
         params: { pagina: String(i + 2) },
     }));

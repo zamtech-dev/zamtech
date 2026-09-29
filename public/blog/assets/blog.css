@@ -1,11 +1,3 @@
-/* Blog público Zamtech — usa os mesmos tokens visuais do site principal.
-   A fonte (Red Hat Display/Text) é carregada por <link> direto no <head>
-   de cada página (index.php, artigo.php, 404.php) — não mais por @import
-   aqui, porque @import dentro do CSS obriga o navegador a esperar esse
-   arquivo inteiro carregar antes de sequer descobrir que precisa buscar a
-   fonte em outro site, atrasando a primeira pintura da página. Esse atraso
-   era o "flash cinza" rápido que aparecia ao abrir o blog. */
-
 :root {
     --color-primary: #0325D0;
     --color-secondary: #0756FF;
@@ -39,9 +31,6 @@
     --space-48: 3rem;
     --space-64: 4rem;
 
-    /* arredondamento mais discreto (o valor antigo — 16px no --radius-lg —
-       deixava capas de artigo, modais e cards com cara de "app de celular"
-       redondo demais; o site real usa cantos bem mais retos) */
     --radius-sm: 3px;
     --radius-md: 6px;
     --radius-lg: 10px;
@@ -56,7 +45,6 @@
     --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* compensa a altura do header fixo do site (idêntico ao Layout.astro principal) */
 .margin-compensa { padding-top: 60px; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -148,10 +136,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     box-shadow: var(--elevation-1);
 }
 
-/* Cards institucionais com foto real + selo de ícone (Quem é a Zamtech,
-   Pra sua casa, Pra sua empresa). A "Indique e Ganhe" fica de fora
-   desse padrão de propósito: segue o mesmo estilo do emoji que o menu
-   real do site (Header.astro) já usa pra ela, sem foto/ícone. */
 .sidebar-card-com-imagem {
     padding: 0;
     overflow: visible;

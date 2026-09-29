@@ -17,9 +17,6 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const artigo = await buscarArtigoPorSlug(slug!);
 
-// Não deveria acontecer (getStaticPaths só gera páginas pra slugs que
-// existem), mas se o artigo tiver sido apagado do WordPress entre o build e
-// agora, ou a API falhar na hora H, cai no 404 do site em vez de quebrar.
 if (!artigo) {
     return Astro.redirect('/404');
 }
@@ -31,11 +28,6 @@ const imagemSeo = artigo.imagemCapa || 'https://zamtech.com.br/assets/icons/logo
 const tempoLeitura = tempoDeLeitura(artigo.conteudoHtml);
 const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';
 
-// Banner do topo do artigo, no mesmo estilo das páginas de regulamento
-// (Termos de Contrato, Indique e Ganhe): imagem de fundo com um gradiente
-// azul por cima pra manter o texto branco legível em qualquer foto. Sem
-// imagem de capa, cai só no gradiente (sem url()), pra não pedir uma
-// imagem que não existe.
 const heroStyle = artigo.imagemCapa
     ? `background-image: linear-gradient(rgba(0, 15, 118, 0.85), rgba(3, 37, 208, 0.85)), url("${artigo.imagemCapa}");`
     : `background-image: linear-gradient(rgba(0, 15, 118, 0.92), rgba(3, 37, 208, 0.92));`;
@@ -200,7 +192,7 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
             });
         }
 
-        // --- Compartilhar ---
+
         const btnCompartilhar = document.getElementById('btn-compartilhar');
         const opcoesCompartilhar = document.getElementById('compartilhar-opcoes');
         const linkWhats = document.getElementById('link-whatsapp');
@@ -217,7 +209,7 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                         await navigator.share({ title: tituloArtigo, url: urlCanonica });
                         return;
                     } catch {
-                        // pessoa cancelou o compartilhamento nativo — cai pro menu abaixo
+
                     }
                 }
                 if (opcoesCompartilhar) opcoesCompartilhar.hidden = !opcoesCompartilhar.hidden;
@@ -234,12 +226,10 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                         if (textoCopiar) textoCopiar.textContent = 'Copiar link';
                     }, 2000);
                 } catch {
-                    // navegador bloqueou a área de transferência — sem drama, a pessoa copia da barra de endereço mesmo
                 }
             });
         }
 
-        // --- Comentário ---
         const form = document.getElementById('form-comentario');
         const status = document.getElementById('comentario-status');
         const inputNome = document.getElementById('comentario-nome');
@@ -285,15 +275,7 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                 }
             });
         }
-
-        // --- "Continuar com Google" (só preenche nome/e-mail, não cria conta em lugar nenhum) ---
-        // Pra isso funcionar de verdade, cria um Client ID gratuito em
-        // https://console.cloud.google.com/apis/credentials (tipo de app:
-        // "Web", em "Authorized JavaScript origins" coloca
-        // https://zamtech.com.br) e troca o texto abaixo pelo ID que o
-        // Google te der. Enquanto não trocar, o botão do Google simplesmente
-        // não aparece — o formulário normal continua funcionando de boa.
-        const GOOGLE_CLIENT_ID = 'COLOQUE_SEU_GOOGLE_CLIENT_ID_AQUI.apps.googleusercontent.com';
+        const GOOGLE_CLIENT_ID = '560058085238-i188rurchh9iq8ul6nbovm785pv6aehm.apps.googleusercontent.com';
 
         function decodificarJwt(token) {
             try {
@@ -325,7 +307,6 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                         { theme: 'outline', size: 'medium', text: 'continue_with' }
                     );
                 } catch {
-                    // Client ID inválido ou bloqueado — sem problema, o formulário manual continua ali embaixo
                 }
             };
             document.head.appendChild(scriptGoogle);
