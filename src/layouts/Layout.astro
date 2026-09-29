@@ -23,6 +23,16 @@ const ogImage = ogImageProp || "https://zamtech.com.br/assets/img/backgrounds/ba
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="facebook-domain-verification" content="h426fzl53ebrz63ufxh48cd36x1jon" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4BWQ2VR9Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-K4BWQ2VR9Q');
+    </script>
+
     <title>{title}</title>
     <meta name="description" content={description}>
     {canonical && <link rel="canonical" href={canonical} />}
