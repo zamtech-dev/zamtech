@@ -262,6 +262,72 @@ const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
             });
         }
 
+        const listaComentarios = document.getElementById('comentarios-lista');
+        const tituloComentarios = document.querySelector('.comentarios h2');
+        const postIdComentarios = document.getElementById('comentario-post-id')?.value;
+
+        function escaparHtml(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function montarComentarioHtml(c) {
+            const avatar = c.autorAvatar
+                ? `<img src="${c.autorAvatar}" alt="" class="comentario-avatar" />`
+                : '';
+            const selo = c.pendente ? ' <span class="comentario-pendente">(aguardando aprovação)</span>' : '';
+            return `
+                <div class="comentario">
+                    ${avatar}
+                    <div class="comentario-corpo">
+                        <span class="comentario-autor">${escaparHtml(c.autorNome)}${selo}</span>
+                        <div class="comentario-texto">${c.conteudoHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let comentariosAprovados = [];
+        let comentariosPendentesLocais = [];
+
+        function renderizarComentarios() {
+            if (!listaComentarios) return;
+            const todos = [...comentariosAprovados, ...comentariosPendentesLocais];
+            if (tituloComentarios) {
+                tituloComentarios.textContent = todos.length > 0 ? `Comentários (${todos.length})` : 'Comentários';
+            }
+            listaComentarios.innerHTML = todos.length === 0
+                ? '<p class="comentarios-vazio">Seja o primeiro a comentar.</p>'
+                : todos.map(montarComentarioHtml).join('');
+        }
+
+        async function carregarComentarios() {
+            if (!postIdComentarios) return;
+            try {
+                const resp = await fetch(
+                    `${WORDPRESS_API_URL}/comments?post=${postIdComentarios}&order=asc&per_page=100&_fields=id,author_name,author_avatar_urls,content,date`
+                );
+                if (!resp.ok) return;
+                const dados = await resp.json();
+                if (!Array.isArray(dados)) return;
+
+                comentariosAprovados = dados.map((c) => ({
+                    id: c.id,
+                    autorNome: c.author_name,
+                    autorAvatar: c.author_avatar_urls?.['96'] || '',
+                    conteudoHtml: c.content?.rendered || '',
+                }));
+                comentariosPendentesLocais = comentariosPendentesLocais.filter(
+                    (p) => !comentariosAprovados.some((a) => a.id === p.id)
+                );
+                renderizarComentarios();
+            } catch {
+            }
+        }
+
+        carregarComentarios();
+
         const form = document.getElementById('form-comentario');
         const status = document.getElementById('comentario-status');
         const inputNome = document.getElementById('comentario-nome');
@@ -272,6 +338,7 @@ const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
                 ev.preventDefault();
                 const botao = form.querySelector('button[type="submit"]');
                 botao.disabled = true;
+                const textoDigitado = document.getElementById('comentario-texto').value;
 
                 try {
                     const resp = await fetch(`${WORDPRESS_API_URL}/comments`, {
@@ -281,15 +348,33 @@ const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
                             post: Number(document.getElementById('comentario-post-id').value),
                             author_name: inputNome.value,
                             author_email: inputEmail.value,
-                            content: document.getElementById('comentario-texto').value,
+                            content: textoDigitado,
                         }),
                     });
 
                     if (status) {
                         status.hidden = false;
                         if (resp.ok) {
-                            status.textContent = 'Comentário enviado! Ele aparece aqui assim que for aprovado.';
+                            let novo = null;
+                            try {
+                                novo = await resp.json();
+                            } catch {
+                            }
+
+                            const aprovado = novo?.status === 'approved' || novo?.status === 'approve';
+                            status.textContent = aprovado
+                                ? 'Comentário publicado!'
+                                : 'Comentário enviado! Ele aparece aqui assim que for aprovado.';
                             status.className = 'comentario-status comentario-status--ok';
+
+                            comentariosPendentesLocais.push({
+                                id: novo?.id ?? `local-${Date.now()}`,
+                                autorNome: inputNome.value,
+                                autorAvatar: novo?.author_avatar_urls?.['96'] || '',
+                                conteudoHtml: novo?.content?.rendered || `<p>${escaparHtml(textoDigitado)}</p>`,
+                                pendente: !aprovado,
+                            });
+                            renderizarComentarios();
                             form.reset();
                         } else {
                             let detalhe = '';

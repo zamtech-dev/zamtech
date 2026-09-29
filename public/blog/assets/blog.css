@@ -733,6 +733,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .comentario-avatar { width: 40px; height: 40px; border-radius: var(--radius-full); object-fit: cover; flex-shrink: 0; }
 .comentario-corpo { flex: 1; min-width: 0; }
 .comentario-autor { display: block; font-weight: 700; font-size: var(--fs-sm); color: var(--color-gray-dark); margin-bottom: 2px; }
+.comentario-pendente { font-weight: 400; font-size: var(--fs-xs); color: var(--color-gray-medium); font-style: italic; }
 .comentario-texto { font-size: var(--fs-sm); color: var(--color-gray-medium); }
 .comentario-texto p { margin-bottom: var(--space-8); }
 
