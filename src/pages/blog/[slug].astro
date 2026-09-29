@@ -29,10 +29,6 @@ const imagemSeo = artigo.imagemCapa || 'https://zamtech.com.br/assets/icons/logo
 const tempoLeitura = tempoDeLeitura(artigo.conteudoHtml);
 const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';
 
-const heroStyle = artigo.imagemCapa
-    ? `background-image: linear-gradient(rgba(0, 15, 118, 0.85), rgba(3, 37, 208, 0.85)), url("${artigo.imagemCapa}");`
-    : `background-image: linear-gradient(rgba(0, 15, 118, 0.92), rgba(3, 37, 208, 0.92));`;
-
 const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -73,15 +69,21 @@ const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
     <link rel="stylesheet" href="/blog/assets/blog.css" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <section class="artigo-hero" style={heroStyle}>
-        <div class="container artigo-hero-content">
-            {categoriaPrincipal && <span class="artigo-hero-badge">{categoriaPrincipal}</span>}
-            <h1>{artigo.titulo}</h1>
-        </div>
-    </section>
-
     <main class="artigo-pagina section container">
         <article>
+            <header class="artigo-cabecalho">
+                {categoriaPrincipal && <span class="blog-card-categoria">{categoriaPrincipal}</span>}
+                <h1>{artigo.titulo}</h1>
+            </header>
+
+            {artigo.imagemCapa && (
+                <img
+                    src={artigo.imagemCapa}
+                    alt={artigo.imagemCapaAlt || artigo.titulo}
+                    class="artigo-imagem-capa"
+                />
+            )}
+
             <div class="artigo-info-bar">
                 <div class="artigo-autor">
                     {artigo.autorAvatar && <img src={artigo.autorAvatar} alt="" class="artigo-autor-avatar" />}

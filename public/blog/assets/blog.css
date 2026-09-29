@@ -525,37 +525,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .artigo-pagina { max-width: 760px; }
 
-.artigo-hero {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    padding: 90px 0 60px;
-    color: var(--color-white);
-    text-align: center;
-}
-
-.artigo-hero-content { max-width: 760px; margin: 0 auto; padding: 0 1.5rem; }
-
-.artigo-hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.15);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-full);
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    margin-bottom: var(--space-16);
-    backdrop-filter: blur(4px);
-}
-
-.artigo-hero h1 {
-    font-size: clamp(1.8rem, 4vw, var(--fs-h1));
-    color: var(--color-white);
-}
-
-.artigo-cabecalho { text-align: center; margin-bottom: var(--space-32); }
-.artigo-cabecalho h1 { font-size: var(--fs-h1); color: var(--color-gray-dark); }
+.artigo-cabecalho { margin-bottom: var(--space-24); }
+.artigo-cabecalho .blog-card-categoria { margin-bottom: var(--space-12); }
+.artigo-cabecalho h1 { font-size: clamp(1.8rem, 4vw, var(--fs-h1)); color: var(--color-gray-dark); }
 .artigo-meta { color: var(--color-gray-medium); font-size: var(--fs-sm); display: block; margin-top: 2px; }
 
 .artigo-imagem-capa {

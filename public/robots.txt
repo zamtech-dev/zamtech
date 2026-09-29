@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /blog/admin/
+Disallow: /cms/
 
 Sitemap: https://zamtech.com.br/blog/sitemap-blog.xml
