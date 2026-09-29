@@ -1,5 +1,5 @@
 ---
-import { formatarDataBr, iconeCategoria, type ArtigoWP } from '../../lib/wordpress';
+import { formatarDataBr, type ArtigoWP } from '../../lib/wordpress';
 
 interface Props {
     artigo: ArtigoWP;
@@ -28,10 +28,7 @@ const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';
         <div class="blog-card-topo">
             <span class="blog-card-data">{formatarDataBr(artigo.dataPublicacao)}</span>
             {categoriaPrincipal && (
-                <span class="blog-card-categoria">
-                    <img src={iconeCategoria(categoriaPrincipal)} alt="" class="blog-card-categoria-icone" />
-                    {categoriaPrincipal}
-                </span>
+                <span class="blog-card-categoria">{categoriaPrincipal}</span>
             )}
         </div>
         <h2 class="blog-card-titulo">{artigo.titulo}</h2>

@@ -12,26 +12,6 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
 
 <aside class="blog-sidebar">
     <div class="sidebar-card">
-        <h2 class="sidebar-card-titulo">Pesquisar artigos</h2>
-        <div class="busca-campo">
-            <input
-                type="text"
-                id="blog-busca-input"
-                class="busca-input"
-                placeholder="Do que você precisa saber?"
-                autocomplete="off"
-            />
-            <button type="button" class="busca-botao" aria-label="Pesquisar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="7"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            </button>
-        </div>
-        <div id="blog-busca-resultados" class="busca-resultados" hidden></div>
-    </div>
-
-    <div class="sidebar-card">
         <h2 class="sidebar-card-titulo">Ordenar por</h2>
         <div class="filtro-tabs" id="blog-filtro-tabs">
             <button type="button" class="filtro-tab ativo" data-ordem="recentes">Mais recentes</button>
@@ -77,9 +57,9 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
         </div>
     )}
 
-    <div class="sidebar-card sidebar-card-destaque sidebar-card-com-imagem">
+    <div class="sidebar-card sidebar-card-institucional">
         <div class="sidebar-card-banner">
-            <img src="/assets/img/sobre-imgs/01-conheca-a-zamtech-fibra-optica.webp" alt="" loading="lazy" />
+            <img src="https://zamtech.com.br/cms/wp-content/uploads/2026/09/mulher-encantada-assiste-a-um-webinar-interessante-em-um-laptop-portatil.jpg" alt="" loading="lazy" />
         </div>
         <div class="sidebar-card-corpo">
             <h2 class="sidebar-card-titulo">Quem é a Zamtech?</h2>
@@ -88,9 +68,9 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
         </div>
     </div>
 
-    <div class="sidebar-card sidebar-card-com-imagem">
+    <div class="sidebar-card sidebar-card-institucional">
         <div class="sidebar-card-banner">
-            <img src="/assets/img/backgrounds/wallpaper-planos-residenciais.webp" alt="" loading="lazy" />
+            <img src="https://zamtech.com.br/cms/wp-content/uploads/2026/09/duas-amigas-ao-ar-livre-com-smartphone-e-fones-de-ouvido_23-2148655919.jpg" alt="" loading="lazy" />
         </div>
         <div class="sidebar-card-corpo">
             <h2 class="sidebar-card-titulo">Pra sua casa</h2>
@@ -99,9 +79,9 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
         </div>
     </div>
 
-    <div class="sidebar-card sidebar-card-escura sidebar-card-com-imagem">
+    <div class="sidebar-card sidebar-card-institucional">
         <div class="sidebar-card-banner">
-            <img src="/assets/img/backgrounds/background-planos-empresariais.jpg" alt="" loading="lazy" />
+            <img src="https://zamtech.com.br/cms/wp-content/uploads/2026/09/mulher-em-hammock-a-trabalhar_23-2151205508.jpg" alt="" loading="lazy" />
         </div>
         <div class="sidebar-card-corpo">
             <h2 class="sidebar-card-titulo">Pra sua empresa</h2>
@@ -112,86 +92,6 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
 </aside>
 
 <script>
-    type ItemBusca = { titulo: string; resumo: string; slug: string; categoria: string };
-
-    let indiceBusca: ItemBusca[] | null = null;
-    let carregandoIndice: Promise<ItemBusca[]> | null = null;
-
-    const REGEX_DIACRITICOS = new RegExp(
-        `[${String.fromCharCode(0x0300)}-${String.fromCharCode(0x036f)}]`,
-        'g'
-    );
-
-    function normalizar(texto: string): string {
-        return texto.toLowerCase().normalize('NFD').replace(REGEX_DIACRITICOS, '');
-    }
-
-    async function carregarIndiceBusca(): Promise<ItemBusca[]> {
-        if (indiceBusca) return indiceBusca;
-        if (!carregandoIndice) {
-            carregandoIndice = fetch('/blog/busca.json')
-                .then((r) => (r.ok ? r.json() : []))
-                .catch(() => []);
-        }
-        indiceBusca = await carregandoIndice;
-        return indiceBusca;
-    }
-
-    const inputBusca = document.getElementById('blog-busca-input') as HTMLInputElement | null;
-    const resultadosBusca = document.getElementById('blog-busca-resultados') as HTMLDivElement | null;
-
-    if (inputBusca && resultadosBusca) {
-        let temporizador: ReturnType<typeof setTimeout>;
-
-        inputBusca.addEventListener('input', () => {
-            clearTimeout(temporizador);
-            const termo = inputBusca.value.trim();
-
-            if (termo.length < 2) {
-                resultadosBusca.hidden = true;
-                resultadosBusca.innerHTML = '';
-                return;
-            }
-
-            temporizador = setTimeout(async () => {
-                const itens = await carregarIndiceBusca();
-                const termoNormalizado = normalizar(termo);
-
-                const encontrados = itens
-                    .filter(
-                        (item) =>
-                            normalizar(item.titulo).includes(termoNormalizado) ||
-                            normalizar(item.resumo).includes(termoNormalizado) ||
-                            normalizar(item.categoria).includes(termoNormalizado)
-                    )
-                    .slice(0, 6);
-
-                if (encontrados.length === 0) {
-                    resultadosBusca.innerHTML = '<p class="busca-vazio">Nada encontrado com esse termo.</p>';
-                } else {
-                    resultadosBusca.innerHTML = encontrados
-                        .map(
-                            (item) => `
-                                <a href="/blog/${item.slug}/" class="busca-resultado-item">
-                                    <span>${item.titulo}</span>
-                                    ${item.categoria ? `<span class="busca-resultado-categoria">${item.categoria}</span>` : ''}
-                                </a>
-                            `
-                        )
-                        .join('');
-                }
-                resultadosBusca.hidden = false;
-            }, 200);
-        });
-
-        document.addEventListener('click', (ev) => {
-            if (!(ev.target instanceof Node)) return;
-            if (!inputBusca.contains(ev.target) && !resultadosBusca.contains(ev.target)) {
-                resultadosBusca.hidden = true;
-            }
-        });
-    }
-
     const tabsOrdem = document.getElementById('blog-filtro-tabs');
     const grade = document.querySelector<HTMLElement>('.blog-grid');
 

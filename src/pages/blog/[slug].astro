@@ -257,7 +257,14 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                             status.className = 'comentario-status comentario-status--ok';
                             form.reset();
                         } else {
-                            status.textContent = 'Não consegui enviar seu comentário agora. Tenta de novo em instantes.';
+                            let detalhe = '';
+                            try {
+                                const erro = await resp.json();
+                                detalhe = erro?.message ? ` (${resp.status}: ${erro.message})` : ` (${resp.status})`;
+                            } catch {
+                                detalhe = ` (${resp.status})`;
+                            }
+                            status.textContent = `Não consegui enviar seu comentário agora.${detalhe}`;
                             status.className = 'comentario-status comentario-status--erro';
                         }
                     }

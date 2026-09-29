@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import CardArtigo from '../../../components/blog/CardArtigo.astro';
 import SidebarBlog from '../../../components/blog/SidebarBlog.astro';
+import BuscaArtigos from '../../../components/blog/BuscaArtigos.astro';
 import { buscarTodosOsArtigos, buscarCategorias } from '../../../lib/wordpress';
 
 export async function getStaticPaths() {
@@ -33,6 +34,8 @@ const recentes = todosOsArtigos.slice(0, 3);
             {artigos.length} artigo{artigos.length === 1 ? '' : 's'} em <strong>{nomeCategoria}</strong>
             &middot; <a href="/blog/">limpar filtro</a>
         </p>
+
+        <BuscaArtigos />
 
         <div class="blog-layout">
             <SidebarBlog categorias={categorias} recentes={recentes} categoriaAtiva={slug} />

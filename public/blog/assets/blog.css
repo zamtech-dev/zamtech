@@ -93,10 +93,15 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .blog-vazio { text-align: center; padding: var(--space-64) 0; color: var(--color-gray-medium); }
 
+.busca-topo {
+    max-width: 640px;
+    margin: 0 auto var(--space-32);
+}
+
 .blog-layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 6.5rem;
+    grid-template-columns: 320px 1fr;
+    gap: 3rem;
     align-items: start;
 }
 
@@ -178,23 +183,10 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .sidebar-card-link:hover { color: var(--color-secondary); }
 
-.sidebar-card-destaque {
-    background: linear-gradient(135deg, rgba(3, 37, 208, 0.06) 0%, rgba(7, 86, 255, 0.06) 100%);
-    border-color: var(--color-border);
+.sidebar-card-institucional {
+    background-color: #ececec;
+    border-color: #ececec;
 }
-
-.sidebar-card-escura {
-    background-color: var(--color-dark-blue);
-    border-color: var(--color-dark-blue);
-}
-
-.sidebar-card-escura .sidebar-card-titulo,
-.sidebar-card-escura .sidebar-card-link {
-    color: var(--color-white);
-}
-
-.sidebar-card-escura p { color: rgba(255, 255, 255, 0.72); }
-.sidebar-card-escura .sidebar-card-link:hover { color: rgba(255, 255, 255, 0.75); }
 
 .sidebar-card-indique {
     background: var(--gradient-brand);
@@ -491,12 +483,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     white-space: nowrap;
 }
 
-.blog-card-categoria-icone {
-    width: 12px;
-    height: 12px;
-    flex-shrink: 0;
-}
-
 .blog-card-titulo { font-size: var(--fs-h4); color: var(--color-gray-dark); }
 
 .blog-card-resumo {
@@ -666,12 +652,22 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .compartilhar-opcoes a:last-child,
 .compartilhar-opcoes button:last-child { border-bottom: none; }
 
-.compartilhar-opcoes img,
 .compartilhar-opcoes svg {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
 }
+
+.compartilhar-opcoes img {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    padding: 5px;
+}
+
+#link-whatsapp img { background-color: #25D366; }
+#link-facebook img { background-color: #1877F2; }
 
 .compartilhar-opcoes a:hover,
 .compartilhar-opcoes button:hover { background-color: var(--color-gray-light); }
