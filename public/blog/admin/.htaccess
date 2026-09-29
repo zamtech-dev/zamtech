@@ -1,4 +1,0 @@
-# Proteção extra pros arquivos internos do admin (além do login por sessão).
-<FilesMatch "^_">
-    Require all denied
-</FilesMatch>

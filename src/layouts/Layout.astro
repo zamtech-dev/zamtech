@@ -8,10 +8,17 @@ import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
 const {
     title = "Zamtech - Fibra Óptica",
     description = "Internet fibra óptica de alta velocidade, PABX em nuvem e monitoramento para sua casa ou empresa. Conheça os planos Zamtech.",
+    // Os três abaixo são opcionais — toda página que já existia continua
+    // exatamente igual (nenhuma delas passa esses props). Foram add pra
+    // servir as páginas do blog, que precisam de um link canônico e de uma
+    // imagem de capa própria no compartilhamento.
+    canonical = "",
+    ogImage: ogImageProp = "",
+    ogType = "website",
 } = Astro.props;
 
 
-const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-internet-zamtech-com-logotipo-centralizada-para-compartilhar-nas-redes-sociais.webp";
+const ogImage = ogImageProp || "https://zamtech.com.br/assets/img/backgrounds/background-internet-zamtech-com-logotipo-centralizada-para-compartilhar-nas-redes-sociais.webp";
 ---
 
 <!DOCTYPE html>
@@ -22,8 +29,9 @@ const ogImage = "https://zamtech.com.br/assets/img/backgrounds/background-intern
     <meta name="facebook-domain-verification" content="h426fzl53ebrz63ufxh48cd36x1jon" />
     <title>{title}</title>
     <meta name="description" content={description}>
+    {canonical && <link rel="canonical" href={canonical} />}
 
-    <meta property="og:type" content="website">
+    <meta property="og:type" content={ogType}>
     <meta property="og:locale" content="pt_BR">
     <meta property="og:site_name" content="Zamtech Fibra Óptica">
     <meta property="og:title" content={title}>

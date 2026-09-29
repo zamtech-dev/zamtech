@@ -1,0 +1,53 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CardArtigo from '../../../components/blog/CardArtigo.astro';
+import SidebarBlog from '../../../components/blog/SidebarBlog.astro';
+import { buscarTodosOsArtigos, buscarCategorias } from '../../../lib/wordpress';
+
+export async function getStaticPaths() {
+    const categorias = await buscarCategorias();
+    return categorias.map((cat) => ({
+        params: { slug: cat.slug },
+        props: { nomeCategoria: cat.nome },
+    }));
+}
+
+const { slug } = Astro.params;
+const { nomeCategoria } = Astro.props;
+
+const todosOsArtigos = await buscarTodosOsArtigos();
+const categorias = await buscarCategorias();
+const artigos = todosOsArtigos.filter((a) => a.categorias.some((c) => c.slug === slug));
+const recentes = todosOsArtigos.slice(0, 3);
+---
+
+<Layout
+    title={`${nomeCategoria} — Blog Zamtech`}
+    description={`Artigos sobre ${nomeCategoria} no blog da Zamtech.`}
+>
+    <link rel="stylesheet" href="/blog/assets/blog.css" />
+
+    <main class="blog-listagem section container">
+        <h1 class="blog-titulo-pagina">Blog Zamtech</h1>
+        <p class="blog-subtitulo-pagina">
+            {artigos.length} artigo{artigos.length === 1 ? '' : 's'} em <strong>{nomeCategoria}</strong>
+            &middot; <a href="/blog/">limpar filtro</a>
+        </p>
+
+        <div class="blog-layout">
+            <SidebarBlog categorias={categorias} recentes={recentes} categoriaAtiva={slug} />
+
+            <div class="blog-conteudo">
+                {artigos.length === 0 ? (
+                    <div class="blog-vazio">
+                        <p>Nenhum artigo encontrado com esse filtro.</p>
+                    </div>
+                ) : (
+                    <div class="blog-grid">
+                        {artigos.map((artigo) => <CardArtigo artigo={artigo} />)}
+                    </div>
+                )}
+            </div>
+        </div>
+    </main>
+</Layout>

@@ -1,0 +1,34 @@
+---
+import { formatarDataBr, iconeCategoria, type ArtigoWP } from '../../lib/wordpress';
+
+interface Props {
+    artigo: ArtigoWP;
+}
+
+const { artigo } = Astro.props;
+const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';
+---
+
+<a href={`/blog/${artigo.slug}/`} class="blog-card">
+    {artigo.imagemCapa && (
+        <img
+            src={artigo.imagemCapa}
+            alt={artigo.imagemCapaAlt || ''}
+            class="blog-card-imagem"
+            loading="lazy"
+        />
+    )}
+    <div class="blog-card-corpo">
+        <div class="blog-card-topo">
+            <span class="blog-card-data">{formatarDataBr(artigo.dataPublicacao)}</span>
+            {categoriaPrincipal && (
+                <span class="blog-card-categoria">
+                    <img src={iconeCategoria(categoriaPrincipal)} alt="" class="blog-card-categoria-icone" />
+                    {categoriaPrincipal}
+                </span>
+            )}
+        </div>
+        <h2 class="blog-card-titulo">{artigo.titulo}</h2>
+        <p class="blog-card-resumo">{artigo.resumo}</p>
+    </div>
+</a>

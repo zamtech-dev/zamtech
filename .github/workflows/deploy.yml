@@ -31,3 +31,44 @@ jobs:
         server-dir: ""
         exclude: |
           **/blog/admin/_config.php
+
+name: Deploy Hostgator
+
+on:
+  push:
+    branches: [ main ]
+  # Disparado pelo WordPress (via wp-mu-plugin-avisar-github.php) toda vez
+  # que um artigo é publicado, atualizado ou despublicado — o blog agora é
+  # gerado em build time, então precisa desse aviso pra saber que tem
+  # conteúdo novo pra buscar.
+  repository_dispatch:
+    types: [ wp-publish ]
+  # Deixa rodar manualmente pela aba "Actions" do GitHub também, sem
+  # precisar dar push nem esperar o WordPress avisar — útil pra testar.
+  workflow_dispatch: {}
+
+jobs:
+  web-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Baixar codigo
+      uses: actions/checkout@v4
+
+    - name: Configurar Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Instalar dependencias e Buildar
+      run: |
+        npm ci
+        npm run build
+
+    - name: Enviar para Hostgator
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: ""

@@ -1,0 +1,79 @@
+---
+import { formatarDataBr, type ArtigoWP, type CategoriaWP } from '../../lib/wordpress';
+
+interface Props {
+    categorias: CategoriaWP[];
+    recentes: ArtigoWP[];
+    categoriaAtiva?: string;
+}
+
+const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
+---
+
+<aside class="blog-sidebar">
+    <div class="sidebar-card">
+        <h2 class="sidebar-card-titulo">Categorias</h2>
+        <ul class="categoria-lista">
+            <li>
+                <a href="/blog/" class={categoriaAtiva === '' ? 'ativo' : ''}>Todas</a>
+            </li>
+            {categorias.map((cat) => (
+                <li>
+                    <a href={`/blog/categoria/${cat.slug}/`} class={categoriaAtiva === cat.slug ? 'ativo' : ''}>
+                        <span class="categoria-nome">{cat.nome}</span>
+                        <span class="categoria-contagem">{cat.totalArtigos}</span>
+                    </a>
+                </li>
+            ))}
+        </ul>
+    </div>
+
+    {recentes.length > 0 && (
+        <div class="sidebar-card">
+            <h2 class="sidebar-card-titulo">Mais recentes</h2>
+            <ul class="sidebar-lista">
+                {recentes.map((artigo) => (
+                    <li>
+                        <a href={`/blog/${artigo.slug}/`}>
+                            <span>{artigo.titulo}</span>
+                            <span class="sidebar-lista-data">{formatarDataBr(artigo.dataPublicacao)}</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )}
+
+    <div class="sidebar-card sidebar-card-destaque sidebar-card-com-imagem">
+        <div class="sidebar-card-banner">
+            <img src="/assets/img/sobre-imgs/01-conheca-a-zamtech-fibra-optica.webp" alt="" loading="lazy" />
+        </div>
+        <div class="sidebar-card-corpo">
+            <h2 class="sidebar-card-titulo">Quem é a Zamtech?</h2>
+            <p>Internet fibra óptica de verdade, com suporte que responde e planos pensados pra sua casa ou pra sua empresa.</p>
+            <a href="/sobre" class="sidebar-card-link">Conhecer a Zamtech &rarr;</a>
+        </div>
+    </div>
+
+    <div class="sidebar-card sidebar-card-com-imagem">
+        <div class="sidebar-card-banner">
+            <img src="/assets/img/backgrounds/wallpaper-planos-residenciais.webp" alt="" loading="lazy" />
+        </div>
+        <div class="sidebar-card-corpo">
+            <h2 class="sidebar-card-titulo">Pra sua casa</h2>
+            <p>Planos de internet residencial com Wi-Fi de verdade em todo cômodo.</p>
+            <a href="/planos-residenciais" class="sidebar-card-link">Ver planos residenciais &rarr;</a>
+        </div>
+    </div>
+
+    <div class="sidebar-card sidebar-card-escura sidebar-card-com-imagem">
+        <div class="sidebar-card-banner">
+            <img src="/assets/img/backgrounds/background-planos-empresariais.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="sidebar-card-corpo">
+            <h2 class="sidebar-card-titulo">Pra sua empresa</h2>
+            <p>Link dedicado, estabilidade e suporte prioritário pro seu negócio não parar.</p>
+            <a href="/planos-empresariais" class="sidebar-card-link">Ver planos empresariais &rarr;</a>
+        </div>
+    </div>
+</aside>

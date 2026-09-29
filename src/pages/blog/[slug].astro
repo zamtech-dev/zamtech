@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {
+    buscarTodosOsArtigos,
+    buscarArtigoPorSlug,
+    tempoDeLeitura,
+    formatarDataLeitura,
+} from '../../lib/wordpress';
+
+export async function getStaticPaths() {
+    const artigos = await buscarTodosOsArtigos();
+    return artigos.map((artigo) => ({ params: { slug: artigo.slug } }));
+}
+
+const { slug } = Astro.params;
+const artigo = await buscarArtigoPorSlug(slug!);
+
+// Não deveria acontecer (getStaticPaths só gera páginas pra slugs que
+// existem), mas se o artigo tiver sido apagado do WordPress entre o build e
+// agora, ou a API falhar na hora H, cai no 404 do site em vez de quebrar.
+if (!artigo) {
+    return Astro.redirect('/404');
+}
+
+const urlCanonica = `https://zamtech.com.br/blog/${artigo.slug}`;
+const imagemSeo = artigo.imagemCapa || 'https://zamtech.com.br/assets/icons/logo-zamtech.svg';
+const tempoLeitura = tempoDeLeitura(artigo.conteudoHtml);
+
+const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: artigo.titulo,
+    description: artigo.metaDescricao,
+    datePublished: artigo.dataPublicacao,
+    dateModified: artigo.dataModificacao,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': urlCanonica },
+    publisher: {
+        '@type': 'Organization',
+        name: 'Zamtech',
+        logo: { '@type': 'ImageObject', url: 'https://zamtech.com.br/assets/icons/logo-zamtech.svg' },
+    },
+    author: { '@type': 'Organization', name: 'Zamtech' },
+    ...(artigo.imagemCapa ? { image: [imagemSeo] } : {}),
+};
+
+const usaInstagram = artigo.conteudoHtml.includes('instagram.com');
+const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteudoHtml.includes('x.com');
+---
+
+<Layout
+    title={`${artigo.metaTitulo} — Blog Zamtech`}
+    description={artigo.metaDescricao}
+    canonical={urlCanonica}
+    ogImage={imagemSeo}
+    ogType="article"
+>
+    <link rel="stylesheet" href="/blog/assets/blog.css" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <main class="artigo-pagina section container">
+        <article>
+            <header class="artigo-cabecalho">
+                <h1>{artigo.titulo}</h1>
+                <p class="artigo-meta">
+                    {formatarDataLeitura(artigo.dataPublicacao)} &middot; {tempoLeitura} min de leitura
+                </p>
+            </header>
+
+            {artigo.imagemCapa && (
+                <img
+                    src={artigo.imagemCapa}
+                    alt={artigo.imagemCapaAlt || ''}
+                    class="artigo-imagem-capa"
+                />
+            )}
+
+            <div class="artigo-corpo" set:html={artigo.conteudoHtml} />
+        </article>
+
+        <div class="artigo-voltar">
+            <a href="/blog/" class="btn-voltar-blog">&larr; Ver todos os artigos</a>
+        </div>
+    </main>
+
+    {usaInstagram && <script async src="https://www.instagram.com/embed.js"></script>}
+    {usaTwitter && <script async src="https://platform.twitter.com/widgets.js"></script>}
+</Layout>

@@ -1,0 +1,59 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CardArtigo from '../../components/blog/CardArtigo.astro';
+import SidebarBlog from '../../components/blog/SidebarBlog.astro';
+import { buscarTodosOsArtigos, buscarCategorias, POR_PAGINA } from '../../lib/wordpress';
+
+const todosOsArtigos = await buscarTodosOsArtigos();
+const categorias = await buscarCategorias();
+
+const artigos = todosOsArtigos.slice(0, POR_PAGINA);
+const recentes = todosOsArtigos.slice(0, 3);
+const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
+---
+
+<Layout
+    title="Blog Zamtech — Notícias, dicas e novidades sobre internet fibra"
+    description="Fique por dentro de dicas de internet, novidades da Zamtech e conteúdos sobre fibra óptica, Wi-Fi e conectividade."
+    canonical="https://zamtech.com.br/blog"
+>
+    <link rel="stylesheet" href="/blog/assets/blog.css" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: 'Blog Zamtech',
+        url: 'https://zamtech.com.br/blog',
+    })} />
+
+    <main class="blog-listagem section container">
+        <h1 class="blog-titulo-pagina">Blog Zamtech</h1>
+        <p class="blog-subtitulo-pagina">Dicas, novidades e conteúdo sobre internet fibra óptica</p>
+
+        <div class="blog-layout">
+            <SidebarBlog categorias={categorias} recentes={recentes} />
+
+            <div class="blog-conteudo">
+                {artigos.length === 0 ? (
+                    <div class="blog-vazio">
+                        <p>Ainda não publicamos nenhum artigo por aqui. Volte em breve!</p>
+                    </div>
+                ) : (
+                    <>
+                        <div class="blog-grid">
+                            {artigos.map((artigo) => <CardArtigo artigo={artigo} />)}
+                        </div>
+
+                        {totalPaginas > 1 && (
+                            <nav class="blog-paginacao">
+                                <a href="/blog/" class="ativa">1</a>
+                                {Array.from({ length: totalPaginas - 1 }).map((_, i) => (
+                                    <a href={`/blog/pagina/${i + 2}/`}>{i + 2}</a>
+                                ))}
+                            </nav>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    </main>
+</Layout>

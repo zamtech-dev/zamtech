@@ -1,0 +1,58 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CardArtigo from '../../../components/blog/CardArtigo.astro';
+import SidebarBlog from '../../../components/blog/SidebarBlog.astro';
+import { buscarTodosOsArtigos, buscarCategorias, POR_PAGINA } from '../../../lib/wordpress';
+
+export async function getStaticPaths() {
+    const todosOsArtigos = await buscarTodosOsArtigos();
+    const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
+
+    // página 1 já é o /blog/ normal (src/pages/blog/index.astro) — aqui só
+    // geramos a 2 em diante.
+    return Array.from({ length: Math.max(0, totalPaginas - 1) }).map((_, i) => ({
+        params: { pagina: String(i + 2) },
+    }));
+}
+
+const { pagina } = Astro.params;
+const numeroPagina = Number(pagina);
+
+const todosOsArtigos = await buscarTodosOsArtigos();
+const categorias = await buscarCategorias();
+
+const inicio = (numeroPagina - 1) * POR_PAGINA;
+const artigos = todosOsArtigos.slice(inicio, inicio + POR_PAGINA);
+const recentes = todosOsArtigos.slice(0, 3);
+const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
+---
+
+<Layout
+    title={`Blog Zamtech — página ${numeroPagina}`}
+    description="Fique por dentro de dicas de internet, novidades da Zamtech e conteúdos sobre fibra óptica, Wi-Fi e conectividade."
+>
+    <link rel="stylesheet" href="/blog/assets/blog.css" />
+
+    <main class="blog-listagem section container">
+        <h1 class="blog-titulo-pagina">Blog Zamtech</h1>
+        <p class="blog-subtitulo-pagina">Dicas, novidades e conteúdo sobre internet fibra óptica</p>
+
+        <div class="blog-layout">
+            <SidebarBlog categorias={categorias} recentes={recentes} />
+
+            <div class="blog-conteudo">
+                <div class="blog-grid">
+                    {artigos.map((artigo) => <CardArtigo artigo={artigo} />)}
+                </div>
+
+                <nav class="blog-paginacao">
+                    {Array.from({ length: totalPaginas }).map((_, i) => {
+                        const n = i + 1;
+                        const href = n === 1 ? '/blog/' : `/blog/pagina/${n}/`;
+                        return <a href={href} class={n === numeroPagina ? 'ativa' : ''}>{n}</a>;
+                    })}
+                </nav>
+            </div>
+        </div>
+    </main>
+</Layout>
