@@ -102,9 +102,21 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
                             ↗ Compartilhar
                         </button>
                         <div class="compartilhar-opcoes" id="compartilhar-opcoes" hidden>
-                            <a id="link-whatsapp" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                            <a id="link-facebook" href="#" target="_blank" rel="noopener noreferrer">Facebook</a>
-                            <button type="button" id="btn-copiar-link">Copiar link</button>
+                            <a id="link-whatsapp" href="#" target="_blank" rel="noopener noreferrer">
+                                <img src="/assets/icons/social/whatsapp.svg" alt="" />
+                                WhatsApp
+                            </a>
+                            <a id="link-facebook" href="#" target="_blank" rel="noopener noreferrer">
+                                <img src="/assets/icons/social/facebook.svg" alt="" />
+                                Facebook
+                            </a>
+                            <button type="button" id="btn-copiar-link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                <span id="btn-copiar-link-texto">Copiar link</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -213,11 +225,14 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
         }
 
         if (btnCopiar) {
+            const textoCopiar = document.getElementById('btn-copiar-link-texto');
             btnCopiar.addEventListener('click', async () => {
                 try {
                     await navigator.clipboard.writeText(urlCanonica);
-                    btnCopiar.textContent = 'Link copiado!';
-                    setTimeout(() => (btnCopiar.textContent = 'Copiar link'), 2000);
+                    if (textoCopiar) textoCopiar.textContent = 'Link copiado!';
+                    setTimeout(() => {
+                        if (textoCopiar) textoCopiar.textContent = 'Copiar link';
+                    }, 2000);
                 } catch {
                     // navegador bloqueou a área de transferência — sem drama, a pessoa copia da barra de endereço mesmo
                 }
@@ -278,7 +293,7 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
         // https://zamtech.com.br) e troca o texto abaixo pelo ID que o
         // Google te der. Enquanto não trocar, o botão do Google simplesmente
         // não aparece — o formulário normal continua funcionando de boa.
-        const GOOGLE_CLIENT_ID = '560058085238-i188rurchh9iq8ul6nbovm785pv6aehm.apps.googleusercontent.com';
+        const GOOGLE_CLIENT_ID = 'COLOQUE_SEU_GOOGLE_CLIENT_ID_AQUI.apps.googleusercontent.com';
 
         function decodificarJwt(token) {
             try {

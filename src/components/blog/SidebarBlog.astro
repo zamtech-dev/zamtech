@@ -21,7 +21,12 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
                 placeholder="Do que você precisa saber?"
                 autocomplete="off"
             />
-            <button type="button" class="busca-botao" aria-label="Pesquisar">🔎</button>
+            <button type="button" class="busca-botao" aria-label="Pesquisar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
         </div>
         <div id="blog-busca-resultados" class="busca-resultados" hidden></div>
     </div>
@@ -54,15 +59,17 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
     {recentes.length > 0 && (
         <div class="sidebar-card">
             <h2 class="sidebar-card-titulo">Mais recentes</h2>
-            <ul class="sidebar-lista-artigos">
+            <ul class="sidebar-artigos-recentes">
                 {recentes.map((artigo) => (
-                    <li>
+                    <li class="sidebar-artigo-item">
                         <a href={`/blog/${artigo.slug}/`}>
-                            {artigo.imagemCapa
-                                ? <img src={artigo.imagemCapa} alt="" loading="lazy" />
-                                : <span class="sidebar-lista-sem-imagem"></span>}
-                            <span>{artigo.titulo}</span>
-                            <span class="sidebar-lista-data">{formatarDataBr(artigo.dataPublicacao)}</span>
+                            <span class="sidebar-artigo-imagem">
+                                {artigo.imagemCapa && <img src={artigo.imagemCapa} alt="" loading="lazy" />}
+                            </span>
+                            <span class="sidebar-artigo-texto">
+                                <span class="sidebar-artigo-titulo">{artigo.titulo}</span>
+                                <span class="sidebar-artigo-data">{formatarDataBr(artigo.dataPublicacao)}</span>
+                            </span>
                         </a>
                     </li>
                 ))}
@@ -111,11 +118,17 @@ const { categorias, recentes, categoriaAtiva = '' } = Astro.props;
     let indiceBusca: ItemBusca[] | null = null;
     let carregandoIndice: Promise<ItemBusca[]> | null = null;
 
+    // Tira acento pra comparação de busca (ex: "conexao" acha "conexão").
+    // Monta o intervalo de "marcas de acento combinando" por código, em vez
+    // de escrever o caractere Unicode direto no meio do regex — assim não
+    // tem risco de esse trecho ser salvo/exibido errado em algum editor.
+    const REGEX_DIACRITICOS = new RegExp(
+        `[${String.fromCharCode(0x0300)}-${String.fromCharCode(0x036f)}]`,
+        'g'
+    );
+
     function normalizar(texto: string): string {
-        return texto
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[̀-ͯ]/g, '');
+        return texto.toLowerCase().normalize('NFD').replace(REGEX_DIACRITICOS, '');
     }
 
     async function carregarIndiceBusca(): Promise<ItemBusca[]> {

@@ -19,28 +19,34 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Registra o campo "zamtech_curtidas" em todo post, pra ele aparecer na API
- * (dentro de "meta"). auth_callback = false: ninguém escreve nesse campo
- * direto pela API padrão — só a rota customizada abaixo, que faz a soma
- * certinha (sem isso, alguém poderia mandar um número qualquer via API e
- * "zerar" ou inflar as curtidas de um artigo).
+ * O contador de curtidas é guardado com update_post_meta() comum (função de
+ * PHP puro, não passa pela API) — de propósito NÃO usamos register_post_meta
+ * aqui. Se a gente registrasse como campo de "meta" da API, o editor de
+ * blocos (Gutenberg) passa a devolver esse campo pra cada post carregado E
+ * reenviar ele de volta a cada "Publicar/Atualizar" — e como só a rota
+ * customizada lá embaixo pode alterar o valor, o WordPress rejeitava essa
+ * tentativa de escrita no meio do salvamento do post, quebrando a resposta
+ * da tela de editar artigo ("Falha ao publicar. A resposta não é um JSON
+ * válido."). Expondo como campo de LEITURA (register_rest_field, igual ao
+ * de comentários logo abaixo) a gente mostra o número pro site sem abrir
+ * esse caminho de escrita.
  */
-add_action('init', function (): void {
-    register_post_meta('post', 'zamtech_curtidas', [
-        'type' => 'integer',
-        'single' => true,
-        'default' => 0,
-        'show_in_rest' => true,
-        'auth_callback' => '__return_false',
-    ]);
-});
-
 add_action('rest_api_init', function (): void {
+
+    register_rest_field('post', 'zamtech_curtidas', [
+        'get_callback' => function (array $post) {
+            $id = isset($post['id']) ? (int) $post['id'] : 0;
+            return $id ? (int) get_post_meta($id, 'zamtech_curtidas', true) : 0;
+        },
+    ]);
 
     // Expõe o número de comentários de cada post na API (o WordPress não
     // manda esse número por padrão em /wp/v2/posts).
     register_rest_field('post', 'zamtech_total_comentarios', [
-        'get_callback' => fn(array $post) => (int) get_comments_number($post['id']),
+        'get_callback' => function (array $post) {
+            $id = isset($post['id']) ? (int) $post['id'] : 0;
+            return $id ? (int) get_comments_number($id) : 0;
+        },
     ]);
 
     // Rota que o botão de curtir do site chama: POST

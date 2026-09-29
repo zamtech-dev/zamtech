@@ -2,12 +2,6 @@
 
 ---
 
-<!--
-  ATENÇÃO: o blog (public/blog/_header.php) tem uma cópia deste header em
-  PHP, porque o blog roda em PHP puro no servidor (não passa pelo build do
-  Astro). Se mudar algo aqui (menu, logo, cores, textos), atualize também
-  public/blog/_header.php pra não ficar diferente do resto do site.
--->
 <header class="main-header" id="main-header">
     <div class="container header-container">
         <a href="/" class="brand-logo-link">
@@ -83,6 +77,18 @@
                 <span>Ajuda</span>
             </a>
         </div>
+
+        <a href="/blog" class="menu-section-card blog-menu-card">
+            <img
+                src="/assets/icons/tech-icon.svg"
+                alt=""
+                class="blog-menu-card-icone"
+            />
+            <div>
+                <h3 class="section-card-title">Blog</h3>
+                <p class="precadastro-card-text">Dicas, novidades e conteúdo sobre internet fibra óptica</p>
+            </div>
+        </a>
 
         <a href="/pre-cadastro" class="menu-section-card precadastro-card">
             <h3 class="section-card-title">📝 Pré-Cadastro</h3>
@@ -647,17 +653,31 @@
     }
 
     .indique-card,
-    .precadastro-card {
+    .precadastro-card,
+    .blog-menu-card {
         text-decoration: none;
         transition: var(--transition-default), box-shadow 0.35s var(--ease-brand);
     }
 
     .indique-card:hover,
-    .precadastro-card:hover {
+    .precadastro-card:hover,
+    .blog-menu-card:hover {
 
         border-color: var(--color-gray-low);
         box-shadow: var(--elevation-2);
         transform: translateY(-2px);
+    }
+
+    .blog-menu-card {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-16);
+    }
+
+    .blog-menu-card-icone {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
     }
 
     .indique-card-text,

@@ -109,10 +109,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 /* --- Layout com barra lateral --- */
 .blog-layout {
     display: grid;
-    grid-template-columns: 300px 1fr;
-    /* Era var(--space-32) — o pedido foi deixar a barra lateral mais
-       distante da lista de artigos. */
-    gap: var(--space-64);
+    grid-template-columns: 280px 1fr;
+    /* Já passou de var(--space-32) pra var(--space-64) e ainda ficou perto
+       demais — valor fixo bem maior dessa vez, sem depender de token
+       pequeno. */
+    gap: 6.5rem;
     align-items: start;
 }
 
@@ -413,39 +414,59 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .sidebar-vazio { font-size: var(--fs-sm); color: var(--color-gray-medium); }
 
-.sidebar-lista-artigos { list-style: none; display: flex; flex-direction: column; gap: var(--space-12); }
+/* Lista "Mais recentes" — refeita do zero (a classe antiga deixava o
+   título espremido e ilegível quando a imagem + data disputavam espaço na
+   mesma linha). Agora imagem de um lado, título+data empilhados do outro. */
+.sidebar-artigos-recentes { list-style: none; display: flex; flex-direction: column; gap: var(--space-16); }
 
-.sidebar-lista-artigos a {
+.sidebar-artigo-item a {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-12);
 }
 
-.sidebar-lista-artigos img,
-.sidebar-lista-sem-imagem {
-    width: 56px;
-    height: 56px;
+.sidebar-artigo-imagem {
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
     border-radius: var(--radius-md);
-    object-fit: cover;
-    background-color: var(--color-gray-light);
+    overflow: hidden;
+    background: var(--gradient-brand);
 }
 
-.sidebar-lista-artigos a > span:not(.sidebar-lista-data) {
+.sidebar-artigo-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-artigo-texto {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 2px;
+}
+
+.sidebar-artigo-titulo {
     font-size: var(--fs-sm);
     font-weight: 600;
-    color: var(--color-gray-dark);
     line-height: 1.35;
+    color: var(--color-gray-dark);
     transition: var(--transition-default);
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.sidebar-lista-artigos a:hover > span:not(.sidebar-lista-data) { color: var(--color-primary); }
+.sidebar-artigo-item a:hover .sidebar-artigo-titulo { color: var(--color-primary); }
+
+.sidebar-artigo-data {
+    font-size: var(--fs-caption);
+    color: var(--color-gray-low);
+}
 
 .sidebar-lista-simples a {
     flex-direction: column;
@@ -649,11 +670,17 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .compartilhar-opcoes {
     position: absolute;
     top: calc(100% + var(--space-8));
-    right: 0;
+    /* Centralizado embaixo do botão em vez de alinhado pela direita — no
+       celular, com o botão perto da borda da tela, "right: 0" jogava o
+       menu pra fora da área visível. */
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
     display: flex;
     flex-direction: column;
-    min-width: 160px;
+    width: max-content;
+    min-width: 180px;
+    max-width: calc(100vw - var(--space-32));
     background-color: var(--color-white);
     border: 1px solid var(--color-gray-light);
     border-radius: var(--radius-md);
@@ -663,11 +690,25 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .compartilhar-opcoes a,
 .compartilhar-opcoes button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
     padding: var(--space-12) var(--space-16);
     text-align: left;
     font-size: var(--fs-sm);
     font-weight: 600;
     color: var(--color-gray-dark);
+    border-bottom: 1px solid var(--color-gray-light);
+}
+
+.compartilhar-opcoes a:last-child,
+.compartilhar-opcoes button:last-child { border-bottom: none; }
+
+.compartilhar-opcoes img,
+.compartilhar-opcoes svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .compartilhar-opcoes a:hover,

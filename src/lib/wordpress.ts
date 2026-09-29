@@ -102,7 +102,7 @@ function converterPost(post: any): ArtigoWP {
         // que expõe contagem de curtidas e de comentários na API. Se o
         // plugin ainda não tiver sido instalado, o WordPress simplesmente
         // não manda esses campos — por isso o "?? 0".
-        curtidas: Number(post.meta?.zamtech_curtidas ?? 0),
+        curtidas: Number(post.zamtech_curtidas ?? 0),
         comentariosContagem: Number(post.zamtech_total_comentarios ?? 0),
     };
 }
