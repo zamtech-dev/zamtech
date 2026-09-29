@@ -110,7 +110,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .blog-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
-    gap: var(--space-32);
+    /* Era var(--space-32) — o pedido foi deixar a barra lateral mais
+       distante da lista de artigos. */
+    gap: var(--space-64);
     align-items: start;
 }
 
@@ -282,6 +284,46 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .busca-limpar:hover { color: var(--color-primary); }
 
+/* Resultados da pesquisa (aparecem embaixo da caixa, sobrepondo o resto) */
+.busca-resultados {
+    position: relative;
+    margin-top: var(--space-8);
+    border: 1px solid var(--color-gray-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-2);
+    background-color: var(--color-white);
+    overflow: hidden;
+}
+
+.busca-resultado-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-12) var(--space-16);
+    border-bottom: 1px solid var(--color-gray-light);
+}
+
+.busca-resultado-item:last-child { border-bottom: none; }
+.busca-resultado-item:hover { background-color: var(--color-gray-light); }
+
+.busca-resultado-item span:first-child {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--color-gray-dark);
+}
+
+.busca-resultado-categoria {
+    font-size: var(--fs-caption);
+    color: var(--color-gray-low);
+}
+
+.busca-vazio {
+    padding: var(--space-16);
+    font-size: var(--fs-sm);
+    color: var(--color-gray-medium);
+    text-align: center;
+}
+
 /* 2. Filtro de ordenação */
 .filtro-tabs {
     display: flex;
@@ -390,6 +432,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 }
 
 .sidebar-lista-artigos a > span:not(.sidebar-lista-data) {
+    flex: 1;
+    min-width: 0;
     font-size: var(--fs-sm);
     font-weight: 600;
     color: var(--color-gray-dark);
@@ -496,9 +540,41 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 /* --- Página de artigo --- */
 .artigo-pagina { max-width: 760px; }
 
+/* Banner do topo, no mesmo estilo das páginas de regulamento (Termos de
+   Contrato, Indique e Ganhe): imagem de capa como fundo + gradiente azul
+   por cima pra manter o texto legível. */
+.artigo-hero {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 90px 0 60px;
+    color: var(--color-white);
+    text-align: center;
+}
+
+.artigo-hero-content { max-width: 760px; margin: 0 auto; padding: 0 1.5rem; }
+
+.artigo-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    margin-bottom: var(--space-16);
+    backdrop-filter: blur(4px);
+}
+
+.artigo-hero h1 {
+    font-size: clamp(1.8rem, 4vw, var(--fs-h1));
+    color: var(--color-white);
+}
+
 .artigo-cabecalho { text-align: center; margin-bottom: var(--space-32); }
 .artigo-cabecalho h1 { font-size: var(--fs-h1); color: var(--color-gray-dark); }
-.artigo-meta { color: var(--color-gray-medium); font-size: var(--fs-sm); margin-top: var(--space-12); }
+.artigo-meta { color: var(--color-gray-medium); font-size: var(--fs-sm); display: block; margin-top: 2px; }
 
 .artigo-imagem-capa {
     width: 100%;
@@ -507,6 +583,95 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-32);
 }
+
+/* Barra com autor + curtir/compartilhar, logo acima do texto do artigo */
+.artigo-info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-16);
+    padding-bottom: var(--space-24);
+    margin-bottom: var(--space-32);
+    border-bottom: 1px solid var(--color-gray-light);
+}
+
+.artigo-autor { display: flex; align-items: center; gap: var(--space-12); }
+
+.artigo-autor-avatar { width: 40px; height: 40px; border-radius: var(--radius-full); object-fit: cover; }
+
+.artigo-autor-nome { display: block; font-weight: 700; font-size: var(--fs-sm); color: var(--color-gray-dark); }
+
+.artigo-acoes { display: flex; align-items: center; gap: var(--space-12); }
+
+.btn-curtir {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-16);
+    border: 1.5px solid var(--color-gray-low);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--fs-sm);
+    color: var(--color-gray-medium);
+    transition: var(--transition-default);
+}
+
+.btn-curtir-coracao { transition: var(--transition-default); }
+
+.btn-curtir:hover { border-color: var(--color-danger, #e0245e); color: var(--color-danger, #e0245e); }
+
+.btn-curtir.curtido {
+    border-color: #e0245e;
+    color: #e0245e;
+    background-color: rgba(224, 36, 94, 0.06);
+}
+
+.btn-curtir.curtido .btn-curtir-coracao { transform: scale(1.15); }
+
+.artigo-compartilhar { position: relative; }
+
+.btn-compartilhar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-16);
+    border: 1.5px solid var(--color-gray-low);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--fs-sm);
+    color: var(--color-gray-medium);
+    transition: var(--transition-default);
+}
+
+.btn-compartilhar:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.compartilhar-opcoes {
+    position: absolute;
+    top: calc(100% + var(--space-8));
+    right: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-2);
+    overflow: hidden;
+}
+
+.compartilhar-opcoes a,
+.compartilhar-opcoes button {
+    padding: var(--space-12) var(--space-16);
+    text-align: left;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--color-gray-dark);
+}
+
+.compartilhar-opcoes a:hover,
+.compartilhar-opcoes button:hover { background-color: var(--color-gray-light); }
 
 .artigo-corpo { font-size: var(--fs-body); color: var(--color-gray-dark); }
 .artigo-corpo p { margin-bottom: var(--space-24); }
@@ -551,3 +716,45 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .artigo-voltar { margin-top: var(--space-64); text-align: center; }
 .btn-voltar-blog { display: inline-flex; padding: var(--space-12) var(--space-24); border: 1.5px solid var(--color-gray-low); border-radius: var(--radius-md); font-weight: 600; }
 .btn-voltar-blog:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* --- Comentários --- */
+.comentarios { max-width: 760px; margin: var(--space-64) auto 0; padding-top: var(--space-48); border-top: 1px solid var(--color-gray-light); }
+.comentarios h2 { font-size: var(--fs-h3); color: var(--color-gray-dark); margin-bottom: var(--space-24); }
+
+.comentarios-lista { display: flex; flex-direction: column; gap: var(--space-24); margin-bottom: var(--space-32); }
+.comentarios-vazio { color: var(--color-gray-medium); font-size: var(--fs-sm); }
+
+.comentario { display: flex; gap: var(--space-12); }
+.comentario-avatar { width: 40px; height: 40px; border-radius: var(--radius-full); object-fit: cover; flex-shrink: 0; }
+.comentario-corpo { flex: 1; min-width: 0; }
+.comentario-autor { display: block; font-weight: 700; font-size: var(--fs-sm); color: var(--color-gray-dark); margin-bottom: 2px; }
+.comentario-texto { font-size: var(--fs-sm); color: var(--color-gray-medium); }
+.comentario-texto p { margin-bottom: var(--space-8); }
+
+.comentario-google-btn { margin-bottom: var(--space-16); }
+
+.form-comentario { display: flex; flex-direction: column; gap: var(--space-12); }
+
+.form-comentario-linha { display: flex; gap: var(--space-12); flex-wrap: wrap; }
+
+.form-comentario input,
+.form-comentario textarea {
+    flex: 1;
+    min-width: 200px;
+    border: 1.5px solid var(--color-gray-low);
+    border-radius: var(--radius-md);
+    padding: var(--space-12) var(--space-16);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    color: var(--color-gray-dark);
+    resize: vertical;
+}
+
+.form-comentario input:focus,
+.form-comentario textarea:focus { outline: none; border-color: var(--color-primary); }
+
+.form-comentario button[type="submit"] { align-self: flex-start; }
+
+.comentario-status { font-size: var(--fs-sm); }
+.comentario-status--ok { color: var(--color-primary); }
+.comentario-status--erro { color: #e0245e; }

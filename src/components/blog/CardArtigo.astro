@@ -9,7 +9,13 @@ const { artigo } = Astro.props;
 const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';
 ---
 
-<a href={`/blog/${artigo.slug}/`} class="blog-card">
+<a
+    href={`/blog/${artigo.slug}/`}
+    class="blog-card"
+    data-data={artigo.dataPublicacao}
+    data-curtidas={artigo.curtidas}
+    data-comentarios={artigo.comentariosContagem}
+>
     {artigo.imagemCapa && (
         <img
             src={artigo.imagemCapa}

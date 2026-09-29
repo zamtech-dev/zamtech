@@ -3,8 +3,10 @@ import Layout from '../../layouts/Layout.astro';
 import {
     buscarTodosOsArtigos,
     buscarArtigoPorSlug,
+    buscarComentarios,
     tempoDeLeitura,
     formatarDataLeitura,
+    WORDPRESS_API_URL,
 } from '../../lib/wordpress';
 
 export async function getStaticPaths() {
@@ -22,9 +24,21 @@ if (!artigo) {
     return Astro.redirect('/404');
 }
 
+const comentarios = await buscarComentarios(artigo.id);
+
 const urlCanonica = `https://zamtech.com.br/blog/${artigo.slug}`;
 const imagemSeo = artigo.imagemCapa || 'https://zamtech.com.br/assets/icons/logo-zamtech.svg';
 const tempoLeitura = tempoDeLeitura(artigo.conteudoHtml);
+const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';
+
+// Banner do topo do artigo, no mesmo estilo das páginas de regulamento
+// (Termos de Contrato, Indique e Ganhe): imagem de fundo com um gradiente
+// azul por cima pra manter o texto branco legível em qualquer foto. Sem
+// imagem de capa, cai só no gradiente (sem url()), pra não pedir uma
+// imagem que não existe.
+const heroStyle = artigo.imagemCapa
+    ? `background-image: linear-gradient(rgba(0, 15, 118, 0.85), rgba(3, 37, 208, 0.85)), url("${artigo.imagemCapa}");`
+    : `background-image: linear-gradient(rgba(0, 15, 118, 0.92), rgba(3, 37, 208, 0.92));`;
 
 const jsonLd = {
     '@context': 'https://schema.org',
@@ -39,7 +53,7 @@ const jsonLd = {
         name: 'Zamtech',
         logo: { '@type': 'ImageObject', url: 'https://zamtech.com.br/assets/icons/logo-zamtech.svg' },
     },
-    author: { '@type': 'Organization', name: 'Zamtech' },
+    author: { '@type': 'Person', name: artigo.autorNome },
     ...(artigo.imagemCapa ? { image: [imagemSeo] } : {}),
 };
 
@@ -57,25 +71,80 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
     <link rel="stylesheet" href="/blog/assets/blog.css" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
+    <section class="artigo-hero" style={heroStyle}>
+        <div class="container artigo-hero-content">
+            {categoriaPrincipal && <span class="artigo-hero-badge">{categoriaPrincipal}</span>}
+            <h1>{artigo.titulo}</h1>
+        </div>
+    </section>
+
     <main class="artigo-pagina section container">
         <article>
-            <header class="artigo-cabecalho">
-                <h1>{artigo.titulo}</h1>
-                <p class="artigo-meta">
-                    {formatarDataLeitura(artigo.dataPublicacao)} &middot; {tempoLeitura} min de leitura
-                </p>
-            </header>
+            <div class="artigo-info-bar">
+                <div class="artigo-autor">
+                    {artigo.autorAvatar && <img src={artigo.autorAvatar} alt="" class="artigo-autor-avatar" />}
+                    <div>
+                        <span class="artigo-autor-nome">Por {artigo.autorNome}</span>
+                        <span class="artigo-meta">
+                            {formatarDataLeitura(artigo.dataPublicacao)} &middot; {tempoLeitura} min de leitura
+                        </span>
+                    </div>
+                </div>
 
-            {artigo.imagemCapa && (
-                <img
-                    src={artigo.imagemCapa}
-                    alt={artigo.imagemCapaAlt || ''}
-                    class="artigo-imagem-capa"
-                />
-            )}
+                <div class="artigo-acoes">
+                    <button type="button" id="btn-curtir" class="btn-curtir" data-post-id={artigo.id}>
+                        <span class="btn-curtir-coracao">♥</span>
+                        <span id="curtir-contagem">{artigo.curtidas}</span>
+                    </button>
+
+                    <div class="artigo-compartilhar">
+                        <button type="button" id="btn-compartilhar" class="btn-compartilhar" aria-label="Compartilhar">
+                            ↗ Compartilhar
+                        </button>
+                        <div class="compartilhar-opcoes" id="compartilhar-opcoes" hidden>
+                            <a id="link-whatsapp" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                            <a id="link-facebook" href="#" target="_blank" rel="noopener noreferrer">Facebook</a>
+                            <button type="button" id="btn-copiar-link">Copiar link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="artigo-corpo" set:html={artigo.conteudoHtml} />
         </article>
+
+        <section class="comentarios" id="comentarios">
+            <h2>Comentários {comentarios.length > 0 && `(${comentarios.length})`}</h2>
+
+            <div class="comentarios-lista" id="comentarios-lista">
+                {comentarios.length === 0 ? (
+                    <p class="comentarios-vazio">Seja o primeiro a comentar.</p>
+                ) : (
+                    comentarios.map((c) => (
+                        <div class="comentario">
+                            {c.autorAvatar && <img src={c.autorAvatar} alt="" class="comentario-avatar" />}
+                            <div class="comentario-corpo">
+                                <span class="comentario-autor">{c.autorNome}</span>
+                                <div class="comentario-texto" set:html={c.conteudoHtml} />
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            <div id="comentario-google-btn" class="comentario-google-btn"></div>
+
+            <form id="form-comentario" class="form-comentario">
+                <input type="hidden" id="comentario-post-id" value={artigo.id} />
+                <div class="form-comentario-linha">
+                    <input type="text" id="comentario-nome" placeholder="Seu nome" required />
+                    <input type="email" id="comentario-email" placeholder="Seu e-mail (não aparece pra ninguém)" required />
+                </div>
+                <textarea id="comentario-texto" placeholder="Escreva seu comentário..." rows="4" required></textarea>
+                <button type="submit" class="btn btn-primary">Comentar</button>
+                <p id="comentario-status" class="comentario-status" hidden></p>
+            </form>
+        </section>
 
         <div class="artigo-voltar">
             <a href="/blog/" class="btn-voltar-blog">&larr; Ver todos os artigos</a>
@@ -84,4 +153,167 @@ const usaTwitter = artigo.conteudoHtml.includes('twitter.com') || artigo.conteud
 
     {usaInstagram && <script async src="https://www.instagram.com/embed.js"></script>}
     {usaTwitter && <script async src="https://platform.twitter.com/widgets.js"></script>}
+
+    <script define:vars={{ WORDPRESS_API_URL, urlCanonica, tituloArtigo: artigo.titulo }}>
+        // --- Curtir ---
+        const CHAVE_CURTIDO = (id) => `zamtech-curtiu-${id}`;
+        const btnCurtir = document.getElementById('btn-curtir');
+        if (btnCurtir) {
+            const postId = btnCurtir.dataset.postId;
+            const contagemEl = document.getElementById('curtir-contagem');
+
+            if (localStorage.getItem(CHAVE_CURTIDO(postId)) === '1') {
+                btnCurtir.classList.add('curtido');
+                btnCurtir.disabled = true;
+            }
+
+            btnCurtir.addEventListener('click', async () => {
+                if (localStorage.getItem(CHAVE_CURTIDO(postId)) === '1') return;
+                btnCurtir.disabled = true;
+                try {
+                    const resp = await fetch(`${WORDPRESS_API_URL.replace('/wp/v2', '')}/zamtech/v1/curtir/${postId}`, {
+                        method: 'POST',
+                    });
+                    if (resp.ok) {
+                        const dados = await resp.json();
+                        if (contagemEl) contagemEl.textContent = String(dados.curtidas);
+                        btnCurtir.classList.add('curtido');
+                        localStorage.setItem(CHAVE_CURTIDO(postId), '1');
+                    } else {
+                        btnCurtir.disabled = false;
+                    }
+                } catch {
+                    btnCurtir.disabled = false;
+                }
+            });
+        }
+
+        // --- Compartilhar ---
+        const btnCompartilhar = document.getElementById('btn-compartilhar');
+        const opcoesCompartilhar = document.getElementById('compartilhar-opcoes');
+        const linkWhats = document.getElementById('link-whatsapp');
+        const linkFace = document.getElementById('link-facebook');
+        const btnCopiar = document.getElementById('btn-copiar-link');
+
+        if (linkWhats) linkWhats.href = `https://wa.me/?text=${encodeURIComponent(tituloArtigo + ' ' + urlCanonica)}`;
+        if (linkFace) linkFace.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(urlCanonica)}`;
+
+        if (btnCompartilhar) {
+            btnCompartilhar.addEventListener('click', async () => {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ title: tituloArtigo, url: urlCanonica });
+                        return;
+                    } catch {
+                        // pessoa cancelou o compartilhamento nativo — cai pro menu abaixo
+                    }
+                }
+                if (opcoesCompartilhar) opcoesCompartilhar.hidden = !opcoesCompartilhar.hidden;
+            });
+        }
+
+        if (btnCopiar) {
+            btnCopiar.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(urlCanonica);
+                    btnCopiar.textContent = 'Link copiado!';
+                    setTimeout(() => (btnCopiar.textContent = 'Copiar link'), 2000);
+                } catch {
+                    // navegador bloqueou a área de transferência — sem drama, a pessoa copia da barra de endereço mesmo
+                }
+            });
+        }
+
+        // --- Comentário ---
+        const form = document.getElementById('form-comentario');
+        const status = document.getElementById('comentario-status');
+        const inputNome = document.getElementById('comentario-nome');
+        const inputEmail = document.getElementById('comentario-email');
+
+        if (form) {
+            form.addEventListener('submit', async (ev) => {
+                ev.preventDefault();
+                const botao = form.querySelector('button[type="submit"]');
+                botao.disabled = true;
+
+                try {
+                    const resp = await fetch(`${WORDPRESS_API_URL}/comments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            post: Number(document.getElementById('comentario-post-id').value),
+                            author_name: inputNome.value,
+                            author_email: inputEmail.value,
+                            content: document.getElementById('comentario-texto').value,
+                        }),
+                    });
+
+                    if (status) {
+                        status.hidden = false;
+                        if (resp.ok) {
+                            status.textContent = 'Comentário enviado! Ele aparece aqui assim que for aprovado.';
+                            status.className = 'comentario-status comentario-status--ok';
+                            form.reset();
+                        } else {
+                            status.textContent = 'Não consegui enviar seu comentário agora. Tenta de novo em instantes.';
+                            status.className = 'comentario-status comentario-status--erro';
+                        }
+                    }
+                } catch {
+                    if (status) {
+                        status.hidden = false;
+                        status.textContent = 'Não consegui falar com o servidor agora.';
+                        status.className = 'comentario-status comentario-status--erro';
+                    }
+                } finally {
+                    botao.disabled = false;
+                }
+            });
+        }
+
+        // --- "Continuar com Google" (só preenche nome/e-mail, não cria conta em lugar nenhum) ---
+        // Pra isso funcionar de verdade, cria um Client ID gratuito em
+        // https://console.cloud.google.com/apis/credentials (tipo de app:
+        // "Web", em "Authorized JavaScript origins" coloca
+        // https://zamtech.com.br) e troca o texto abaixo pelo ID que o
+        // Google te der. Enquanto não trocar, o botão do Google simplesmente
+        // não aparece — o formulário normal continua funcionando de boa.
+        const GOOGLE_CLIENT_ID = '560058085238-i188rurchh9iq8ul6nbovm785pv6aehm.apps.googleusercontent.com';
+
+        function decodificarJwt(token) {
+            try {
+                const payload = token.split('.')[1];
+                return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+            } catch {
+                return null;
+            }
+        }
+
+        if (!GOOGLE_CLIENT_ID.startsWith('COLOQUE_')) {
+            const scriptGoogle = document.createElement('script');
+            scriptGoogle.src = 'https://accounts.google.com/gsi/client';
+            scriptGoogle.async = true;
+            scriptGoogle.onload = () => {
+                try {
+                    window.google.accounts.id.initialize({
+                        client_id: GOOGLE_CLIENT_ID,
+                        callback: (resposta) => {
+                            const dados = decodificarJwt(resposta.credential);
+                            if (dados) {
+                                inputNome.value = dados.name || '';
+                                inputEmail.value = dados.email || '';
+                            }
+                        },
+                    });
+                    window.google.accounts.id.renderButton(
+                        document.getElementById('comentario-google-btn'),
+                        { theme: 'outline', size: 'medium', text: 'continue_with' }
+                    );
+                } catch {
+                    // Client ID inválido ou bloqueado — sem problema, o formulário manual continua ali embaixo
+                }
+            };
+            document.head.appendChild(scriptGoogle);
+        }
+    </script>
 </Layout>
