@@ -156,8 +156,6 @@ const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
                 )}
             </div>
 
-            <div id="comentario-google-btn" class="comentario-google-btn"></div>
-
             <form id="form-comentario" class="form-comentario">
                 <input type="hidden" id="comentario-post-id" value={artigo.id} />
                 <div class="form-comentario-linha">
@@ -315,43 +313,6 @@ const recomendados = [...mesmaCategoria, ...outrosArtigos].slice(0, 3);
                     botao.disabled = false;
                 }
             });
-        }
-
-        const GOOGLE_CLIENT_ID = '560058085238-i188rurchh9iq8ul6nbovm785pv6aehm.apps.googleusercontent.com';
-
-        function decodificarJwt(token) {
-            try {
-                const payload = token.split('.')[1];
-                return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
-            } catch {
-                return null;
-            }
-        }
-
-        if (!GOOGLE_CLIENT_ID.startsWith('COLOQUE_')) {
-            const scriptGoogle = document.createElement('script');
-            scriptGoogle.src = 'https://accounts.google.com/gsi/client';
-            scriptGoogle.async = true;
-            scriptGoogle.onload = () => {
-                try {
-                    window.google.accounts.id.initialize({
-                        client_id: GOOGLE_CLIENT_ID,
-                        callback: (resposta) => {
-                            const dados = decodificarJwt(resposta.credential);
-                            if (dados) {
-                                inputNome.value = dados.name || '';
-                                inputEmail.value = dados.email || '';
-                            }
-                        },
-                    });
-                    window.google.accounts.id.renderButton(
-                        document.getElementById('comentario-google-btn'),
-                        { theme: 'outline', size: 'medium', text: 'continue_with' }
-                    );
-                } catch {
-                }
-            };
-            document.head.appendChild(scriptGoogle);
         }
     </script>
 </Layout>
