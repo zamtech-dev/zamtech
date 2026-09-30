@@ -2,7 +2,6 @@
 import Layout from '../../../layouts/Layout.astro';
 import CardArtigo from '../../../components/blog/CardArtigo.astro';
 import SidebarBlog from '../../../components/blog/SidebarBlog.astro';
-import BuscaArtigos from '../../../components/blog/BuscaArtigos.astro';
 import { buscarTodosOsArtigos, buscarCategorias, POR_PAGINA } from '../../../lib/wordpress';
 
 export async function getStaticPaths() {
@@ -29,14 +28,13 @@ const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
 <Layout
     title={`Blog Zamtech — página ${numeroPagina}`}
     description="Fique por dentro de dicas de internet, novidades da Zamtech e conteúdos sobre fibra óptica, Wi-Fi e conectividade."
+    canonical={`https://zamtech.com.br/blog/pagina/${numeroPagina}/`}
 >
     <link rel="stylesheet" href="/blog/assets/blog.css" />
 
     <main class="blog-listagem section container">
         <h1 class="blog-titulo-pagina">Blog Zamtech</h1>
         <p class="blog-subtitulo-pagina">Dicas, novidades e conteúdo sobre internet fibra óptica</p>
-
-        <BuscaArtigos />
 
         <div class="blog-layout">
             <SidebarBlog categorias={categorias} recentes={recentes} />

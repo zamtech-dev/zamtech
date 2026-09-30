@@ -24,7 +24,7 @@ if (!artigo) {
 
 const comentarios = await buscarComentarios(artigo.id);
 
-const urlCanonica = `https://zamtech.com.br/blog/${artigo.slug}`;
+const urlCanonica = `https://zamtech.com.br/blog/${artigo.slug}/`;
 const imagemSeo = artigo.imagemCapa || 'https://zamtech.com.br/assets/icons/logo-zamtech.svg';
 const tempoLeitura = tempoDeLeitura(artigo.conteudoHtml);
 const categoriaPrincipal = artigo.categorias[0]?.nome ?? '';

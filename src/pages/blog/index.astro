@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import CardArtigo from '../../components/blog/CardArtigo.astro';
 import SidebarBlog from '../../components/blog/SidebarBlog.astro';
-import BuscaArtigos from '../../components/blog/BuscaArtigos.astro';
 import { buscarTodosOsArtigos, buscarCategorias, POR_PAGINA } from '../../lib/wordpress';
 
 const todosOsArtigos = await buscarTodosOsArtigos();
@@ -16,7 +15,7 @@ const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
 <Layout
     title="Blog Zamtech — Notícias, dicas e novidades sobre internet fibra"
     description="Fique por dentro de dicas de internet, novidades da Zamtech e conteúdos sobre fibra óptica, Wi-Fi e conectividade."
-    canonical="https://zamtech.com.br/blog"
+    canonical="https://zamtech.com.br/blog/"
 >
     <link rel="stylesheet" href="/blog/assets/blog.css" />
     <script type="application/ld+json" set:html={JSON.stringify({
@@ -29,8 +28,6 @@ const totalPaginas = Math.max(1, Math.ceil(todosOsArtigos.length / POR_PAGINA));
     <main class="blog-listagem section container">
         <h1 class="blog-titulo-pagina">Blog Zamtech</h1>
         <p class="blog-subtitulo-pagina">Dicas, novidades e conteúdo sobre internet fibra óptica</p>
-
-        <BuscaArtigos />
 
         <div class="blog-layout">
             <SidebarBlog categorias={categorias} recentes={recentes} />
